@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="AnimalThingBase">
+    <defName>RimClaw_Clawfish</defName>
+    <label>clawfish</label>
+    <description>A strange crustacean-like aquatic creature frequently hooked while fishing. It cannot be tamed directly.</description>
+    <thingClass>Pawn</thingClass>
+    <graphicData>
+      <texPath>Things/Pawn/Animal/Spelopede/Spelopede</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1.6,1.6)</drawSize>
+      <shadowData>
+        <volume>(0.7,0.35,0.7)</volume>
+      </shadowData>
+    </graphicData>
+    <statBases>
+      <MarketValue>320</MarketValue>
+      <MoveSpeed>4.6</MoveSpeed>
+      <BodySize>0.9</BodySize>
+      <MaxHitPoints>145</MaxHitPoints>
+      <ArmorRating_Sharp>0.24</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.3</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.1</ArmorRating_Heat>
+      <MeleeDPS>9.5</MeleeDPS>
+      <MeleeHitChance>0.78</MeleeHitChance>
+      <PainShockThreshold>999</PainShockThreshold>
+    </statBases>
+    <race>
+      <body>RimClaw_ClawfishBody</body>
+      <baseBodySize>0.9</baseBodySize>
+      <baseHungerRate>0.0</baseHungerRate>
+      <baseHealthScale>1.0</baseHealthScale>
+      <baseMoveSpeed>4.6</baseMoveSpeed>
+      <foodType>None</foodType>
+      <needsRest>false</needsRest>
+      <predator>false</predator>
+      <roamMtbDays>2</roamMtbDays>
+      <wildness>1.0</wildness>
+      <trainability>None</trainability>
+      <manhunterOnDamageChance>0.12</manhunterOnDamageChance>
+      <manhunterOnTameFailChance>1.0</manhunterOnTameFailChance>
+      <fleshType>Normal</fleshType>
+      <lifeExpectancy>40</lifeExpectancy>
+      <herdAnimal>false</herdAnimal>
+      <petness>0.0</petness>
+      <intelligence>Animal</intelligence>
+      <nameOnTameChance>0</nameOnTameChance>
+      <thinkTreeMain>Animal</thinkTreeMain>
+      <thinkTreeConstant>AnimalConstant</thinkTreeConstant>
+      <meatLabel>clawfish meat</meatLabel>
+      <nuzzleMtbHours>0</nuzzleMtbHours>
+      <mateMtbHours>99999</mateMtbHours>
+      <gestationPeriodDays>99999</gestationPeriodDays>
+    </race>
+    <tools>
+      <li>
+        <label>left claw</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Scratch</li>
+        </capacities>
+        <power>14</power>
+        <cooldownTime>1.95</cooldownTime>
+        <linkedBodyPartsGroup>LeftShoulder</linkedBodyPartsGroup>
+      </li>
+      <li>
+        <label>right claw</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Scratch</li>
+        </capacities>
+        <power>14</power>
+        <cooldownTime>1.95</cooldownTime>
+        <linkedBodyPartsGroup>RightShoulder</linkedBodyPartsGroup>
+      </li>
+    </tools>
+    <inspectorTabs>
+      <li>ITab_Pawn_Character</li>
+      <li>ITab_Pawn_Health</li>
+      <li>ITab_Pawn_Gear</li>
+      <li>ITab_Pawn_Social</li>
+    </inspectorTabs>
+  </ThingDef>
+</Defs>

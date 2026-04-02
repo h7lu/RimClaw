@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BaseHumanMakeableGun">
+    <defName>RimClaw_PromptInjector</defName>
+    <label>Prompt Injector</label>
+    <description>Launches hostile prompt payloads that can force Clawfish behavioral collapse.</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/EMPLauncher</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1.15,1.15)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>WeaponsRanged</li>
+    </thingCategories>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <Mass>6.5</Mass>
+      <WorkToMake>1000</WorkToMake>
+      <AccuracyTouch>0.68</AccuracyTouch>
+      <AccuracyShort>0.8</AccuracyShort>
+      <AccuracyMedium>0.72</AccuracyMedium>
+      <AccuracyLong>0.56</AccuracyLong>
+      <RangedWeapon_Cooldown>2.4</RangedWeapon_Cooldown>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+      <recipeUsers>
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <ingredients>
+        <li>
+          <filter>
+            <thingDefs>
+              <li>EMPLauncher</li>
+            </thingDefs>
+          </filter>
+          <count>1</count>
+        </li>
+        <li>
+          <filter>
+            <thingDefs>
+              <li>ComponentSpacer</li>
+            </thingDefs>
+          </filter>
+          <count>1</count>
+        </li>
+        <li>
+          <filter>
+            <thingDefs>
+              <li>RimClaw_PromptInjectionDatabase</li>
+            </thingDefs>
+          </filter>
+          <count>1</count>
+        </li>
+      </ingredients>
+      <workAmount>1000</workAmount>
+      <effectWorking>Fabrication</effectWorking>
+      <soundWorking>Recipe_Smelt</soundWorking>
+    </recipeMaker>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>RimClaw_PromptInjectorProjectile</defaultProjectile>
+        <warmupTime>0.7</warmupTime>
+        <range>22.9</range>
+        <ticksBetweenBurstShots>12</ticksBetweenBurstShots>
+        <burstShotCount>1</burstShotCount>
+        <soundCast>Shot_EMPLauncher</soundCast>
+        <targetParams>
+          <canTargetLocations>false</canTargetLocations>
+          <canTargetSelf>false</canTargetSelf>
+          <canTargetFires>false</canTargetFires>
+          <canTargetItems>false</canTargetItems>
+          <canTargetBuildings>false</canTargetBuildings>
+          <canTargetPawns>true</canTargetPawns>
+        </targetParams>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>RangedHunting</li>
+      <li>RimClawPromptInjector</li>
+    </weaponTags>
+  </ThingDef>
+
+  <ThingDef ParentName="BulletBase">
+    <defName>RimClaw_PromptInjectorProjectile</defName>
+    <label>prompt payload</label>
+    <thingClass>RimClaw.Projectile_PromptInjector</thingClass>
+    <graphicData>
+      <texPath>Things/Projectile/EMP</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.2,0.2)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Blunt</damageDef>
+      <damageAmountBase>1</damageAmountBase>
+      <speed>45</speed>
+      <stoppingPower>0</stoppingPower>
+    </projectile>
+  </ThingDef>
+</Defs>

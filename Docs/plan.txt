@@ -1,0 +1,101 @@
+Rimworld mod: RimClaw
+
+this is a mod dependent on rimworld 1.6 and Odyssey dlc. A meme like mod for OpenClaw
+
+this mod adds a new animal pawn, Clawfish. When a pawn is fishing in any kind of water, it has a certain chance(like 10%) to spawn a Clawfish by the pawn. the pawn will then stop the current fishing job. that Clawfish is wild, is animal, and cannot be tamed directly. 
+
+The basic melee stats(body size, walk speed, health, melee combat damage, etc) of clawfish is roughly equivalent to the vanilla Spelopede.
+
+The player can buy a special item(unstackable), Prompt Injection Database, from space merchants or factions with industrial or more tech. then there is a crafting recipe, 1* EMP launcher, 1 * spacer component, 1 * Prompt Injection Database, 1000 workload, to make a ranged weapon Prompt Injector. 
+Targeting the prompt injector on a Clawfish will have a chance(base 50%) to be stunned for 5 seconds, and have 3 possible behaviours: 60% instantly join the player's faction as a humanlike colonizer; 30% instantly go mad and become hostile to every creature for 3 hours(mental state: berserk); 10% deletes itself(disappear after doing a job Self Deleting for 5s)
+this mechanism is a bit like wildman, from animal to humanlike colonizer after taming. 
+The random name of clawfish would be like "xxxClaw pid=106443", "xxxCode pid=44520", etc
+
+the body structure of Clawfish is different from human. it is:
+
+    <head>
+        <left claw>
+        <right claw>
+        <left eye>
+        <right eye>
+        <left antenna>
+        <right antenna>
+        <walking legs>
+        <tail>
+            <swimming legs>
+        <brain>
+        
+
+every Clawfish have skill level = 8 on every skills. The learning rate is set to be 0. It will never lose skill level by time. It will not feel pain. it has no demand of food, sleep, entertainment.
+However, it has a token consumption. 
+Every job would have a defined base token consumption rate, like walking and idling is low, researching, fighting, curing human/animals medically and manufacturing stuff is high. 
+The token of the Clawfish is consumed every second it is doing a job, based on the job consumption rate * clawfish itself's comsumption multiplier. 
+Once the token supply reaches 0, it shuts down, being unconscious (max consciousness 0.1). 
+
+One way of providing token is using the LLM Service Subscription. this is a 1*1 building. It has a gizmo of Connecting Agents. it has a basic token/s supply and can connect to any amount of Clawfishes. The token consumption is the live sum of all Clawfishes' token consumption rate, and if it exceeds the token/s supply, a major crash will happen. in the status panel in left bottom screen when selecting this building, it says status: Errorcode 429.
+All connected Clawfishes fell unconscious instantly, showing the same status errorcode. a message warning the player of this outbreak pops on the left top of screen.
+
+ It consumes 50w electricity, but can also connect to money hopper that consumes silver like nutrientpaste dispenser. It cannot be built under thick rock roof, but can be built under thin rock roof, roof or no roof. 
+each faction would sell different LLM Service Subscription, that is the same building partly with random different color. the LLM Service Subscription has internal status parameter that records its label of LLM Service corresponding to the faction it sells. use the faction's color for this color. 
+depending on the label and the randomly generated workspeed boost factor, the Clawfish that charges at the LLM Service Subscription will gain corresponding hediff to boost global workspeed.
+
+Another way of replenishing is to build own datacenter. This costs no silver, just electricity. 2 new buildings: GPU Cluster and Host Computer. the Host computer is 1*1 building, consumes 800w electricity, made with 1 personality core, 4 components, 2 spacer components, 20 plasteel, 20 steel on fabrication bench, 4000 workload, require 12 intelligence and 8 crafting.
+it can connect to the nearby GPU Clusters within radius of 9, amount unlimited. It can connect to 1 memory disk within radius of 9. similar to LLM service subscriptions, it can connect to Clawfishes of our faction.
+The GPU Cluster is 2*1 building, 400w electricity consumption, generate heat at the rate of campfire once working. Made with 8 advanced components and 20 plasteel on fabrication bench, 6000 workload, require 16 intelligence and 10 crafting. 
+Each GPU cluster connected to Host Computer will provide 300GB VRAM computational force, shown in the stat panel of the host computer. each GPU cluster can only connect to one Host Computer. Host computer can connect to many GPU. 
+The Host computer also has an attribute: Model. the player can buy Model (an unstackable item). The model is like a book, randomly generate a name and property(global workspeed boost, token generation rate, and required VRAM) and use that name as the primary name shown when selected. the Host computer should be connect to an 1*1 building, Memory disk, which pawn can insert a Model. The host computer's model comes from the memory unit it connected to.
+Depending on the datacenter's computational force, if the datacenter provides far more VRAM than the model requires, it can start multiple(integer amount) instances to try to fill up the total amount. 
+for example, a host computer running Model kwen3.5_27b(requires 40GB VRAM and provide 200token/s, +2% global working speed), connects to 3 GPU clusters
+on the left bottom stat panel of selecting the host computer there will be:
+
+Model: kwen3.5_27b
+VRAM: 880/900GB (22 instances)
+total token supply: 4400 tok/s
+
+player can make their own LLM Service subscription 1*1 building, sell it to other factions. while there are spare instances, the sold LLM subscriptions will make money automatically. silver will pop up by the host computer per hour.
+
+
+No matter how much token is charged, the token charging process of a Clawfish will last no longer than 10s. 
+
+Tamed Clawfish can do any type of work.
+
+Once a tamed clawfish is hurt, it cannot be healed by common medical way. instead, it will start a job(job priority category Bed rest) of self reprogramming: this job has high token consumption rate, and gives itself a regeneration hediff (300hp/day). hediff disappears when the job is done/interrupted. 
+
+For any job, if the Clawfish does job(except walking, idling and wandering) for consecutive 4 hours straight, from the 5th hour, for every second, it has base 1/1000 chance of starting a mental state: Context collapse.
+Context collapse typically lasts for 2 hours, during which time the Clawfish will randomly wander, randomly carry items to somewhere else, randomly build thing, randomly disassemble thing. this is a process of random job assignment. 
+
+The Clawfish cannot accept any surguries like prothetic, organ harvesting or blood transfusion. the only surguries it accept is: all biotech mechanitor brain implants; Skills brain implants
+
+The Skills is a type of brain implants that can be bought from merchants. It is like book, with randomly generated name and properties. it has quality factor. implanting Skills will temporarily improve skill level of that Clawfish by quality:
+
+The quality factor of a Skills:
+                total level shift      
+Awful	            -1                    
+Poor	            +1                      
+Normal	            +3                      
+Good	            +5                      
+Excellent	        +7                      
+Masterwork	        +9                      
+Legendary           +12                    
+
+The Masterwork, Legendary Skills cannot have negative shift on any skill level.
+Another kind of Skills property is stats boost skill, like improving moving speed, reducing token consumption, reducing Context collapse chance after working consecutivly, reduce the chance of being Prompt Injected.
+the stats boost is 3% correspondent to 1 skill level boost, these are additive over multiple hediffs. the "consumption/chance reduce" type of stats boost is -3% correspondent to 1 skill level boost, multiplicative over multiple hediffs and base stat.
+One Skills can have up to 4 random skill level boosts/stats boosts(for example, a good quality Skills.md can make the Clawfish context corruption chance * 0.91, Melee + 6, Cooking - 2, global working speed -6%, adding up to +5 (-6% in stats <=> -2 in level, - 0.09 in chance <=> +3 in level), or it can simply have shooting + 5). 
+Player can also craft Skills.md on host computer(host computer is also a workbench!). host computer has one manipulation point, normally at south, as other workbenches do. 
+the crafting of a Skills.md need a component, and 12 intelligence. it will randomly be named and contain random effect.
+
+research tree:
+
+Cluster Computing
+    3000 workload
+    prereq: advanced fabrication
+    allows the crafting of GPU cluster, Memory unit, LLM Service Subscription
+
+Agentic Design
+    1000 workload
+    prereq: microelectronics
+    allows the crafting of Skills.md on Host computer
+
+
+

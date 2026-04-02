@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <BodyPartDef>
+    <defName>RimClaw_Claw</defName>
+    <label>claw</label>
+    <hitPoints>12</hitPoints>
+    <skinCovered>false</skinCovered>
+    <alive>true</alive>
+    <tags>
+      <li>ManipulationLimbCore</li>
+    </tags>
+  </BodyPartDef>
+
+  <BodyPartDef>
+    <defName>RimClaw_Antenna</defName>
+    <label>antenna</label>
+    <hitPoints>6</hitPoints>
+    <skinCovered>false</skinCovered>
+    <alive>true</alive>
+    <tags>
+      <li>ConsciousnessSource</li>
+    </tags>
+  </BodyPartDef>
+
+  <BodyPartDef>
+    <defName>RimClaw_WalkingLegs</defName>
+    <label>walking legs</label>
+    <hitPoints>20</hitPoints>
+    <skinCovered>false</skinCovered>
+    <alive>true</alive>
+    <tags>
+      <li>MovingLimbCore</li>
+    </tags>
+  </BodyPartDef>
+
+  <BodyPartDef>
+    <defName>RimClaw_Tail</defName>
+    <label>tail</label>
+    <hitPoints>16</hitPoints>
+    <skinCovered>false</skinCovered>
+    <alive>true</alive>
+  </BodyPartDef>
+
+  <BodyPartDef>
+    <defName>RimClaw_SwimmingLegs</defName>
+    <label>swimming legs</label>
+    <hitPoints>16</hitPoints>
+    <skinCovered>false</skinCovered>
+    <alive>true</alive>
+    <tags>
+      <li>MovingLimbSegment</li>
+    </tags>
+  </BodyPartDef>
+</Defs>

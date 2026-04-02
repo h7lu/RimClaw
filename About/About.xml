@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>RimClaw</name>
+  <author>OpenClaw</author>
+  <packageId>openclaw.rimclaw</packageId>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <description>Meme mod adding Clawfish, fishing encounters, and Prompt Injector conversion outcomes.</description>
+  <modDependencies>
+    <li>
+      <packageId>ludeon.rimworld.odyssey</packageId>
+      <displayName>Odyssey</displayName>
+      <downloadUrl>https://rimworldgame.com/</downloadUrl>
+    </li>
+  </modDependencies>
+</ModMetaData>

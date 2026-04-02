@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <PawnKindDef ParentName="AnimalKindBase">
+    <defName>RimClaw_ClawfishKind</defName>
+    <label>clawfish</label>
+    <race>RimClaw_Clawfish</race>
+    <combatPower>120</combatPower>
+    <wildGroupSize>
+      <min>1</min>
+      <max>1</max>
+    </wildGroupSize>
+    <ecoSystemWeight>0.2</ecoSystemWeight>
+    <canArriveManhunter>true</canArriveManhunter>
+    <maxGenerationAge>18</maxGenerationAge>
+    <minGenerationAge>3</minGenerationAge>
+  </PawnKindDef>
+</Defs>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimClaw_PromptInjectionDatabase</defName>
+    <label>Prompt Injection Database</label>
+    <description>A curated exploit corpus used by Prompt Injectors to destabilize Clawfish cognition.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/ComponentSpacer</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <MarketValue>620</MarketValue>
+      <Mass>0.75</Mass>
+      <Flammability>0.35</Flammability>
+    </statBases>
+    <tradeability>Buyable</tradeability>
+    <techLevel>Spacer</techLevel>
+    <thingSetMakerTags>
+      <li>RewardStandardMidFreq</li>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+  </ThingDef>
+</Defs>

@@ -1,0 +1,11 @@
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.GeneratedMSBuildEditorConfig.editorconfig
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.AssemblyInfoInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.AssemblyInfo.cs
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.csproj.CoreCompileInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\bin\Release\net472\RimClaw.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\bin\Release\net472\RimClaw.pdb
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\bin\Release\net472\0Harmony.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.csproj.Up2Date
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.pdb

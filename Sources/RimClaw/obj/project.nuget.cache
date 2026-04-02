@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "qWo/8BFFMUg=",
+  "success": true,
+  "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\claw\\Sources\\RimClaw\\RimClaw.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\20828\\.nuget\\packages\\lib.harmony\\2.3.3\\lib.harmony.2.3.3.nupkg.sha512"
+  ],
+  "logs": []
+}

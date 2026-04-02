@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <BodyDef>
+    <defName>RimClaw_ClawfishBody</defName>
+    <corePart>
+      <def>Head</def>
+      <height>Top</height>
+      <depth>Outside</depth>
+      <parts>
+        <li>
+          <def>RimClaw_Claw</def>
+          <customLabel>left claw</customLabel>
+          <height>Middle</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>left claw</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>RimClaw_Claw</def>
+          <customLabel>right claw</customLabel>
+          <height>Middle</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>right claw</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>Eye</def>
+          <customLabel>left eye</customLabel>
+          <height>Top</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>left eye</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>Eye</def>
+          <customLabel>right eye</customLabel>
+          <height>Top</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>right eye</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>RimClaw_Antenna</def>
+          <customLabel>left antenna</customLabel>
+          <height>Top</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>left antenna</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>RimClaw_Antenna</def>
+          <customLabel>right antenna</customLabel>
+          <height>Top</height>
+          <depth>Outside</depth>
+          <customLabelBeforeEw>right antenna</customLabelBeforeEw>
+        </li>
+        <li>
+          <def>RimClaw_WalkingLegs</def>
+          <height>Bottom</height>
+          <depth>Outside</depth>
+        </li>
+        <li>
+          <def>RimClaw_Tail</def>
+          <height>Bottom</height>
+          <depth>Outside</depth>
+          <parts>
+            <li>
+              <def>RimClaw_SwimmingLegs</def>
+              <height>Bottom</height>
+              <depth>Outside</depth>
+            </li>
+          </parts>
+        </li>
+        <li>
+          <def>Brain</def>
+          <height>Middle</height>
+          <depth>Inside</depth>
+        </li>
+      </parts>
+    </corePart>
+  </BodyDef>
+</Defs>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <JobDef>
+    <defName>RimClaw_SelfDelete</defName>
+    <driverClass>RimClaw.JobDriver_SelfDelete</driverClass>
+    <reportString>self deleting.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <alwaysShowWeapon>false</alwaysShowWeapon>
+  </JobDef>
+</Defs>

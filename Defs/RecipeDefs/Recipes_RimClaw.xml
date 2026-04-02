@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <RecipeDef>
+    <defName>RimClaw_MakePromptInjector</defName>
+    <label>craft Prompt Injector</label>
+    <description>Combine an EMP launcher and exploit data to produce a Prompt Injector.</description>
+    <jobString>Crafting Prompt Injector.</jobString>
+    <workAmount>1000</workAmount>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Fabrication</effectWorking>
+    <soundWorking>Recipe_Smelt</soundWorking>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>EMPLauncher</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>RimClaw_PromptInjectionDatabase</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <products>
+      <RimClaw_PromptInjector>1</RimClaw_PromptInjector>
+    </products>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>EMPLauncher</li>
+        <li>ComponentSpacer</li>
+        <li>RimClaw_PromptInjectionDatabase</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <recipeUsers>
+      <li>FabricationBench</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>8</Crafting>
+    </skillRequirements>
+  </RecipeDef>
+</Defs>
