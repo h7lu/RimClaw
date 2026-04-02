@@ -8,6 +8,7 @@ namespace RimClaw
     {
         protected override void Impact(Thing hitThing, bool blockedByShield = false)
         {
+            var cfg = RimClawConfig.Values;
             base.Impact(hitThing, blockedByShield);
             if (blockedByShield)
             {
@@ -19,19 +20,34 @@ namespace RimClaw
                 return;
             }
 
-            if (Rand.Chance(RimClawSettings.PromptInjectorStunChance))
+            if (Rand.Chance(cfg.promptInjectorStunChance))
             {
-                target.stances?.stunner?.StunFor(RimClawSettings.PromptInjectorStunTicks, launcher, addBattleLog: true, showMote: true, disableRotation: false);
+                target.stances?.stunner?.StunFor(cfg.promptInjectorStunTicks, launcher, addBattleLog: true, showMote: true, disableRotation: false);
             }
 
+            float joinChance = System.Math.Max(0f, cfg.promptInjectorJoinChance);
+            float berserkChance = System.Math.Max(0f, cfg.promptInjectorBerserkChance);
+            float selfDeleteChance = System.Math.Max(0f, cfg.promptInjectorSelfDeleteChance);
+            float sum = joinChance + berserkChance + selfDeleteChance;
+            if (sum <= 0.0001f)
+            {
+                joinChance = 0.60f;
+                berserkChance = 0.30f;
+                selfDeleteChance = 0.10f;
+                sum = 1f;
+            }
+
+            joinChance /= sum;
+            berserkChance /= sum;
+
             float roll = Rand.Value;
-            if (roll < 0.60f)
+            if (roll < joinChance)
             {
                 ConvertToColonist(target);
                 return;
             }
 
-            if (roll < 0.90f)
+            if (roll < joinChance + berserkChance)
             {
                 target.mindState?.mentalStateHandler?.TryStartMentalState(MentalStateDefOf.Berserk, forceWake: true);
                 return;
@@ -51,7 +67,7 @@ namespace RimClaw
                 return;
             }
 
-            Pawn colonist = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist, Faction.OfPlayer);
+            Pawn colonist = PawnGenerator.GeneratePawn(RimClawConfig.ConvertedPawnKind, Faction.OfPlayer);
             GenSpawn.Spawn(colonist, cell, map, WipeMode.Vanish);
             colonist.Name = new NameSingle(ClawfishUtility.GenerateName());
             target.Destroy(DestroyMode.Vanish);

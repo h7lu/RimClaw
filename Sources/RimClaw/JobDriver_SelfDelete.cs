@@ -13,7 +13,7 @@ namespace RimClaw
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            Toil wait = Toils_General.Wait(RimClawSettings.SelfDeleteTicks);
+            Toil wait = Toils_General.Wait(RimClawConfig.Values.selfDeleteTicks);
             wait.WithProgressBarToilDelay(TargetIndex.A);
             yield return wait;
 

@@ -10,6 +10,7 @@ namespace RimClaw
         public static ThingDef RimClaw_Clawfish;
         public static ThingDef RimClaw_PromptInjector;
         public static JobDef RimClaw_SelfDelete;
+        public static HediffDef RimClaw_TokenDepleted;
 
         static RimClawDefOf()
         {

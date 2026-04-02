@@ -80,5 +80,66 @@
       <li>ITab_Pawn_Gear</li>
       <li>ITab_Pawn_Social</li>
     </inspectorTabs>
+    <comps>
+      <li Class="RimClaw.CompProperties_ClawfishToken">
+        <maxTokens>1200</maxTokens>
+        <consumptionMultiplier>1.0</consumptionMultiplier>
+        <noJobRate>0.05</noJobRate>
+        <defaultRate>0.4</defaultRate>
+        <idleRate>0.08</idleRate>
+        <combatRate>1.5</combatRate>
+        <workRate>1.1</workRate>
+        <onlineStatusText>Online</onlineStatusText>
+        <depletedStatusText>Errorcode 402</depletedStatusText>
+        <idleJobKeywords>
+          <li>Goto</li>
+          <li>Wait</li>
+          <li>Wander</li>
+        </idleJobKeywords>
+        <combatJobKeywords>
+          <li>Attack</li>
+          <li>Hunt</li>
+        </combatJobKeywords>
+        <workJobKeywords>
+          <li>Research</li>
+          <li>DoBill</li>
+          <li>Tend</li>
+          <li>Operate</li>
+          <li>Cook</li>
+          <li>Construct</li>
+          <li>Mine</li>
+        </workJobKeywords>
+      </li>
+    </comps>
+    <modExtensions>
+      <li Class="RimClaw.RimClawConfigExtension">
+        <fishingSpawnChance>0.10</fishingSpawnChance>
+        <spawnRadiusFromFisher>3</spawnRadiusFromFisher>
+        <fishingLetterLabel>Clawfish Hooked</fishingLetterLabel>
+        <fishingLetterText>{0} hooked a Clawfish and aborted fishing.</fishingLetterText>
+        <promptInjectorStunChance>0.50</promptInjectorStunChance>
+        <promptInjectorStunTicks>300</promptInjectorStunTicks>
+        <promptInjectorJoinChance>0.60</promptInjectorJoinChance>
+        <promptInjectorBerserkChance>0.30</promptInjectorBerserkChance>
+        <promptInjectorSelfDeleteChance>0.10</promptInjectorSelfDeleteChance>
+        <selfDeleteTicks>300</selfDeleteTicks>
+        <clawfishSkillLevel>8</clawfishSkillLevel>
+        <nameMinPid>10000</nameMinPid>
+        <nameMaxPid>999999</nameMaxPid>
+        <nameFragments>
+          <li>Auto</li>
+          <li>Vector</li>
+          <li>Kernel</li>
+          <li>Delta</li>
+          <li>Omega</li>
+          <li>Cloud</li>
+          <li>Prompt</li>
+          <li>Runtime</li>
+          <li>Signal</li>
+          <li>Code</li>
+        </nameFragments>
+        <convertedPawnKindDefName>Colonist</convertedPawnKindDefName>
+      </li>
+    </modExtensions>
   </ThingDef>
 </Defs>

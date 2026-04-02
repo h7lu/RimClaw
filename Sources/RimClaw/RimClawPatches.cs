@@ -32,8 +32,9 @@ namespace RimClaw
 
             __result.initAction = (Action)Delegate.Combine(__result.initAction, (Action)delegate
             {
+                var cfg = RimClawConfig.Values;
                 Pawn fisher = __instance.pawn;
-                if (fisher?.Map == null || !Rand.Chance(RimClawSettings.FishingSpawnChance))
+                if (fisher?.Map == null || !Rand.Chance(cfg.fishingSpawnChance))
                 {
                     return;
                 }
@@ -46,8 +47,8 @@ namespace RimClaw
                 fisher.jobs?.EndCurrentJob(JobCondition.InterruptForced);
 
                 Find.LetterStack.ReceiveLetter(
-                    "Clawfish Hooked",
-                    $"{fisher.LabelShortCap} hooked a Clawfish and aborted fishing.",
+                    cfg.fishingLetterLabel,
+                    string.Format(cfg.fishingLetterText, fisher.LabelShortCap),
                     LetterDefOf.NeutralEvent,
                     clawfish);
             });
@@ -55,7 +56,7 @@ namespace RimClaw
 
         private static IntVec3 FindSpawnCellNear(Pawn fisher)
         {
-            if (CellFinder.TryFindRandomCellNear(fisher.Position, fisher.Map, RimClawSettings.SpawnRadiusFromFisher,
+            if (CellFinder.TryFindRandomCellNear(fisher.Position, fisher.Map, RimClawConfig.Values.spawnRadiusFromFisher,
                 c => c.Standable(fisher.Map) && c.GetFirstPawn(fisher.Map) == null,
                 out IntVec3 result))
             {

@@ -9,3 +9,4 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.csproj.Up2Date
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.pdb
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\claw\Sources\RimClaw\obj\Release\net472\RimClaw.sourcelink.json
