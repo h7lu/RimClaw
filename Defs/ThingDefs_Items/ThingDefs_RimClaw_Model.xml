@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimClaw_ModelCard</defName>
+    <label>model package</label>
+    <description>A packaged model definition with randomized VRAM requirements and token throughput.</description>
+    <graphicData>
+      <texPath>Things/Item/Resource/SkilltrainerShooting</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <MarketValue>2200</MarketValue>
+      <Mass>0.6</Mass>
+      <Flammability>0.2</Flammability>
+    </statBases>
+    <tradeability>All</tradeability>
+    <techLevel>Spacer</techLevel>
+    <comps>
+      <li Class="RimClaw.CompProperties_ModelCard">
+        <namePrefixes>
+          <li>kwen</li>
+          <li>clawdex</li>
+          <li>omni</li>
+          <li>rex</li>
+          <li>delta</li>
+        </namePrefixes>
+        <nameSuffixes>
+          <li>3.5_27b</li>
+          <li>2.1_14b</li>
+          <li>4.0_72b</li>
+          <li>mini_8b</li>
+        </nameSuffixes>
+        <requiredVramMin>20</requiredVramMin>
+        <requiredVramMax>120</requiredVramMax>
+        <tokenPerSecondPerInstanceMin>80</tokenPerSecondPerInstanceMin>
+        <tokenPerSecondPerInstanceMax>260</tokenPerSecondPerInstanceMax>
+        <workSpeedBonusMin>0.01</workSpeedBonusMin>
+        <workSpeedBonusMax>0.06</workSpeedBonusMax>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>

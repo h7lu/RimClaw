@@ -20,6 +20,13 @@ namespace RimClaw
         public float promptInjectorSelfDeleteChance = RimClawSettings.DefaultPromptInjectorSelfDeleteChance;
 
         public int selfDeleteTicks = RimClawSettings.DefaultSelfDeleteTicks;
+        public int selfReprogrammingTicks = 1200;
+        public float selfRegenHpPerDay = 300f;
+
+        public int contextCollapseStartTicks = 10000;
+        public int contextCollapseRollStartTicks = 12500;
+        public float contextCollapseChancePerSecond = 0.001f;
+        public int contextCollapseDurationTicks = 5000;
 
         public int clawfishSkillLevel = RimClawSettings.DefaultClawfishSkillLevel;
         public int nameMinPid = RimClawSettings.DefaultNameMinPid;
@@ -27,6 +34,8 @@ namespace RimClaw
         public List<string> nameFragments = new List<string>(RimClawSettings.DefaultNameFragments);
 
         public string convertedPawnKindDefName = "Colonist";
+        public List<string> allowedSurgeryDefNames = new List<string>();
+        public List<string> allowedSurgeryNameContains = new List<string> { "Mechanitor", "Skill" };
     }
 
     public static class RimClawConfig

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
+using Verse.AI;
 
 namespace RimClaw
 {
@@ -32,6 +33,8 @@ namespace RimClaw
     public class CompClawfishToken : ThingComp
     {
         private float currentTokens;
+        private int consecutiveWorkTicks;
+        private int lastSelfReprogramTick;
 
         public CompProperties_ClawfishToken Props => (CompProperties_ClawfishToken)props;
 
@@ -54,6 +57,8 @@ namespace RimClaw
         {
             base.PostExposeData();
             Scribe_Values.Look(ref currentTokens, "currentTokens", -1f);
+            Scribe_Values.Look(ref consecutiveWorkTicks, "consecutiveWorkTicks", 0);
+            Scribe_Values.Look(ref lastSelfReprogramTick, "lastSelfReprogramTick", -999999);
             if (Scribe.mode == LoadSaveMode.PostLoadInit && currentTokens < 0f)
             {
                 currentTokens = MaxTokens;
@@ -76,6 +81,9 @@ namespace RimClaw
             }
 
             float rate = GetCurrentConsumptionRatePerSecond(pawn);
+            TrackContinuousWorkAndMentalRisk(pawn);
+            TryStartSelfReprogramming(pawn);
+
             if (rate > 0f)
             {
                 currentTokens = Math.Max(0f, currentTokens - rate);
@@ -94,6 +102,67 @@ namespace RimClaw
             {
                 pawn.health?.RemoveHediff(existing);
             }
+        }
+
+        private void TrackContinuousWorkAndMentalRisk(Pawn pawn)
+        {
+            string jobName = pawn.CurJob?.def?.defName ?? string.Empty;
+            bool idleLike = ContainsAny(jobName, Props.idleJobKeywords);
+            if (idleLike)
+            {
+                consecutiveWorkTicks = 0;
+                return;
+            }
+
+            consecutiveWorkTicks += 60;
+            var cfg = RimClawConfig.Values;
+            if (consecutiveWorkTicks < cfg.contextCollapseRollStartTicks)
+            {
+                return;
+            }
+
+            if (pawn.MentalStateDef == RimClawDefOf.RimClaw_ContextCollapse)
+            {
+                return;
+            }
+
+            if (Rand.Chance(cfg.contextCollapseChancePerSecond))
+            {
+                pawn.mindState?.mentalStateHandler?.TryStartMentalState(RimClawDefOf.RimClaw_ContextCollapse, forceWake: true);
+                consecutiveWorkTicks = 0;
+            }
+        }
+
+        private void TryStartSelfReprogramming(Pawn pawn)
+        {
+            if (Find.TickManager.TicksGame - lastSelfReprogramTick < 1200)
+            {
+                return;
+            }
+
+            if (pawn.Faction != Faction.OfPlayer || pawn.Downed || pawn.CurJobDef == RimClawDefOf.RimClaw_SelfReprogramming)
+            {
+                return;
+            }
+
+            bool injured = false;
+            for (int i = 0; i < pawn.health.hediffSet.hediffs.Count; i++)
+            {
+                if (pawn.health.hediffSet.hediffs[i] is Hediff_Injury injury && !injury.IsPermanent())
+                {
+                    injured = true;
+                    break;
+                }
+            }
+
+            if (!injured)
+            {
+                return;
+            }
+
+            Job job = JobMaker.MakeJob(RimClawDefOf.RimClaw_SelfReprogramming);
+            pawn.jobs?.TryTakeOrderedJob(job, JobTag.Misc);
+            lastSelfReprogramTick = Find.TickManager.TicksGame;
         }
 
         public float GetCurrentConsumptionRatePerSecond(Pawn pawn)
@@ -149,6 +218,11 @@ namespace RimClaw
             }
 
             currentTokens = Math.Min(MaxTokens, currentTokens + amount);
+        }
+
+        public void ForceDepleted()
+        {
+            currentTokens = 0f;
         }
 
         public override string CompInspectStringExtra()

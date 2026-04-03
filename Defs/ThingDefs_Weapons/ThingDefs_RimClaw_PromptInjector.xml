@@ -34,7 +34,7 @@
         <li>
           <filter>
             <thingDefs>
-              <li>EMPLauncher</li>
+              <li>Gun_EMPLauncher</li>
             </thingDefs>
           </filter>
           <count>1</count>
@@ -57,8 +57,6 @@
         </li>
       </ingredients>
       <workAmount>1000</workAmount>
-      <effectWorking>Fabrication</effectWorking>
-      <soundWorking>Recipe_Smelt</soundWorking>
     </recipeMaker>
     <verbs>
       <li>
@@ -69,7 +67,6 @@
         <range>22.9</range>
         <ticksBetweenBurstShots>12</ticksBetweenBurstShots>
         <burstShotCount>1</burstShotCount>
-        <soundCast>Shot_EMPLauncher</soundCast>
         <targetParams>
           <canTargetLocations>false</canTargetLocations>
           <canTargetSelf>false</canTargetSelf>

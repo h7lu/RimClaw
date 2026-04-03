@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BuildingBase">
+    <defName>RimClaw_LLMServiceSubscription</defName>
+    <label>LLM Service Subscription</label>
+    <description>Remote token service endpoint for connected Clawfish agents.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Power/GeothermalGenerator</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <size>(1,1)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.12</fillPercent>
+    <statBases>
+      <MaxHitPoints>220</MaxHitPoints>
+      <WorkToBuild>2400</WorkToBuild>
+      <Mass>22</Mass>
+      <Flammability>0.2</Flammability>
+      <MarketValue>1600</MarketValue>
+    </statBases>
+    <costList>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>2</ComponentIndustrial>
+      <Steel>70</Steel>
+    </costList>
+    <designationCategory>Production</designationCategory>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
+      <requiresPower>true</requiresPower>
+      <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>50</basePowerConsumption>
+      </li>
+      <li Class="RimClaw.CompProperties_LLMServiceSubscription">
+        <tokenSupplyPerSecond>20</tokenSupplyPerSecond>
+        <connectionRadius>80</connectionRadius>
+        <majorCrashStatusText>Errorcode 429</majorCrashStatusText>
+      </li>
+    </comps>
+    <placeWorkers>
+      <li>RimClaw.PlaceWorker_NotUnderThickRoof</li>
+    </placeWorkers>
+    <researchPrerequisites>
+      <li>MicroelectronicsBasics</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>RimClaw_HostComputer</defName>
+    <label>Host Computer</label>
+    <description>Central datacenter host that orchestrates model instances and token throughput.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Special/GroundPenMarker</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <size>(1,1)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.12</fillPercent>
+    <statBases>
+      <MaxHitPoints>240</MaxHitPoints>
+      <WorkToBuild>4000</WorkToBuild>
+      <Mass>35</Mass>
+      <Flammability>0.05</Flammability>
+      <MarketValue>3600</MarketValue>
+    </statBases>
+    <costList>
+      <AIPersonaCore>1</AIPersonaCore>
+      <ComponentIndustrial>4</ComponentIndustrial>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Plasteel>20</Plasteel>
+      <Steel>20</Steel>
+    </costList>
+    <designationCategory>Production</designationCategory>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
+      <requiresPower>true</requiresPower>
+      <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+      <buildingTags>
+        <li>Workbench</li>
+      </buildingTags>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>800</basePowerConsumption>
+      </li>
+      <li Class="RimClaw.CompProperties_HostComputer">
+        <connectionRadius>9</connectionRadius>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>MultiAnalyzer</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>RimClaw_GPUCluster</defName>
+    <label>GPU Cluster</label>
+    <description>Compute accelerator unit for Host Computer model instances.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Ship/Ship_ComputerCore</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,1)</drawSize>
+    </graphicData>
+    <size>(2,1)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.12</fillPercent>
+    <statBases>
+      <MaxHitPoints>220</MaxHitPoints>
+      <WorkToBuild>6000</WorkToBuild>
+      <Mass>45</Mass>
+      <Flammability>0.05</Flammability>
+      <MarketValue>3200</MarketValue>
+    </statBases>
+    <costList>
+      <ComponentSpacer>8</ComponentSpacer>
+      <Plasteel>20</Plasteel>
+    </costList>
+    <designationCategory>Production</designationCategory>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
+      <requiresPower>true</requiresPower>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>400</basePowerConsumption>
+      </li>
+      <li Class="RimClaw.CompProperties_GPUCluster">
+        <providedVRAM>300</providedVRAM>
+        <heatPerSecond>0.6</heatPerSecond>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>MultiAnalyzer</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>RimClaw_MemoryDisk</defName>
+    <label>memory disk</label>
+    <description>Stores one model package that can be read by a linked Host Computer.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Misc/StandingLamp</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <size>(1,1)</size>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.08</fillPercent>
+    <statBases>
+      <MaxHitPoints>140</MaxHitPoints>
+      <WorkToBuild>1800</WorkToBuild>
+      <Mass>10</Mass>
+      <Flammability>0.08</Flammability>
+      <MarketValue>750</MarketValue>
+    </statBases>
+    <costList>
+      <ComponentIndustrial>2</ComponentIndustrial>
+      <Steel>30</Steel>
+    </costList>
+    <designationCategory>Production</designationCategory>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
+      <requiresPower>false</requiresPower>
+    </building>
+    <comps>
+      <li Class="RimClaw.CompProperties_MemoryDisk" />
+    </comps>
+    <researchPrerequisites>
+      <li>MultiAnalyzer</li>
+    </researchPrerequisites>
+  </ThingDef>
+</Defs>

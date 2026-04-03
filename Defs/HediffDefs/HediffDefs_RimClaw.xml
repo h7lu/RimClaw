@@ -18,4 +18,33 @@
       </li>
     </stages>
   </HediffDef>
+
+  <HediffDef>
+    <defName>RimClaw_ServiceBoost</defName>
+    <label>service acceleration</label>
+    <description>This Clawfish is actively synchronized with an upstream LLM service.</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>false</isBad>
+    <stages>
+      <li>
+        <label>accelerated</label>
+        <statOffsets>
+          <GlobalWorkSpeed>0.05</GlobalWorkSpeed>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>RimClaw_SelfReprogrammingRegen</defName>
+    <label>self reprogramming</label>
+    <description>The Clawfish is regenerating internal systems while consuming large token throughput.</description>
+    <hediffClass>RimClaw.Hediff_SelfReprogrammingRegen</hediffClass>
+    <isBad>false</isBad>
+    <stages>
+      <li>
+        <label>regenerating</label>
+      </li>
+    </stages>
+  </HediffDef>
 </Defs>

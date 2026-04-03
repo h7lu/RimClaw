@@ -48,5 +48,21 @@ namespace RimClaw
             int pid = Rand.RangeInclusive(minPid, maxPid);
             return $"{frag}Claw pid={pid}";
         }
+
+        public static void EnsureServiceBoost(Pawn pawn, float bonus)
+        {
+            if (!IsClawfish(pawn) || pawn.health == null)
+            {
+                return;
+            }
+
+            Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(RimClawDefOf.RimClaw_ServiceBoost);
+            if (hediff == null)
+            {
+                hediff = pawn.health.AddHediff(RimClawDefOf.RimClaw_ServiceBoost);
+            }
+
+            hediff.Severity = bonus;
+        }
     }
 }

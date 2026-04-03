@@ -7,13 +7,12 @@
     <jobString>Crafting Prompt Injector.</jobString>
     <workAmount>1000</workAmount>
     <workSkill>Crafting</workSkill>
-    <effectWorking>Fabrication</effectWorking>
     <soundWorking>Recipe_Smelt</soundWorking>
     <ingredients>
       <li>
         <filter>
           <thingDefs>
-            <li>EMPLauncher</li>
+            <li>Gun_EMPLauncher</li>
           </thingDefs>
         </filter>
         <count>1</count>
@@ -40,7 +39,7 @@
     </products>
     <fixedIngredientFilter>
       <thingDefs>
-        <li>EMPLauncher</li>
+        <li>Gun_EMPLauncher</li>
         <li>ComponentSpacer</li>
         <li>RimClaw_PromptInjectionDatabase</li>
       </thingDefs>
@@ -51,5 +50,86 @@
     <skillRequirements>
       <Crafting>8</Crafting>
     </skillRequirements>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>RimClaw_MakeHostComputer</defName>
+    <label>make host computer</label>
+    <jobString>Making host computer.</jobString>
+    <workAmount>4000</workAmount>
+    <workSkill>Crafting</workSkill>
+    <soundWorking>Recipe_Smelt</soundWorking>
+    <ingredients>
+      <li><filter><thingDefs><li>AIPersonaCore</li></thingDefs></filter><count>1</count></li>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>4</count></li>
+      <li><filter><thingDefs><li>ComponentSpacer</li></thingDefs></filter><count>2</count></li>
+      <li><filter><thingDefs><li>Plasteel</li></thingDefs></filter><count>20</count></li>
+      <li><filter><thingDefs><li>Steel</li></thingDefs></filter><count>20</count></li>
+    </ingredients>
+    <products>
+      <RimClaw_HostComputer>1</RimClaw_HostComputer>
+    </products>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>AIPersonaCore</li><li>ComponentIndustrial</li><li>ComponentSpacer</li><li>Plasteel</li><li>Steel</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <skillRequirements><Crafting>8</Crafting><Intellectual>12</Intellectual></skillRequirements>
+    <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>RimClaw_MakeGPUCluster</defName>
+    <label>make GPU cluster</label>
+    <jobString>Making GPU cluster.</jobString>
+    <workAmount>6000</workAmount>
+    <workSkill>Crafting</workSkill>
+    <soundWorking>Recipe_Smelt</soundWorking>
+    <ingredients>
+      <li><filter><thingDefs><li>ComponentSpacer</li></thingDefs></filter><count>8</count></li>
+      <li><filter><thingDefs><li>Plasteel</li></thingDefs></filter><count>20</count></li>
+    </ingredients>
+    <products><RimClaw_GPUCluster>1</RimClaw_GPUCluster></products>
+    <fixedIngredientFilter><thingDefs><li>ComponentSpacer</li><li>Plasteel</li></thingDefs></fixedIngredientFilter>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <skillRequirements><Crafting>10</Crafting><Intellectual>16</Intellectual></skillRequirements>
+    <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>RimClaw_MakeMemoryDisk</defName>
+    <label>make memory disk</label>
+    <jobString>Making memory disk.</jobString>
+    <workAmount>2200</workAmount>
+    <workSkill>Crafting</workSkill>
+    <soundWorking>Recipe_Smelt</soundWorking>
+    <ingredients>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>2</count></li>
+      <li><filter><thingDefs><li>Steel</li></thingDefs></filter><count>30</count></li>
+    </ingredients>
+    <products><RimClaw_MemoryDisk>1</RimClaw_MemoryDisk></products>
+    <fixedIngredientFilter><thingDefs><li>ComponentIndustrial</li><li>Steel</li></thingDefs></fixedIngredientFilter>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <skillRequirements><Crafting>6</Crafting></skillRequirements>
+    <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
+  </RecipeDef>
+
+  <RecipeDef>
+    <defName>RimClaw_MakeModelCard</defName>
+    <label>compile model package</label>
+    <jobString>Compiling model package.</jobString>
+    <workAmount>1800</workAmount>
+    <workSkill>Intellectual</workSkill>
+    <effectWorking>Research</effectWorking>
+    <soundWorking>Recipe_Research</soundWorking>
+    <ingredients>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>1</count></li>
+    </ingredients>
+    <products><RimClaw_ModelCard>1</RimClaw_ModelCard></products>
+    <fixedIngredientFilter><thingDefs><li>ComponentIndustrial</li></thingDefs></fixedIngredientFilter>
+    <recipeUsers><li>RimClaw_HostComputer</li></recipeUsers>
+    <skillRequirements><Intellectual>12</Intellectual></skillRequirements>
+    <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
   </RecipeDef>
 </Defs>

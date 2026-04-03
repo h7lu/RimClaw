@@ -61,7 +61,6 @@
         </capacities>
         <power>14</power>
         <cooldownTime>1.95</cooldownTime>
-        <linkedBodyPartsGroup>LeftShoulder</linkedBodyPartsGroup>
       </li>
       <li>
         <label>right claw</label>
@@ -71,7 +70,6 @@
         </capacities>
         <power>14</power>
         <cooldownTime>1.95</cooldownTime>
-        <linkedBodyPartsGroup>RightShoulder</linkedBodyPartsGroup>
       </li>
     </tools>
     <inspectorTabs>

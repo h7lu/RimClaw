@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <MentalStateDef>
+    <defName>RimClaw_ContextCollapse</defName>
+    <label>context collapse</label>
+    <stateClass>RimClaw.MentalState_ContextCollapse</stateClass>
+    <workerClass>Verse.AI.MentalStateWorker</workerClass>
+    <category>Misc</category>
+    <stopsJobs>true</stopsJobs>
+    <beginLetterLabel>Context collapse</beginLetterLabel>
+    <beginLetter>{PAWN_nameDef} has entered context collapse and is behaving unpredictably.</beginLetter>
+    <beginLetterDef>NegativeEvent</beginLetterDef>
+    <baseInspectLine>Context collapsed</baseInspectLine>
+    <minTicksBeforeRecovery>5000</minTicksBeforeRecovery>
+    <maxTicksBeforeRecovery>5000</maxTicksBeforeRecovery>
+    <recoveryMtbDays>999</recoveryMtbDays>
+    <recoverFromSleep>false</recoverFromSleep>
+    <recoverFromDowned>true</recoverFromDowned>
+    <recoverFromCaptured>true</recoverFromCaptured>
+  </MentalStateDef>
+</Defs>
