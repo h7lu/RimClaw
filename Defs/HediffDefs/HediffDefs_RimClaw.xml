@@ -29,7 +29,7 @@
       <li>
         <label>accelerated</label>
         <statOffsets>
-          <GlobalWorkSpeed>0.05</GlobalWorkSpeed>
+          <WorkSpeedGlobal>0.05</WorkSpeedGlobal>
         </statOffsets>
       </li>
     </stages>

@@ -5,7 +5,7 @@
     <label>model package</label>
     <description>A packaged model definition with randomized VRAM requirements and token throughput.</description>
     <graphicData>
-      <texPath>Things/Item/Resource/SkilltrainerShooting</texPath>
+      <texPath>model</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(1,1)</drawSize>
     </graphicData>

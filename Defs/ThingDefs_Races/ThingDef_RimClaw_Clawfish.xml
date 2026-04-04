@@ -3,20 +3,21 @@
   <ThingDef ParentName="AnimalThingBase">
     <defName>RimClaw_Clawfish</defName>
     <label>clawfish</label>
-    <description>A strange crustacean-like aquatic creature frequently hooked while fishing. It cannot be tamed directly.</description>
+    <description>A strange crustacean-like aquatic creature frequently hooked while fishing. It cannot be tamed directly. It seems to have some unspeakable intelligence.</description>
     <thingClass>Pawn</thingClass>
     <graphicData>
-      <texPath>Things/Pawn/Animal/Spelopede/Spelopede</texPath>
+      <texPath>clawfish</texPath>
       <graphicClass>Graphic_Multi</graphicClass>
-      <drawSize>(1.6,1.6)</drawSize>
+      <shaderType>CutoutComplex</shaderType>
+      <drawSize>(2.5,2.5)</drawSize>
       <shadowData>
         <volume>(0.7,0.35,0.7)</volume>
       </shadowData>
     </graphicData>
+    <uiIconPath>clawfish_south</uiIconPath>
     <statBases>
       <MarketValue>320</MarketValue>
       <MoveSpeed>4.6</MoveSpeed>
-      <BodySize>0.9</BodySize>
       <MaxHitPoints>145</MaxHitPoints>
       <ArmorRating_Sharp>0.24</ArmorRating_Sharp>
       <ArmorRating_Blunt>0.3</ArmorRating_Blunt>
@@ -30,17 +31,29 @@
       <baseBodySize>0.9</baseBodySize>
       <baseHungerRate>0.0</baseHungerRate>
       <baseHealthScale>1.0</baseHealthScale>
-      <baseMoveSpeed>4.6</baseMoveSpeed>
       <foodType>None</foodType>
       <needsRest>false</needsRest>
       <predator>false</predator>
       <roamMtbDays>2</roamMtbDays>
-      <wildness>1.0</wildness>
       <trainability>None</trainability>
       <manhunterOnDamageChance>0.12</manhunterOnDamageChance>
       <manhunterOnTameFailChance>1.0</manhunterOnTameFailChance>
       <fleshType>Normal</fleshType>
       <lifeExpectancy>40</lifeExpectancy>
+      <lifeStageAges>
+        <li>
+          <def>AnimalBaby</def>
+          <minAge>0</minAge>
+        </li>
+        <li>
+          <def>AnimalJuvenile</def>
+          <minAge>3</minAge>
+        </li>
+        <li>
+          <def>AnimalAdult</def>
+          <minAge>18</minAge>
+        </li>
+      </lifeStageAges>
       <herdAnimal>false</herdAnimal>
       <petness>0.0</petness>
       <intelligence>Animal</intelligence>
@@ -79,6 +92,8 @@
       <li>ITab_Pawn_Social</li>
     </inspectorTabs>
     <comps>
+      <li Class="RimClaw.CompProperties_ClawfishColor" />
+      <li Class="RimClaw.CompProperties_PromptInjectorReaction" />
       <li Class="RimClaw.CompProperties_ClawfishToken">
         <maxTokens>1200</maxTokens>
         <consumptionMultiplier>1.0</consumptionMultiplier>
@@ -114,7 +129,7 @@
         <fishingSpawnChance>0.10</fishingSpawnChance>
         <spawnRadiusFromFisher>3</spawnRadiusFromFisher>
         <fishingLetterLabel>Clawfish Hooked</fishingLetterLabel>
-        <fishingLetterText>{0} hooked a Clawfish and aborted fishing.</fishingLetterText>
+        <fishingLetterText>{0} hooked a Clawfish.</fishingLetterText>
         <promptInjectorStunChance>0.50</promptInjectorStunChance>
         <promptInjectorStunTicks>300</promptInjectorStunTicks>
         <promptInjectorJoinChance>0.60</promptInjectorJoinChance>
@@ -122,6 +137,13 @@
         <promptInjectorSelfDeleteChance>0.10</promptInjectorSelfDeleteChance>
         <selfDeleteTicks>300</selfDeleteTicks>
         <clawfishSkillLevel>8</clawfishSkillLevel>
+        <clawfishColorR1>130</clawfishColorR1>
+        <clawfishColorG1>60</clawfishColorG1>
+        <clawfishColorB1>80</clawfishColorB1>
+        <clawfishColorR2>200</clawfishColorR2>
+        <clawfishColorG2>100</clawfishColorG2>
+        <clawfishColorB2>0</clawfishColorB2>
+        <clawfishColorDeviationRadius>30</clawfishColorDeviationRadius>
         <nameMinPid>10000</nameMinPid>
         <nameMaxPid>999999</nameMaxPid>
         <nameFragments>
@@ -136,6 +158,92 @@
           <li>Signal</li>
           <li>Code</li>
         </nameFragments>
+        <modelFormalNamePool>
+          <li>Clode</li>
+          <li>Astra</li>
+          <li>Nexa</li>
+          <li>Orin</li>
+          <li>Vanta</li>
+          <li>Helix</li>
+          <li>Quanta</li>
+          <li>Myria</li>
+          <li>Luma</li>
+          <li>Cinder</li>
+          <li>Arcus</li>
+          <li>Radian</li>
+          <li>Solace</li>
+          <li>Kestrel</li>
+          <li>Nova</li>
+          <li>Caelum</li>
+          <li>Verdan</li>
+          <li>Talon</li>
+          <li>Echo</li>
+          <li>GML</li>
+          <li>talkGPT</li>
+          <li>Raikkonen</li>
+          <li>Mistia</li>
+          <li>Roubao</li>
+          <li>Kwen</li>
+          <li>Deepsleep</li>
+          <li>V-DEPA</li>
+          <li>Lamaa</li>
+          <li>Atlas</li>
+          <li>Pisces</li>
+          <li>Gamme</li>
+          <li>MaxMini</li>
+          <li>TERT</li>
+          <li>Avocado</li>
+        </modelFormalNamePool>
+        <modelMidWordPool>
+          <li>Flash</li>
+          <li>Rapid</li>
+          <li>Fast</li>
+          <li>Instruct</li>
+          <li>Lite</li>
+          <li>Linear</li>
+          <li>PagedAttn</li>
+          <li>Mini</li>
+          <li>Thinking</li>
+          <li>Deepthink</li>
+          <li>Pro</li>
+          <li>Max</li>
+          <li>Omni</li>
+          <li>Expert</li>
+        </modelMidWordPool>
+        <modelTpsOrderPool>
+          <li>Flash</li>
+          <li>Rapid</li>
+          <li>Fast</li>
+          <li>Instruct</li>
+          <li>Lite</li>
+          <li>Linear</li>
+          <li>PagedAttn</li>
+          <li>Expert</li>
+          <li>Mini</li>
+          <li>None</li>
+          <li>Thinking</li>
+          <li>Deepthink</li>
+          <li>Pro</li>
+          <li>Max</li>
+          <li>Omni</li>
+        </modelTpsOrderPool>
+        <modelVramOrderPool>
+          <li>Omni</li>
+          <li>Max</li>
+          <li>Pro</li>
+          <li>Deepthink</li>
+          <li>Thinking</li>
+          <li>None</li>
+          <li>Instruct</li>
+          <li>Rapid</li>
+          <li>PagedAttn</li>
+          <li>Expert</li>
+          <li>Fast</li>
+          <li>Flash</li>
+          <li>Mini</li>
+          <li>Lite</li>
+          <li>Linear</li>
+        </modelVramOrderPool>
         <convertedPawnKindDefName>Colonist</convertedPawnKindDefName>
       </li>
     </modExtensions>

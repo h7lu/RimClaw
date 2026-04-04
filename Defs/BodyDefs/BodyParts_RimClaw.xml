@@ -15,6 +15,7 @@
     <defName>RimClaw_Antenna</defName>
     <label>antenna</label>
     <hitPoints>6</hitPoints>
+    <frostbiteVulnerability>10</frostbiteVulnerability>
     <skinCovered>false</skinCovered>
     <alive>true</alive>
     <tags>
@@ -26,6 +27,7 @@
     <defName>RimClaw_WalkingLegs</defName>
     <label>walking legs</label>
     <hitPoints>20</hitPoints>
+    <frostbiteVulnerability>0.1</frostbiteVulnerability>
     <skinCovered>false</skinCovered>
     <alive>true</alive>
     <tags>
@@ -37,6 +39,7 @@
     <defName>RimClaw_Tail</defName>
     <label>tail</label>
     <hitPoints>16</hitPoints>
+    <frostbiteVulnerability>8</frostbiteVulnerability>
     <skinCovered>false</skinCovered>
     <alive>true</alive>
   </BodyPartDef>
@@ -45,6 +48,7 @@
     <defName>RimClaw_SwimmingLegs</defName>
     <label>swimming legs</label>
     <hitPoints>16</hitPoints>
+    <frostbiteVulnerability>0.1</frostbiteVulnerability>
     <skinCovered>false</skinCovered>
     <alive>true</alive>
     <tags>

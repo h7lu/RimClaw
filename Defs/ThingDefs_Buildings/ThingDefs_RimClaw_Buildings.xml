@@ -6,7 +6,7 @@
     <description>Remote token service endpoint for connected Clawfish agents.</description>
     <thingClass>Building</thingClass>
     <graphicData>
-      <texPath>Things/Building/Power/GeothermalGenerator</texPath>
+      <texPath>llm_subscription</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(1,1)</drawSize>
     </graphicData>
@@ -30,7 +30,6 @@
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
-      <requiresPower>true</requiresPower>
       <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
     </building>
     <comps>
@@ -58,9 +57,9 @@
     <description>Central datacenter host that orchestrates model instances and token throughput.</description>
     <thingClass>Building</thingClass>
     <graphicData>
-      <texPath>Things/Building/Special/GroundPenMarker</texPath>
+      <texPath>hostcomputer_south</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1,1)</drawSize>
+      <drawSize>(1.3, 1.3)</drawSize>
     </graphicData>
     <size>(1,1)</size>
     <altitudeLayer>Building</altitudeLayer>
@@ -84,7 +83,6 @@
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
-      <requiresPower>true</requiresPower>
       <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
       <buildingTags>
         <li>Workbench</li>
@@ -110,11 +108,11 @@
     <description>Compute accelerator unit for Host Computer model instances.</description>
     <thingClass>Building</thingClass>
     <graphicData>
-      <texPath>Things/Building/Ship/Ship_ComputerCore</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(2,1)</drawSize>
+      <texPath>GPU</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1,2)</drawSize>
     </graphicData>
-    <size>(2,1)</size>
+    <size>(1,2)</size>
     <altitudeLayer>Building</altitudeLayer>
     <passability>PassThroughOnly</passability>
     <fillPercent>0.12</fillPercent>
@@ -133,7 +131,6 @@
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
-      <requiresPower>true</requiresPower>
     </building>
     <comps>
       <li Class="CompProperties_Power">
@@ -156,7 +153,7 @@
     <description>Stores one model package that can be read by a linked Host Computer.</description>
     <thingClass>Building</thingClass>
     <graphicData>
-      <texPath>Things/Building/Misc/StandingLamp</texPath>
+      <texPath>Memory</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(1,1)</drawSize>
     </graphicData>
@@ -179,7 +176,6 @@
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
-      <requiresPower>false</requiresPower>
     </building>
     <comps>
       <li Class="RimClaw.CompProperties_MemoryDisk" />

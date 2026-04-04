@@ -1,5 +1,6 @@
 using RimWorld;
 using Verse;
+using UnityEngine;
 
 namespace RimClaw
 {
@@ -16,6 +17,8 @@ namespace RimClaw
             {
                 return;
             }
+
+            EnsureRandomColor(pawn);
 
             if (pawn.skills != null)
             {
@@ -63,6 +66,88 @@ namespace RimClaw
             }
 
             hediff.Severity = bonus;
+        }
+
+        public static Graphic GetClawfishBodyGraphic(Pawn pawn)
+        {
+            if (!IsClawfish(pawn))
+            {
+                return null;
+            }
+
+            GraphicData graphicData = pawn.def.graphicData;
+            if (graphicData == null)
+            {
+                return null;
+            }
+
+            string path = (pawn.Faction == Faction.OfPlayer) ? RimClawConfig.Values.clawfishTamedTexPath : RimClawConfig.Values.clawfishWildTexPath;
+            Shader shader = ShaderDatabase.Cutout;
+            Color primary = GetOrAssignColor(pawn);
+            return GraphicDatabase.Get(typeof(Graphic_Multi_EastScaled), path, shader, graphicData.drawSize, primary, pawn.DrawColorTwo, graphicData, graphicData.shaderParameters, graphicData.maskPath);
+        }
+
+        public static Color GetOrAssignColor(Pawn pawn)
+        {
+            return EnsureRandomColor(pawn);
+        }
+
+        private static Color EnsureRandomColor(Pawn pawn)
+        {
+            CompClawfishColor comp = pawn?.TryGetComp<CompClawfishColor>();
+            if (comp == null)
+            {
+                return Color.white;
+            }
+
+            if (!comp.Initialized)
+            {
+                comp.Initialize(GenerateRandomClawfishColor());
+            }
+
+            return comp.Color;
+        }
+
+        private static Color GenerateRandomClawfishColor()
+        {
+            var cfg = RimClawConfig.Values;
+            Vector3 min = new Vector3(
+                Mathf.Min(cfg.clawfishColorR1, cfg.clawfishColorR2),
+                Mathf.Min(cfg.clawfishColorG1, cfg.clawfishColorG2),
+                Mathf.Min(cfg.clawfishColorB1, cfg.clawfishColorB2));
+            Vector3 max = new Vector3(
+                Mathf.Max(cfg.clawfishColorR1, cfg.clawfishColorR2),
+                Mathf.Max(cfg.clawfishColorG1, cfg.clawfishColorG2),
+                Mathf.Max(cfg.clawfishColorB1, cfg.clawfishColorB2));
+
+            Vector3 baseColor = new Vector3(
+                Rand.Range(min.x, max.x),
+                Rand.Range(min.y, max.y),
+                Rand.Range(min.z, max.z));
+
+            Vector3 deviated = baseColor + RandomInsideRgbSphere(Mathf.Max(0f, cfg.clawfishColorDeviationRadius));
+            deviated.x = Mathf.Clamp(deviated.x, 0f, 255f);
+            deviated.y = Mathf.Clamp(deviated.y, 0f, 255f);
+            deviated.z = Mathf.Clamp(deviated.z, 0f, 255f);
+
+            return new Color(deviated.x / 255f, deviated.y / 255f, deviated.z / 255f, 1f);
+        }
+
+        private static Vector3 RandomInsideRgbSphere(float radius)
+        {
+            float u = Rand.Value;
+            float v = Rand.Value;
+            float w = Rand.Value;
+
+            float theta = 2f * Mathf.PI * u;
+            float phi = Mathf.Acos(2f * v - 1f);
+            float r = radius * Mathf.Pow(w, 1f / 3f);
+
+            float sinPhi = Mathf.Sin(phi);
+            return new Vector3(
+                r * sinPhi * Mathf.Cos(theta),
+                r * sinPhi * Mathf.Sin(theta),
+                r * Mathf.Cos(phi));
         }
     }
 }

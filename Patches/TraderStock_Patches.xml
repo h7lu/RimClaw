@@ -11,24 +11,6 @@
           </li>
         </value>
       </li>
-      <li Class="PatchOperationAdd">
-        <xpath>/Defs/TraderKindDef[defName="Orbital_Combat"]/stockGenerators</xpath>
-        <value>
-          <li Class="StockGenerator_SingleDef">
-            <thingDef>RimClaw_PromptInjectionDatabase</thingDef>
-            <countRange>1~2</countRange>
-          </li>
-        </value>
-      </li>
-      <li Class="PatchOperationAdd">
-        <xpath>/Defs/TraderKindDef[defName="Industrial"]/stockGenerators</xpath>
-        <value>
-          <li Class="StockGenerator_SingleDef">
-            <thingDef>RimClaw_PromptInjectionDatabase</thingDef>
-            <countRange>1~1</countRange>
-          </li>
-        </value>
-      </li>
     </operations>
   </Operation>
 </Patch>

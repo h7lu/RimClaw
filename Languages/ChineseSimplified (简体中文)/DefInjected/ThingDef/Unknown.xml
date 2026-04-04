@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: clawfish -->
+  <RimClaw_Clawfish.label>TODO</RimClaw_Clawfish.label>
+  <!-- EN: A strange crustacean-like aquatic creature frequently hooked while fishing. It cannot be tamed directly. It seems to have some unspeakable intelligence. -->
+  <RimClaw_Clawfish.description>TODO</RimClaw_Clawfish.description>
+  <!-- EN: Errorcode 402 -->
+  <RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>TODO</RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>
+  <!-- EN: Clawfish Hooked -->
+  <RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>TODO</RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>
+  <!-- EN: {0} hooked a Clawfish. -->
+  <RimClaw_Clawfish.modExtensions.0.fishingLetterText>TODO</RimClaw_Clawfish.modExtensions.0.fishingLetterText>
+  <!-- EN: clawfish meat -->
+  <RimClaw_Clawfish.race.meatLabel>TODO</RimClaw_Clawfish.race.meatLabel>
+  <!-- EN: left claw -->
+  <RimClaw_Clawfish.tools.left_claw.label>TODO</RimClaw_Clawfish.tools.left_claw.label>
+  <!-- EN: right claw -->
+  <RimClaw_Clawfish.tools.right_claw.label>TODO</RimClaw_Clawfish.tools.right_claw.label>
+  
+  <!-- EN: GPU Cluster -->
+  <RimClaw_GPUCluster.label>TODO</RimClaw_GPUCluster.label>
+  <!-- EN: Compute accelerator unit for Host Computer model instances. -->
+  <RimClaw_GPUCluster.description>TODO</RimClaw_GPUCluster.description>
+  
+  <!-- EN: Host Computer -->
+  <RimClaw_HostComputer.label>TODO</RimClaw_HostComputer.label>
+  <!-- EN: Central datacenter host that orchestrates model instances and token throughput. -->
+  <RimClaw_HostComputer.description>TODO</RimClaw_HostComputer.description>
+  
+  <!-- EN: LLM Service Subscription -->
+  <RimClaw_LLMServiceSubscription.label>TODO</RimClaw_LLMServiceSubscription.label>
+  <!-- EN: Remote token service endpoint for connected Clawfish agents. -->
+  <RimClaw_LLMServiceSubscription.description>TODO</RimClaw_LLMServiceSubscription.description>
+  <!-- EN: Errorcode 429 -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMServiceSubscription.majorCrashStatusText>TODO</RimClaw_LLMServiceSubscription.comps.CompLLMServiceSubscription.majorCrashStatusText>
+  
+  <!-- EN: memory disk -->
+  <RimClaw_MemoryDisk.label>TODO</RimClaw_MemoryDisk.label>
+  <!-- EN: Stores one model package that can be read by a linked Host Computer. -->
+  <RimClaw_MemoryDisk.description>TODO</RimClaw_MemoryDisk.description>
+  
+  <!-- EN: model package -->
+  <RimClaw_ModelCard.label>TODO</RimClaw_ModelCard.label>
+  <!-- EN: A packaged model definition with randomized VRAM requirements and token throughput. -->
+  <RimClaw_ModelCard.description>TODO</RimClaw_ModelCard.description>
+  
+  <!-- EN: Prompt Injection Database -->
+  <RimClaw_PromptInjectionDatabase.label>TODO</RimClaw_PromptInjectionDatabase.label>
+  <!-- EN: A curated exploit corpus used by Prompt Injectors to destabilize Clawfish cognition. -->
+  <RimClaw_PromptInjectionDatabase.description>TODO</RimClaw_PromptInjectionDatabase.description>
+  
+  <!-- EN: Prompt Injector -->
+  <RimClaw_PromptInjector.label>TODO</RimClaw_PromptInjector.label>
+  <!-- EN: Launches hostile prompt payloads that can force Clawfish behavioral collapse. -->
+  <RimClaw_PromptInjector.description>TODO</RimClaw_PromptInjector.description>
+  <!-- EN: Prompt Injector -->
+  <RimClaw_PromptInjector.verbs.Verb_Shoot.label>TODO</RimClaw_PromptInjector.verbs.Verb_Shoot.label>
+  
+  <!-- EN: prompt payload -->
+  <RimClaw_PromptInjectorProjectile.label>TODO</RimClaw_PromptInjectorProjectile.label>
+  
+</LanguageData>

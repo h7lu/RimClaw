@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: context collapse -->
+  <RimClaw_ContextCollapse.label>TODO</RimClaw_ContextCollapse.label>
+  <!-- EN: Context collapsed -->
+  <RimClaw_ContextCollapse.baseInspectLine>TODO</RimClaw_ContextCollapse.baseInspectLine>
+  <!-- EN: {PAWN_nameDef} has entered context collapse and is behaving unpredictably. -->
+  <RimClaw_ContextCollapse.beginLetter>TODO</RimClaw_ContextCollapse.beginLetter>
+  <!-- EN: Context collapse -->
+  <RimClaw_ContextCollapse.beginLetterLabel>TODO</RimClaw_ContextCollapse.beginLetterLabel>
+  
+</LanguageData>

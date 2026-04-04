@@ -22,6 +22,7 @@ namespace RimClaw
         private int requiredVram;
         private float tokenPerSecondPerInstance;
         private float workSpeedBonus;
+        private int hostThingID = -1;
 
         public CompProperties_MemoryDisk Props => (CompProperties_MemoryDisk)props;
         public bool HasModel => hasModel;
@@ -29,6 +30,12 @@ namespace RimClaw
         public int RequiredVram => requiredVram;
         public float TokenPerSecondPerInstance => tokenPerSecondPerInstance;
         public float WorkSpeedBonus => workSpeedBonus;
+        public int HostThingID => hostThingID;
+
+        public void AssignHost(Thing host)
+        {
+            hostThingID = host?.thingIDNumber ?? -1;
+        }
 
         public override void PostExposeData()
         {
@@ -38,6 +45,7 @@ namespace RimClaw
             Scribe_Values.Look(ref requiredVram, "requiredVram", 0);
             Scribe_Values.Look(ref tokenPerSecondPerInstance, "tokenPerSecondPerInstance", 0f);
             Scribe_Values.Look(ref workSpeedBonus, "workSpeedBonus", 0f);
+            Scribe_Values.Look(ref hostThingID, "hostThingID", -1);
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
@@ -69,6 +77,18 @@ namespace RimClaw
                     }
                 };
             }
+        }
+
+        public override string CompInspectStringExtra()
+        {
+            if (!hasModel)
+            {
+                return hostThingID < 0 ? "Model: (none)" : $"Model: (none)\nHost ID: {hostThingID}";
+            }
+
+            return hostThingID < 0
+                ? $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%"
+                : $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%\nHost ID: {hostThingID}";
         }
 
         private void InsertNearbyModel()
@@ -114,14 +134,5 @@ namespace RimClaw
             Find.WindowStack.Add(new FloatMenu(opts));
         }
 
-        public override string CompInspectStringExtra()
-        {
-            if (!hasModel)
-            {
-                return "Model: (none)";
-            }
-
-            return $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%";
-        }
     }
 }

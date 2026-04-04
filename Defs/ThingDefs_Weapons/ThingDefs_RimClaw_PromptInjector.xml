@@ -5,59 +5,24 @@
     <label>Prompt Injector</label>
     <description>Launches hostile prompt payloads that can force Clawfish behavioral collapse.</description>
     <graphicData>
-      <texPath>Things/Item/Equipment/WeaponRanged/EMPLauncher</texPath>
+      <texPath>Prompt_Injector</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1.15,1.15)</drawSize>
+      <drawSize>(1.3,1.3)</drawSize>
     </graphicData>
-    <thingCategories>
-      <li>WeaponsRanged</li>
-    </thingCategories>
     <statBases>
       <MaxHitPoints>140</MaxHitPoints>
       <Mass>6.5</Mass>
       <WorkToMake>1000</WorkToMake>
-      <AccuracyTouch>0.68</AccuracyTouch>
-      <AccuracyShort>0.8</AccuracyShort>
-      <AccuracyMedium>0.72</AccuracyMedium>
-      <AccuracyLong>0.56</AccuracyLong>
+      <AccuracyTouch>1</AccuracyTouch>
+      <AccuracyShort>1</AccuracyShort>
+      <AccuracyMedium>1</AccuracyMedium>
+      <AccuracyLong>1</AccuracyLong>
       <RangedWeapon_Cooldown>2.4</RangedWeapon_Cooldown>
     </statBases>
-    <recipeMaker>
-      <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
-      <skillRequirements>
-        <Crafting>8</Crafting>
-      </skillRequirements>
-      <recipeUsers>
-        <li>FabricationBench</li>
-      </recipeUsers>
-      <ingredients>
-        <li>
-          <filter>
-            <thingDefs>
-              <li>Gun_EMPLauncher</li>
-            </thingDefs>
-          </filter>
-          <count>1</count>
-        </li>
-        <li>
-          <filter>
-            <thingDefs>
-              <li>ComponentSpacer</li>
-            </thingDefs>
-          </filter>
-          <count>1</count>
-        </li>
-        <li>
-          <filter>
-            <thingDefs>
-              <li>RimClaw_PromptInjectionDatabase</li>
-            </thingDefs>
-          </filter>
-          <count>1</count>
-        </li>
-      </ingredients>
-      <workAmount>1000</workAmount>
-    </recipeMaker>
+    <costList>
+      <Steel>70</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
     <verbs>
       <li>
         <verbClass>Verb_Shoot</verbClass>
@@ -83,19 +48,19 @@
     </weaponTags>
   </ThingDef>
 
-  <ThingDef ParentName="BulletBase">
+  <ThingDef ParentName="BaseBullet">
     <defName>RimClaw_PromptInjectorProjectile</defName>
     <label>prompt payload</label>
     <thingClass>RimClaw.Projectile_PromptInjector</thingClass>
     <graphicData>
-      <texPath>Things/Projectile/EMP</texPath>
+      <texPath>PI_bullet</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(0.2,0.2)</drawSize>
+      <drawSize>(1.8,2)</drawSize>
     </graphicData>
     <projectile>
-      <damageDef>Blunt</damageDef>
-      <damageAmountBase>1</damageAmountBase>
-      <speed>45</speed>
+      <damageDef>EMP</damageDef>
+      <damageAmountBase>40</damageAmountBase>
+      <speed>30</speed>
       <stoppingPower>0</stoppingPower>
     </projectile>
   </ThingDef>

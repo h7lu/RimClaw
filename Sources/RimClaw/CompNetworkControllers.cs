@@ -5,9 +5,18 @@ using Verse;
 
 namespace RimClaw
 {
+    [StaticConstructorOnStartup]
     public abstract class CompClawfishConnectorBase : ThingComp
     {
         protected List<Pawn> connected = new List<Pawn>();
+        protected static readonly Material GrayLineMat;
+        protected static readonly Material YellowLineMat;
+
+        static CompClawfishConnectorBase()
+        {
+            GrayLineMat = MaterialPool.MatFrom(GenDraw.LineTexPath, ShaderDatabase.Transparent, new Color(0.70f, 0.74f, 0.82f, 1f));
+            YellowLineMat = MaterialPool.MatFrom(GenDraw.LineTexPath, ShaderDatabase.Transparent, new Color(1.00f, 0.86f, 0.24f, 1f));
+        }
 
         protected abstract float ConnectionRadius { get; }
         protected abstract string ConnectorLabel { get; }
@@ -122,6 +131,10 @@ namespace RimClaw
                 return;
             }
 
+            CompModelCard model = parent.TryGetComp<CompModelCard>();
+            model?.EnsureInitialized();
+            float supplyPerSecond = model?.TokenPerSecondPerInstance ?? Props.tokenSupplyPerSecond;
+
             float demand = 0f;
             for (int i = 0; i < connected.Count; i++)
             {
@@ -132,7 +145,7 @@ namespace RimClaw
                 }
             }
 
-            if (demand > Props.tokenSupplyPerSecond)
+            if (demand > supplyPerSecond)
             {
                 MajorCrash();
                 return;
@@ -153,7 +166,7 @@ namespace RimClaw
                 }
 
                 float share = token.GetCurrentConsumptionRatePerSecond(pawn) / demand;
-                token.AddTokens(Props.tokenSupplyPerSecond * share);
+                token.AddTokens(supplyPerSecond * share);
                 ClawfishUtility.EnsureServiceBoost(pawn, 0.05f);
             }
         }
@@ -190,8 +203,13 @@ namespace RimClaw
                 }
             }
 
-            string status = demand > Props.tokenSupplyPerSecond ? Props.majorCrashStatusText : "Online";
-            return $"Connected: {connected.Count}\nSupply: {Props.tokenSupplyPerSecond:0.0} tok/s\nDemand: {demand:0.0} tok/s\nStatus: {status}";
+            CompModelCard model = parent.TryGetComp<CompModelCard>();
+            model?.EnsureInitialized();
+            float supplyPerSecond = model?.TokenPerSecondPerInstance ?? Props.tokenSupplyPerSecond;
+
+            string status = demand > supplyPerSecond ? Props.majorCrashStatusText : "Online";
+            string modelLine = model == null ? string.Empty : $"\nModel: {model.ModelName}";
+            return $"Connected: {connected.Count}\nSupply: {supplyPerSecond:0.0} tok/s\nDemand: {demand:0.0} tok/s{modelLine}\nStatus: {status}";
         }
     }
 
@@ -207,6 +225,8 @@ namespace RimClaw
 
     public class CompHostComputer : CompClawfishConnectorBase
     {
+        private readonly List<Thing> connectedGpus = new List<Thing>();
+        private Thing connectedMemoryDisk;
         private int gpuCount;
         private int totalVram;
         private int usedVram;
@@ -215,7 +235,7 @@ namespace RimClaw
         private string modelName;
 
         public CompProperties_HostComputer Props => (CompProperties_HostComputer)props;
-        protected override float ConnectionRadius => 45f;
+        protected override float ConnectionRadius => Props.connectionRadius;
         protected override string ConnectorLabel => "Host Computer";
 
         public override void CompTick()
@@ -267,6 +287,8 @@ namespace RimClaw
 
         private void ResolveNetwork()
         {
+            connectedGpus.Clear();
+            connectedMemoryDisk = null;
             gpuCount = 0;
             totalVram = 0;
             usedVram = 0;
@@ -282,12 +304,10 @@ namespace RimClaw
                 CompGPUCluster gpu = thing.TryGetComp<CompGPUCluster>();
                 if (gpu != null)
                 {
-                    if (gpu.HostThingID < 0 || gpu.IsAssignedTo(parent))
-                    {
-                        gpu.AssignHost(parent);
-                        gpuCount++;
-                        totalVram += gpu.Props.providedVRAM;
-                    }
+                    gpu.AssignHost(parent);
+                    connectedGpus.Add(thing);
+                    gpuCount++;
+                    totalVram += gpu.Props.providedVRAM;
 
                     continue;
                 }
@@ -300,14 +320,18 @@ namespace RimClaw
                     {
                         bestDiskDist = dist;
                         bestDisk = disk;
+                        connectedMemoryDisk = thing;
                     }
                 }
             }
 
             if (bestDisk == null || !bestDisk.HasModel)
             {
+                connectedMemoryDisk = null;
                 return;
             }
+
+            bestDisk.AssignHost(parent);
 
             modelName = bestDisk.ModelName;
             if (bestDisk.RequiredVram <= 0)
@@ -318,6 +342,37 @@ namespace RimClaw
             instances = totalVram / bestDisk.RequiredVram;
             usedVram = instances * bestDisk.RequiredVram;
             totalTokenSupply = instances * bestDisk.TokenPerSecondPerInstance;
+        }
+
+        public override void PostDrawExtraSelectionOverlays()
+        {
+            base.PostDrawExtraSelectionOverlays();
+            if (parent?.Spawned != true || parent.MapHeld == null)
+            {
+                return;
+            }
+
+            GenDraw.DrawRadiusRing(parent.Position, Props.connectionRadius);
+            if (!IsPowered(parent as ThingWithComps))
+            {
+                return;
+            }
+
+            ResolveNetwork();
+
+            for (int i = 0; i < connectedGpus.Count; i++)
+            {
+                Thing gpu = connectedGpus[i];
+                if (gpu?.Spawned == true && gpu.Map == parent.Map)
+                {
+                    GenDraw.DrawLineBetween(parent.DrawPos, gpu.DrawPos, GrayLineMat);
+                }
+            }
+
+            if (connectedMemoryDisk != null && connectedMemoryDisk.Spawned && connectedMemoryDisk.Map == parent.Map)
+            {
+                GenDraw.DrawLineBetween(parent.DrawPos, connectedMemoryDisk.DrawPos, YellowLineMat);
+            }
         }
 
         public override string CompInspectStringExtra()

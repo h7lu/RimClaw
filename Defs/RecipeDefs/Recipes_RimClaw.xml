@@ -12,7 +12,7 @@
       <li>
         <filter>
           <thingDefs>
-            <li>Gun_EMPLauncher</li>
+            <li>Gun_EmpLauncher</li>
           </thingDefs>
         </filter>
         <count>1</count>
@@ -39,7 +39,7 @@
     </products>
     <fixedIngredientFilter>
       <thingDefs>
-        <li>Gun_EMPLauncher</li>
+        <li>Gun_EmpLauncher</li>
         <li>ComponentSpacer</li>
         <li>RimClaw_PromptInjectionDatabase</li>
       </thingDefs>
@@ -122,7 +122,6 @@
     <workAmount>1800</workAmount>
     <workSkill>Intellectual</workSkill>
     <effectWorking>Research</effectWorking>
-    <soundWorking>Recipe_Research</soundWorking>
     <ingredients>
       <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>1</count></li>
     </ingredients>

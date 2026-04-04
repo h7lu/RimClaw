@@ -1,6 +1,5 @@
 using RimWorld;
 using Verse;
-using Verse.AI;
 
 namespace RimClaw
 {
@@ -20,9 +19,11 @@ namespace RimClaw
                 return;
             }
 
+            bool stunned = false;
             if (Rand.Chance(cfg.promptInjectorStunChance))
             {
                 target.stances?.stunner?.StunFor(cfg.promptInjectorStunTicks, launcher, addBattleLog: true, showMote: true, disableRotation: false);
+                stunned = true;
             }
 
             float joinChance = System.Math.Max(0f, cfg.promptInjectorJoinChance);
@@ -41,36 +42,31 @@ namespace RimClaw
             berserkChance /= sum;
 
             float roll = Rand.Value;
+            PromptInjectorOutcome outcome;
             if (roll < joinChance)
             {
-                ConvertToColonist(target);
-                return;
+                outcome = PromptInjectorOutcome.Join;
             }
-
-            if (roll < joinChance + berserkChance)
+            else if (roll < joinChance + berserkChance)
             {
-                target.mindState?.mentalStateHandler?.TryStartMentalState(MentalStateDefOf.Berserk, forceWake: true);
-                return;
+                outcome = PromptInjectorOutcome.Berserk;
             }
-
-            Job selfDelete = JobMaker.MakeJob(RimClawDefOf.RimClaw_SelfDelete);
-            target.jobs?.TryTakeOrderedJob(selfDelete, JobTag.Misc);
-        }
-
-        private static void ConvertToColonist(Pawn target)
-        {
-            Map map = target.Map;
-            IntVec3 cell = target.Position;
-
-            if (map == null)
+            else
             {
-                return;
+                outcome = PromptInjectorOutcome.SelfDelete;
             }
 
-            Pawn colonist = PawnGenerator.GeneratePawn(RimClawConfig.ConvertedPawnKind, Faction.OfPlayer);
-            GenSpawn.Spawn(colonist, cell, map, WipeMode.Vanish);
-            colonist.Name = new NameSingle(ClawfishUtility.GenerateName());
-            target.Destroy(DestroyMode.Vanish);
+            if (stunned)
+            {
+                CompPromptInjectorReaction comp = target.TryGetComp<CompPromptInjectorReaction>();
+                if (comp != null)
+                {
+                    comp.Schedule(outcome, cfg.promptInjectorStunTicks);
+                    return;
+                }
+            }
+
+            CompPromptInjectorReaction.ApplyOutcome(target, outcome);
         }
     }
 }

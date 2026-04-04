@@ -13,5 +13,52 @@
     <canArriveManhunter>true</canArriveManhunter>
     <maxGenerationAge>18</maxGenerationAge>
     <minGenerationAge>3</minGenerationAge>
+    <lifeStages>
+      <li>
+        <label>clawfish juvenile</label>
+        <bodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.4</drawSize>
+          <shadowData>
+            <volume>(0.6,0.3,0.6)</volume>
+            <offset>(0,0,-0.12)</offset>
+          </shadowData>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.4</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+      <li>
+        <label>clawfish</label>
+        <bodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.6</drawSize>
+          <shadowData>
+            <volume>(0.7,0.35,0.7)</volume>
+            <offset>(0,0,-0.15)</offset>
+          </shadowData>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.6</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+      <li>
+        <label>clawfish elder</label>
+        <bodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.8</drawSize>
+          <shadowData>
+            <volume>(0.8,0.4,0.8)</volume>
+            <offset>(0,0,-0.15)</offset>
+          </shadowData>
+        </bodyGraphicData>
+        <dessicatedBodyGraphicData>
+          <texPath>clawfish</texPath>
+          <drawSize>1.8</drawSize>
+        </dessicatedBodyGraphicData>
+      </li>
+    </lifeStages>
   </PawnKindDef>
 </Defs>

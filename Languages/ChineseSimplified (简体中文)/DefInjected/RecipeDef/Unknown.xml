@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: make GPU cluster -->
+  <RimClaw_MakeGPUCluster.label>TODO</RimClaw_MakeGPUCluster.label>
+  <!-- EN: Making GPU cluster. -->
+  <RimClaw_MakeGPUCluster.jobString>TODO</RimClaw_MakeGPUCluster.jobString>
+  
+  <!-- EN: make host computer -->
+  <RimClaw_MakeHostComputer.label>TODO</RimClaw_MakeHostComputer.label>
+  <!-- EN: Making host computer. -->
+  <RimClaw_MakeHostComputer.jobString>TODO</RimClaw_MakeHostComputer.jobString>
+  
+  <!-- EN: make memory disk -->
+  <RimClaw_MakeMemoryDisk.label>TODO</RimClaw_MakeMemoryDisk.label>
+  <!-- EN: Making memory disk. -->
+  <RimClaw_MakeMemoryDisk.jobString>TODO</RimClaw_MakeMemoryDisk.jobString>
+  
+  <!-- EN: compile model package -->
+  <RimClaw_MakeModelCard.label>TODO</RimClaw_MakeModelCard.label>
+  <!-- EN: Compiling model package. -->
+  <RimClaw_MakeModelCard.jobString>TODO</RimClaw_MakeModelCard.jobString>
+  
+  <!-- EN: craft Prompt Injector -->
+  <RimClaw_MakePromptInjector.label>TODO</RimClaw_MakePromptInjector.label>
+  <!-- EN: Combine an EMP launcher and exploit data to produce a Prompt Injector. -->
+  <RimClaw_MakePromptInjector.description>TODO</RimClaw_MakePromptInjector.description>
+  <!-- EN: Crafting Prompt Injector. -->
+  <RimClaw_MakePromptInjector.jobString>TODO</RimClaw_MakePromptInjector.jobString>
+  
+</LanguageData>

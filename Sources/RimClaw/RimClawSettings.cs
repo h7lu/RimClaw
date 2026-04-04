@@ -2,7 +2,7 @@ namespace RimClaw
 {
     public static class RimClawSettings
     {
-        public const float DefaultFishingSpawnChance = 0.10f;
+        public const float DefaultFishingSpawnChance = 1f;
         public const int DefaultSpawnRadiusFromFisher = 3;
 
         public const float DefaultPromptInjectorStunChance = 0.50f;

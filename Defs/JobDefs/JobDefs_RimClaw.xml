@@ -7,4 +7,11 @@
     <casualInterruptible>false</casualInterruptible>
     <alwaysShowWeapon>false</alwaysShowWeapon>
   </JobDef>
+  <JobDef>
+    <defName>RimClaw_SelfReprogramming</defName>
+    <driverClass>RimClaw.JobDriver_SelfReprogramming</driverClass>
+    <reportString>self reprogramming.</reportString>
+    <casualInterruptible>true</casualInterruptible>
+    <alwaysShowWeapon>false</alwaysShowWeapon>
+  </JobDef>
 </Defs>
