@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <BackstoryDef>
+    <defName>RimClaw_Childhood_Crustacean</defName>
+    <title>Crustacean</title>
+    <titleShort>Crustacean</titleShort>
+    <description>[PAWN_nameDef] began life in artificial brine tanks as an experimental crustacean cognition host.</description>
+    <slot>Childhood</slot>
+    <spawnCategories>
+      <li>Child</li>
+    </spawnCategories>
+  </BackstoryDef>
+
+  <BackstoryDef>
+    <defName>RimClaw_Adulthood_LLM_Agent</defName>
+    <title>LLM Agent</title>
+    <titleShort>LLM Agent</titleShort>
+    <description>[PAWN_nameDef] matured into an autonomous LLM agent specializing in coordinated work throughput.</description>
+    <slot>Adulthood</slot>
+    <spawnCategories>
+      <li>AdultColonist</li>
+    </spawnCategories>
+    <bodyTypeMale>Male</bodyTypeMale>
+    <bodyTypeFemale>Female</bodyTypeFemale>
+  </BackstoryDef>
+</Defs>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RimClaw")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ad08f6ce90d6f89416929da0d36224be581f8e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aaeb3b8c1a4c20bc65e7637efbe97693e3f1a1db")]
 [assembly: System.Reflection.AssemblyProductAttribute("RimClaw")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RimClaw")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

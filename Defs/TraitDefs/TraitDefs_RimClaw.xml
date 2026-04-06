@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <TraitDef>
+    <defName>RimClaw_AI</defName>
+    <description>A synthetic cognition lock that holds emotional baseline at exactly 50% mood.</description>
+    <commonality>0</commonality>
+    <degreeDatas>
+      <li>
+        <label>AI</label>
+        <description>Maintains mood at a fixed midpoint regardless of thought fluctuations.</description>
+      </li>
+    </degreeDatas>
+  </TraitDef>
+</Defs>

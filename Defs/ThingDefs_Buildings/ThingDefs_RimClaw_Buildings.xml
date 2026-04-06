@@ -37,10 +37,12 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>50</basePowerConsumption>
       </li>
-      <li Class="RimClaw.CompProperties_LLMServiceSubscription">
-        <tokenSupplyPerSecond>20</tokenSupplyPerSecond>
-        <connectionRadius>80</connectionRadius>
-        <majorCrashStatusText>Errorcode 429</majorCrashStatusText>
+      <li Class="RimClaw.CompProperties_LLMSubscriptionService">
+        <baseTokenCapacityPerSecond>220</baseTokenCapacityPerSecond>
+        <maxCapacityPerClaw>80</maxCapacityPerClaw>
+        <pricePerMillionTokens>8</pricePerMillionTokens>
+        <silverSearchRadius>5</silverSearchRadius>
+        <historyLength>360</historyLength>
       </li>
     </comps>
     <placeWorkers>
@@ -93,7 +95,7 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>800</basePowerConsumption>
       </li>
-      <li Class="RimClaw.CompProperties_HostComputer">
+      <li Class="RimClaw.CompProperties_HostComputerService">
         <connectionRadius>9</connectionRadius>
       </li>
     </comps>

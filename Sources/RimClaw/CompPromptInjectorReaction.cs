@@ -1,4 +1,5 @@
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 
@@ -83,16 +84,61 @@ namespace RimClaw
 
         private static void JoinAsClawfish(Pawn target)
         {
-            if (target.Faction != Faction.OfPlayer)
+            Map map = target.Map;
+            IntVec3 cell = target.Position;
+            if (map == null)
             {
-                target.SetFaction(Faction.OfPlayer);
+                return;
             }
 
-            target.mindState?.mentalStateHandler?.Reset();
-            target.jobs?.StopAll();
-            ClawfishUtility.ApplyBaseline(target);
+            Color fishColor = target.TryGetComp<CompClawfishColor>()?.Color ?? ClawfishUtility.GetOrAssignColor(target);
+            string pawnName = target.Name?.ToStringFull ?? ClawfishUtility.GenerateName();
 
-            Messages.Message($"{target.LabelShortCap} joined your faction.", target, MessageTypeDefOf.PositiveEvent, historical: false);
+            Pawn colonist = PawnGenerator.GeneratePawn(RimClawConfig.ConvertedPawnKind, Faction.OfPlayer);
+
+            if (colonist.story != null)
+            {
+                BackstoryDef child = DefDatabase<BackstoryDef>.GetNamedSilentFail("RimClaw_Childhood_Crustacean");
+                BackstoryDef adult = DefDatabase<BackstoryDef>.GetNamedSilentFail("RimClaw_Adulthood_LLM_Agent");
+                if (child != null)
+                {
+                    colonist.story.Childhood = child;
+                }
+
+                if (adult != null)
+                {
+                    colonist.story.Adulthood = adult;
+                }
+            }
+
+            ClawfishUtility.EnsureAiTraitForLlmAgent(colonist);
+
+            if (colonist.skills != null)
+            {
+                foreach (SkillRecord skill in colonist.skills.skills)
+                {
+                    skill.Level = RimClawConfig.Values.clawfishSkillLevel;
+                    skill.xpSinceLastLevel = 0f;
+                    skill.passion = Passion.None;
+                }
+            }
+
+            ClawfishUtility.EnsureSkillFloor(colonist, 8);
+
+            CompClawfishColor colorComp = colonist.TryGetComp<CompClawfishColor>();
+            if (colorComp != null)
+            {
+                colorComp.Initialize(fishColor);
+            }
+
+            colonist.Name = new NameSingle(pawnName);
+            GenSpawn.Spawn(colonist, cell, map, WipeMode.Vanish);
+            colonist.needs?.AddOrRemoveNeedsAsAppropriate();
+            colonist.Drawer?.renderer?.SetAllGraphicsDirty();
+            PortraitsCache.SetDirty(colonist);
+            target.Destroy(DestroyMode.Vanish);
+
+            Messages.Message($"{colonist.LabelShortCap} joined your faction.", colonist, MessageTypeDefOf.PositiveEvent, historical: false);
         }
     }
 }

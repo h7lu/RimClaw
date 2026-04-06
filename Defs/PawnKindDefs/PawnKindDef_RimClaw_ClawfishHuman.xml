@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <PawnKindDef ParentName="BasePlayerPawnKind">
+    <defName>RimClaw_ClawfishColonist</defName>
+    <label>clawfish colonist</label>
+    <race>RimClaw_ClawfishHuman</race>
+    <defaultFactionDef>PlayerColony</defaultFactionDef>
+    <combatPower>30</combatPower>
+    <isFighter>false</isFighter>
+    <initialWillRange>0~0</initialWillRange>
+    <initialResistanceRange>13~21</initialResistanceRange>
+  </PawnKindDef>
+</Defs>

@@ -8,7 +8,22 @@ namespace RimClaw
     {
         public static bool IsClawfish(Pawn pawn)
         {
-            return pawn?.def == RimClawDefOf.RimClaw_Clawfish;
+            if (pawn == null)
+            {
+                return false;
+            }
+
+            if (pawn.def == RimClawDefOf.RimClaw_Clawfish || pawn.def == RimClawDefOf.RimClaw_ClawfishHuman)
+            {
+                return true;
+            }
+
+            return pawn.health?.hediffSet?.GetFirstHediffOfDef(RimClawDefOf.RimClaw_DisguisedClawfish) != null;
+        }
+
+        public static bool IsClawfishColonist(Pawn pawn)
+        {
+            return pawn?.def == RimClawDefOf.RimClaw_ClawfishHuman;
         }
 
         public static void ApplyBaseline(Pawn pawn)
@@ -75,16 +90,90 @@ namespace RimClaw
                 return null;
             }
 
-            GraphicData graphicData = pawn.def.graphicData;
+            GraphicData graphicData = pawn.def.graphicData ?? RimClawDefOf.RimClaw_Clawfish?.graphicData;
             if (graphicData == null)
             {
                 return null;
             }
 
-            string path = (pawn.Faction == Faction.OfPlayer) ? RimClawConfig.Values.clawfishTamedTexPath : RimClawConfig.Values.clawfishWildTexPath;
-            Shader shader = ShaderDatabase.Cutout;
+            string path = GetTexturePathForPawn(pawn);
+            Shader shader = graphicData.shaderType?.Shader ?? ShaderDatabase.CutoutComplex;
             Color primary = GetOrAssignColor(pawn);
-            return GraphicDatabase.Get(typeof(Graphic_Multi_EastScaled), path, shader, graphicData.drawSize, primary, pawn.DrawColorTwo, graphicData, graphicData.shaderParameters, graphicData.maskPath);
+            return GraphicDatabase.Get(typeof(Graphic_Multi_EastScaled), path, shader, graphicData.drawSize, primary, Color.white, graphicData, graphicData.shaderParameters, graphicData.maskPath);
+        }
+
+        public static Graphic GetDisguisedClawfishGraphic(Pawn pawn)
+        {
+            Color color;
+            if (TryGetDisguisedClawfishColor(pawn, out color))
+            {
+                return GetClawfishGraphic(pawn, color);
+            }
+
+            if (!IsClawfish(pawn))
+            {
+                return null;
+            }
+
+            return GetClawfishGraphic(pawn, GetOrAssignColor(pawn));
+        }
+
+        private static Graphic GetClawfishGraphic(Pawn pawn, Color color)
+        {
+            GraphicData graphicData = RimClawDefOf.RimClaw_Clawfish?.graphicData ?? pawn?.def?.graphicData;
+            if (graphicData == null)
+            {
+                return null;
+            }
+
+            return GraphicDatabase.Get(
+                typeof(Graphic_Multi_EastScaled),
+                GetTexturePathForPawn(pawn),
+                graphicData.shaderType?.Shader ?? ShaderDatabase.CutoutComplex,
+                graphicData.drawSize,
+                color,
+                Color.white,
+                graphicData,
+                graphicData.shaderParameters,
+                graphicData.maskPath);
+        }
+
+        public static string GetPortraitSouthTexPath(Pawn pawn)
+        {
+            return GetTexturePathForPawn(pawn) + "_south";
+        }
+
+        private static string GetTexturePathForPawn(Pawn pawn)
+        {
+            if (pawn?.def == RimClawDefOf.RimClaw_ClawfishHuman)
+            {
+                return RimClawConfig.Values.clawfishTamedTexPath;
+            }
+
+            if (TryGetDisguisedClawfishColor(pawn, out _))
+            {
+                return RimClawConfig.Values.clawfishTamedTexPath;
+            }
+
+            return RimClawConfig.Values.clawfishWildTexPath;
+        }
+
+        public static bool TryGetDisguisedClawfishColor(Pawn pawn, out Color color)
+        {
+            color = Color.white;
+            if (pawn?.health?.hediffSet == null)
+            {
+                return false;
+            }
+
+            Hediff_DisguisedClawfish hediff = pawn.health.hediffSet.GetFirstHediffOfDef(RimClawDefOf.RimClaw_DisguisedClawfish) as Hediff_DisguisedClawfish;
+            if (hediff == null)
+            {
+                return false;
+            }
+
+            color = hediff.DisplayColor;
+            return true;
         }
 
         public static Color GetOrAssignColor(Pawn pawn)
@@ -130,7 +219,11 @@ namespace RimClaw
             deviated.y = Mathf.Clamp(deviated.y, 0f, 255f);
             deviated.z = Mathf.Clamp(deviated.z, 0f, 255f);
 
-            return new Color(deviated.x / 255f, deviated.y / 255f, deviated.z / 255f, 1f);
+            Color candidate = new Color(deviated.x / 255f, deviated.y / 255f, deviated.z / 255f, 1f);
+            Color.RGBToHSV(candidate, out float h, out float s, out float v);
+            s = Mathf.Max(s, 0.65f);
+            v = Mathf.Min(v, 0.88f);
+            return Color.HSVToRGB(h, s, v);
         }
 
         private static Vector3 RandomInsideRgbSphere(float radius)
@@ -148,6 +241,50 @@ namespace RimClaw
                 r * sinPhi * Mathf.Cos(theta),
                 r * sinPhi * Mathf.Sin(theta),
                 r * Mathf.Cos(phi));
+        }
+
+        public static void EnsureAiTraitForLlmAgent(Pawn pawn)
+        {
+            if (!IsClawfishColonist(pawn) || pawn?.story?.traits == null || RimClawDefOf.RimClaw_AI == null)
+            {
+                return;
+            }
+
+            if (pawn.story.Adulthood?.defName != "RimClaw_Adulthood_LLM_Agent")
+            {
+                return;
+            }
+
+            if (!pawn.story.traits.HasTrait(RimClawDefOf.RimClaw_AI))
+            {
+                pawn.story.traits.GainTrait(new Trait(RimClawDefOf.RimClaw_AI));
+            }
+        }
+
+        public static bool HasAiMoodLock(Pawn pawn)
+        {
+            return IsClawfishColonist(pawn)
+                && pawn?.story?.traits != null
+                && RimClawDefOf.RimClaw_AI != null
+                && pawn.story.traits.HasTrait(RimClawDefOf.RimClaw_AI);
+        }
+
+        public static void EnsureSkillFloor(Pawn pawn, int minLevel)
+        {
+            if (pawn?.skills == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < pawn.skills.skills.Count; i++)
+            {
+                SkillRecord skill = pawn.skills.skills[i];
+                if (skill.Level < minLevel)
+                {
+                    skill.Level = minLevel;
+                    skill.xpSinceLastLevel = 0f;
+                }
+            }
         }
     }
 }

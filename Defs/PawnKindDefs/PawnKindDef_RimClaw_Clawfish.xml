@@ -13,6 +13,8 @@
     <canArriveManhunter>true</canArriveManhunter>
     <maxGenerationAge>18</maxGenerationAge>
     <minGenerationAge>3</minGenerationAge>
+    <initialWillRange>0~0</initialWillRange>
+    <initialResistanceRange>0~2</initialResistanceRange>
     <lifeStages>
       <li>
         <label>clawfish juvenile</label>

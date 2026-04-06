@@ -5,7 +5,7 @@ namespace RimClaw
 {
     public class Graphic_Multi_EastScaled : Graphic_Multi
     {
-        private const float EastScale = 1.2f;
+        private const float EastScale = 1.0f;
 
         public override void DrawWorker(Vector3 loc, Rot4 rot, ThingDef thingDef, Thing thing, float extraRotation)
         {

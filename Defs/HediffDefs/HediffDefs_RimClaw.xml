@@ -47,4 +47,35 @@
       </li>
     </stages>
   </HediffDef>
+
+  <HediffDef>
+    <defName>RimClaw_DisguisedClawfish</defName>
+    <label>clawfish disguise</label>
+    <description>This colonist keeps a clawfish visual shell.</description>
+    <hediffClass>RimClaw.Hediff_DisguisedClawfish</hediffClass>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <stages>
+      <li>
+        <label>active</label>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>RimClaw_InsufficientIORate</defName>
+    <label>insufficient I/O rate</label>
+    <description>This Clawfish is not receiving sufficient token throughput from its connected supplier, causing reduced work speed.</description>
+    <hediffClass>RimClaw.Hediff_InsufficientIORate</hediffClass>
+    <isBad>true</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <stages>
+      <li>
+        <label>throttled</label>
+        <statOffsets>
+          <WorkSpeedGlobal>-0.5</WorkSpeedGlobal>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
 </Defs>

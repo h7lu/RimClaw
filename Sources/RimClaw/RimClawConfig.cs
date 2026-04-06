@@ -50,7 +50,7 @@ namespace RimClaw
             "Omni", "Max", "Pro", "Deepthink", "Thinking", "None", "Instruct", "Rapid", "PagedAttn", "Fast", "Flash", "Mini", "Lite", "Linear"
         };
 
-        public string convertedPawnKindDefName = "Colonist";
+        public string convertedPawnKindDefName = "RimClaw_ClawfishColonist";
         public List<string> allowedSurgeryDefNames = new List<string>();
         public List<string> allowedSurgeryNameContains = new List<string> { "Mechanitor", "Skill" };
 

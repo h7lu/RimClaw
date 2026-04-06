@@ -95,10 +95,10 @@
       <li Class="RimClaw.CompProperties_ClawfishColor" />
       <li Class="RimClaw.CompProperties_PromptInjectorReaction" />
       <li Class="RimClaw.CompProperties_ClawfishToken">
-        <maxTokens>1200</maxTokens>
+        <maxTokens>12000</maxTokens>
         <consumptionMultiplier>1.0</consumptionMultiplier>
-        <noJobRate>0.05</noJobRate>
-        <defaultRate>0.4</defaultRate>
+        <noJobRate>5</noJobRate>
+        <defaultRate>100</defaultRate>
         <idleRate>0.08</idleRate>
         <combatRate>1.5</combatRate>
         <workRate>1.1</workRate>
@@ -126,7 +126,7 @@
     </comps>
     <modExtensions>
       <li Class="RimClaw.RimClawConfigExtension">
-        <fishingSpawnChance>0.10</fishingSpawnChance>
+        <fishingSpawnChance>1</fishingSpawnChance>
         <spawnRadiusFromFisher>3</spawnRadiusFromFisher>
         <fishingLetterLabel>Clawfish Hooked</fishingLetterLabel>
         <fishingLetterText>{0} hooked a Clawfish.</fishingLetterText>
@@ -244,7 +244,7 @@
           <li>Lite</li>
           <li>Linear</li>
         </modelVramOrderPool>
-        <convertedPawnKindDefName>Colonist</convertedPawnKindDefName>
+        <convertedPawnKindDefName>RimClaw_ClawfishColonist</convertedPawnKindDefName>
       </li>
     </modExtensions>
   </ThingDef>

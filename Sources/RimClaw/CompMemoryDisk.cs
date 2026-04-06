@@ -19,6 +19,7 @@ namespace RimClaw
     {
         private bool hasModel;
         private string modelName;
+        private Color modelColor = Color.white;
         private int requiredVram;
         private float tokenPerSecondPerInstance;
         private float workSpeedBonus;
@@ -27,6 +28,7 @@ namespace RimClaw
         public CompProperties_MemoryDisk Props => (CompProperties_MemoryDisk)props;
         public bool HasModel => hasModel;
         public string ModelName => modelName;
+        public Color ModelColor => modelColor;
         public int RequiredVram => requiredVram;
         public float TokenPerSecondPerInstance => tokenPerSecondPerInstance;
         public float WorkSpeedBonus => workSpeedBonus;
@@ -42,6 +44,7 @@ namespace RimClaw
             base.PostExposeData();
             Scribe_Values.Look(ref hasModel, "hasModel", defaultValue: false);
             Scribe_Values.Look(ref modelName, "modelName");
+            Scribe_Values.Look(ref modelColor, "modelColor", Color.white);
             Scribe_Values.Look(ref requiredVram, "requiredVram", 0);
             Scribe_Values.Look(ref tokenPerSecondPerInstance, "tokenPerSecondPerInstance", 0f);
             Scribe_Values.Look(ref workSpeedBonus, "workSpeedBonus", 0f);
@@ -71,6 +74,7 @@ namespace RimClaw
                     {
                         hasModel = false;
                         modelName = null;
+                        modelColor = Color.white;
                         requiredVram = 0;
                         tokenPerSecondPerInstance = 0f;
                         workSpeedBonus = 0f;
@@ -118,6 +122,7 @@ namespace RimClaw
                     comp.EnsureInitialized();
                     hasModel = true;
                     modelName = comp.ModelName;
+                    modelColor = comp.ModelColor;
                     requiredVram = comp.RequiredVram;
                     tokenPerSecondPerInstance = comp.TokenPerSecondPerInstance;
                     workSpeedBonus = comp.WorkSpeedBonus;
