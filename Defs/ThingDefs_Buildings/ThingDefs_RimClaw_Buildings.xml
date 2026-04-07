@@ -180,7 +180,13 @@
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
     </building>
     <comps>
-      <li Class="RimClaw.CompProperties_MemoryDisk" />
+      <li Class="RimClaw.CompProperties_MemoryDisk">
+        <modelSignOffsetX>0</modelSignOffsetX>
+        <modelSignOffsetY>0.42</modelSignOffsetY>
+        <modelSignOffsetZ>0</modelSignOffsetZ>
+        <modelSignScale>0.8</modelSignScale>
+        <modelSignAlpha>0.8</modelSignAlpha>
+      </li>
     </comps>
     <researchPrerequisites>
       <li>MultiAnalyzer</li>

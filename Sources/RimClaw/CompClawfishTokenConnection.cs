@@ -77,8 +77,16 @@ namespace RimClaw
             // Check if we have sufficient I/O rate from supplier
             if (IsConnected)
             {
-                RemoveDisconnectedShutdown(pawn);
                 float providedRate = GetProvidedRate(pawn);
+                if (providedRate > 0.01f)
+                {
+                    RemoveDisconnectedShutdown(pawn);
+                }
+                else
+                {
+                    ApplyDisconnectedShutdown(pawn);
+                }
+
                 ApplyInsufficientIOHediff(pawn, providedRate);
             }
             else

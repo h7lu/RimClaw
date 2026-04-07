@@ -12,6 +12,7 @@ namespace RimClaw
         public static ThingDef RimClaw_ClawfishHuman;
         public static ThingDef RimClaw_PromptInjector;
         public static ThingDef RimClaw_ModelCard;
+        public static ThingDef RimClaw_Mote_ModelDiskSign;
         public static JobDef RimClaw_SelfDelete;
         public static JobDef RimClaw_SelfReprogramming;
         public static HediffDef RimClaw_TokenDepleted;

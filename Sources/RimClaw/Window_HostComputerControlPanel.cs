@@ -22,9 +22,12 @@ namespace RimClaw
         private const float AvatarSize = 46f;
 
         private readonly CompHostComputerService host;
+        private readonly Dictionary<int, Rect> gpuIconRects = new Dictionary<int, Rect>();
         private Vector2 gpuScrollPos = Vector2.zero;
         private Vector2 clawPoolScrollPos = Vector2.zero;
+        private Vector2 modelDropdownScrollPos = Vector2.zero;
         private int selectedGpuIndex = -1;
+        private int modelDropdownGpuThingId = -1;
         private Pawn draggingClaw;
         private PlotTimeRange selectedPlotTimeRange = PlotTimeRange.All;
 
@@ -76,6 +79,8 @@ namespace RimClaw
             DrawLine(new Vector2(contentRect.x, topRect.yMax + 4f), new Vector2(contentRect.xMax, topRect.yMax + 4f));
             DrawLine(new Vector2(leftRect.xMax - 6f, leftRect.y), new Vector2(leftRect.xMax - 6f, leftRect.yMax));
 
+            DrawModelDropdown(snapshot, inRect);
+
             DrawDraggingPreview();
         }
 
@@ -111,11 +116,20 @@ namespace RimClaw
 
                 TextAnchor oldAnchor = Text.Anchor;
                 GameFont oldFont = Text.Font;
-                Text.Anchor = TextAnchor.MiddleCenter;
+                string assignedLabel = host.GetAssignedGpuLabel(claw);
+                bool isNone = assignedLabel == "None";
+                Color oldColor = GUI.color;
+                if (isNone)
+                {
+                    GUI.color = Color.red;
+                }
+
+                Text.Anchor = TextAnchor.UpperLeft;
                 Text.Font = GameFont.Tiny;
-                Widgets.Label(new Rect(cell.x - 8f, portraitRect.yMax - 10f, cell.width + 16f, 12f), AbbreviateName(host.GetAssignedGpuLabel(claw), 8));
+                Widgets.Label(new Rect(cell.x + 2f, cell.y + 1f, cell.width - 4f, 14f), AbbreviateName(assignedLabel, 8));
                 Text.Font = oldFont;
                 Text.Anchor = oldAnchor;
+                GUI.color = oldColor;
 
                 Rect labelRect = new Rect(cell.x - 10f, cell.yMax + 1f, cell.width + 20f, 18f);
                 DrawCenteredShortName(labelRect, claw);
@@ -144,6 +158,7 @@ namespace RimClaw
 
             Rect listRect = new Rect(rect.x + 8f, titleRect.yMax + 6f, rect.width - 16f, rect.height - 18f - titleRect.height);
             Rect viewRect = new Rect(0f, 0f, listRect.width - 16f, snapshot.Gpus.Count * 100f + 8f);
+            gpuIconRects.Clear();
 
             Widgets.BeginScrollView(listRect, ref gpuScrollPos, viewRect);
 
@@ -151,13 +166,13 @@ namespace RimClaw
             {
                 HostGpuSnapshot gpu = snapshot.Gpus[i];
                 Rect row = new Rect(0f, i * 100f, viewRect.width, 96f);
-                DrawGpuRow(row, i, gpu, snapshot.ModelName);
+                DrawGpuRow(row, i, gpu, listRect);
             }
 
             Widgets.EndScrollView();
         }
 
-        private void DrawGpuRow(Rect row, int index, HostGpuSnapshot gpu, string modelName)
+        private void DrawGpuRow(Rect row, int index, HostGpuSnapshot gpu, Rect listRect)
         {
             DrawOutline(row);
             if (selectedGpuIndex == index)
@@ -174,9 +189,19 @@ namespace RimClaw
             Rect iconRect = new Rect(row.x + 12f, row.y + 12f, iconSize, iconSize);
             DrawModelSign(iconRect, ResolveModelTint(gpu));
 
+            Rect iconScreenRect = new Rect(listRect.x + iconRect.x - gpuScrollPos.x, listRect.y + iconRect.y - gpuScrollPos.y, iconRect.width, iconRect.height);
+            gpuIconRects[gpu.ThingId] = iconScreenRect;
+
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && iconRect.Contains(Event.current.mousePosition))
+            {
+                modelDropdownGpuThingId = modelDropdownGpuThingId == gpu.ThingId ? -1 : gpu.ThingId;
+                modelDropdownScrollPos = Vector2.zero;
+                Event.current.Use();
+            }
+
             float textX = iconRect.xMax + 12f;
             Widgets.Label(new Rect(textX, row.y + 8f, row.width - textX - 8f, 20f), gpu.Name);
-            Widgets.Label(new Rect(textX, row.y + 30f, row.width - textX - 8f, 18f), modelName);
+            Widgets.Label(new Rect(textX, row.y + 30f, row.width - textX - 8f, 18f), gpu.ModelName);
             Widgets.Label(new Rect(textX, row.y + 50f, row.width - textX - 8f, 18f), $"Instances: {gpu.UsedInstances}/{gpu.TotalInstances}");
 
             Rect usageBar = new Rect(textX, row.y + 72f, row.width - textX - 8f, 10f);
@@ -185,16 +210,30 @@ namespace RimClaw
             Color modelTint = ResolveModelTint(gpu);
             Widgets.DrawBoxSolid(new Rect(usageBar.x + 1f, usageBar.y + 1f, (usageBar.width - 2f) * pct, usageBar.height - 2f), modelTint);
 
-            if (Widgets.ButtonInvisible(row))
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
             {
                 selectedGpuIndex = index;
+                modelDropdownGpuThingId = -1;
+                Event.current.Use();
             }
 
             if (draggingClaw != null && Event.current.type == EventType.MouseUp && row.Contains(Event.current.mousePosition))
             {
+                if (!gpu.IsActive)
+                {
+                    Messages.Message("Cannot assign clawfish to inactive GPU (None model).", MessageTypeDefOf.RejectInput, historical: false);
+                    draggingClaw = null;
+                    Event.current.Use();
+                    return;
+                }
+
                 if (host.AssignClawToGpu(draggingClaw, gpu.ThingId))
                 {
                     Messages.Message($"{draggingClaw.NameShortColored} assigned to {gpu.Name}", MessageTypeDefOf.TaskCompletion, historical: false);
+                }
+                else
+                {
+                    Messages.Message("Cannot assign clawfish to this GPU.", MessageTypeDefOf.RejectInput, historical: false);
                 }
 
                 draggingClaw = null;
@@ -437,6 +476,97 @@ namespace RimClaw
             }
         }
 
+        private void DrawModelDropdown(HostComputerSnapshot snapshot, Rect windowRect)
+        {
+            if (modelDropdownGpuThingId < 0)
+            {
+                return;
+            }
+
+            if (!gpuIconRects.TryGetValue(modelDropdownGpuThingId, out Rect iconRect))
+            {
+                modelDropdownGpuThingId = -1;
+                return;
+            }
+
+            int optionCount = snapshot.AvailableModels.Count + 1;
+            const float rowHeight = 22f;
+            const float panelWidth = 208f;
+            float panelHeight = Mathf.Min(180f, optionCount * rowHeight + 8f);
+            Rect panelRect = new Rect(iconRect.xMax + 4f, iconRect.y, panelWidth, panelHeight);
+            if (panelRect.xMax > windowRect.xMax - 8f)
+            {
+                panelRect.x = iconRect.x - panelWidth - 4f;
+            }
+
+            panelRect.y = Mathf.Clamp(panelRect.y, windowRect.y + 8f, windowRect.yMax - panelHeight - 8f);
+
+            if (Event.current.type == EventType.MouseDown && !panelRect.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
+            {
+                modelDropdownGpuThingId = -1;
+                return;
+            }
+
+            Widgets.DrawBoxSolid(panelRect, new Color(0.08f, 0.10f, 0.12f, 1f));
+            DrawOutline(panelRect);
+
+            Rect outRect = new Rect(panelRect.x + 2f, panelRect.y + 2f, panelRect.width - 4f, panelRect.height - 4f);
+            Rect viewRect = new Rect(0f, 0f, outRect.width - 16f, optionCount * rowHeight);
+            Widgets.BeginScrollView(outRect, ref modelDropdownScrollPos, viewRect);
+
+            HostGpuSnapshot selectedGpu = null;
+            for (int i = 0; i < snapshot.Gpus.Count; i++)
+            {
+                if (snapshot.Gpus[i].ThingId == modelDropdownGpuThingId)
+                {
+                    selectedGpu = snapshot.Gpus[i];
+                    break;
+                }
+            }
+
+            DrawModelOptionRow(new Rect(0f, 0f, viewRect.width, rowHeight), "(None)", new Color32(100, 100, 100, 255), -1, selectedGpu);
+            for (int i = 0; i < snapshot.AvailableModels.Count; i++)
+            {
+                HostModelOptionSnapshot option = snapshot.AvailableModels[i];
+                DrawModelOptionRow(new Rect(0f, (i + 1) * rowHeight, viewRect.width, rowHeight), option.ModelName, option.ModelColor, option.DiskThingId, selectedGpu);
+            }
+
+            Widgets.EndScrollView();
+        }
+
+        private void DrawModelOptionRow(Rect row, string label, Color color, int diskThingId, HostGpuSnapshot selectedGpu)
+        {
+            bool isSelected = selectedGpu != null && selectedGpu.ModelDiskThingId == diskThingId;
+            if (isSelected)
+            {
+                Widgets.DrawHighlightSelected(row);
+            }
+            else if (Mouse.IsOver(row))
+            {
+                Widgets.DrawHighlight(row);
+            }
+
+            Rect iconRect = new Rect(row.x + 4f, row.y + 3f, 14f, 14f);
+            DrawModelSign(iconRect, color);
+
+            GameFont oldFont = Text.Font;
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(new Rect(row.x + 22f, row.y + 3f, row.width - 24f, 16f), label);
+            Text.Font = oldFont;
+
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition))
+            {
+                if (host.SetGpuModelForGpu(modelDropdownGpuThingId, diskThingId))
+                {
+                    modelDropdownGpuThingId = -1;
+                }
+                else
+                {
+                    Messages.Message("Failed to switch model for this GPU.", MessageTypeDefOf.RejectInput, historical: false);
+                }
+            }
+        }
+
         private void GetHistorySlice(int totalCount, out int startIndex, out int count)
         {
             if (totalCount <= 0)
@@ -526,6 +656,11 @@ namespace RimClaw
 
         private static Color ResolveModelTint(HostGpuSnapshot gpu)
         {
+            if (!gpu.IsActive)
+            {
+                return new Color32(100, 100, 100, 255);
+            }
+
             if (gpu.ModelColor.grayscale < 0.95f)
             {
                 return gpu.ModelColor;

@@ -8,6 +8,13 @@ namespace RimClaw
     public class CompProperties_MemoryDisk : CompProperties
     {
         public int searchRadius = 12;
+        public float modelSignOffsetX = 0f;
+        public float modelSignOffsetY = 0.42f;
+        public float modelSignOffsetZ = 0f;
+        public float modelSignScale = 0.8f;
+        public float modelSignAlpha = 0.8f;
+        public float modelSignBobAmplitudeTiles = 0.1f;
+        public float modelSignBobPeriodSeconds = 4f;
 
         public CompProperties_MemoryDisk()
         {
@@ -17,6 +24,8 @@ namespace RimClaw
 
     public class CompMemoryDisk : ThingComp
     {
+        private Mote modelSignMote;
+
         private bool hasModel;
         private string modelName;
         private Color modelColor = Color.white;
@@ -78,6 +87,7 @@ namespace RimClaw
                         requiredVram = 0;
                         tokenPerSecondPerInstance = 0f;
                         workSpeedBonus = 0f;
+                        DestroyModelSignMote();
                     }
                 };
             }
@@ -93,6 +103,63 @@ namespace RimClaw
             return hostThingID < 0
                 ? $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%"
                 : $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%\nHost ID: {hostThingID}";
+        }
+
+        public override void CompTick()
+        {
+            base.CompTick();
+
+            if (parent?.MapHeld == null || !parent.Spawned)
+            {
+                DestroyModelSignMote();
+                return;
+            }
+
+            if (!hasModel)
+            {
+                DestroyModelSignMote();
+                return;
+            }
+
+            EnsureModelSignMote();
+            if (modelSignMote == null || modelSignMote.Destroyed)
+            {
+                return;
+            }
+        }
+
+        private void EnsureModelSignMote()
+        {
+            if (modelSignMote != null && !modelSignMote.Destroyed)
+            {
+                return;
+            }
+
+            ThingDef moteDef = RimClawDefOf.RimClaw_Mote_ModelDiskSign;
+            if (moteDef == null)
+            {
+                return;
+            }
+
+            modelSignMote = MoteMaker.MakeAttachedOverlay(parent, moteDef, new Vector3(Props.modelSignOffsetX, Props.modelSignOffsetY, Props.modelSignOffsetZ), Mathf.Max(0.05f, Props.modelSignScale), -1f);
+            Mote_ModelDiskSign sign = modelSignMote as Mote_ModelDiskSign;
+            if (sign != null)
+            {
+                sign.bobAmplitudeTiles = Props.modelSignBobAmplitudeTiles;
+                sign.bobPeriodSeconds = Props.modelSignBobPeriodSeconds;
+            }
+
+            modelSignMote.instanceColor = new Color(modelColor.r, modelColor.g, modelColor.b, Mathf.Clamp01(Props.modelSignAlpha));
+        }
+
+        private void DestroyModelSignMote()
+        {
+            if (modelSignMote != null && !modelSignMote.Destroyed)
+            {
+                modelSignMote.Destroy();
+            }
+
+            modelSignMote = null;
         }
 
         private void InsertNearbyModel()

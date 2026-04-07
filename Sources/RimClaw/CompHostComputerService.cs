@@ -22,6 +22,8 @@ namespace RimClaw
         public string Name;
         public string ModelName;
         public Color ModelColor;
+        public int ModelDiskThingId;
+        public bool IsActive;
         public int TotalVram;
         public int UsedVram;
         public int TotalInstances;
@@ -34,6 +36,16 @@ namespace RimClaw
         public float TotalUsageFraction;
         public List<Pawn> AssignedClaws = new List<Pawn>();
         public List<float> InstanceUsageFractions = new List<float>();
+    }
+
+    public class HostModelOptionSnapshot
+    {
+        public int DiskThingId;
+        public string ModelName;
+        public Color ModelColor;
+        public int RequiredVram;
+        public float TokenPerSecondPerInstance;
+        public float WorkSpeedBonus;
     }
 
     public class HostComputerSnapshot
@@ -54,6 +66,7 @@ namespace RimClaw
         public float HeatRate;
         public float ActiveTimeSeconds;
         public List<HostGpuSnapshot> Gpus = new List<HostGpuSnapshot>();
+        public List<HostModelOptionSnapshot> AvailableModels = new List<HostModelOptionSnapshot>();
         public List<float> TpsHistory = new List<float>();
         public List<float> HeatHistory = new List<float>();
         public List<Pawn> ConnectedClaws = new List<Pawn>();
@@ -67,18 +80,18 @@ namespace RimClaw
 
         private List<Pawn> connectedClaws = new List<Pawn>();
         private readonly Dictionary<int, int> clawToGpuThing = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> gpuToModelDiskThing = new Dictionary<int, int>();
         private readonly List<Thing> connectedGpus = new List<Thing>();
+        private readonly List<CompMemoryDisk> connectedMemoryDisks = new List<CompMemoryDisk>();
         private readonly List<HostGpuSnapshot> gpuSnapshots = new List<HostGpuSnapshot>();
+        private readonly List<HostModelOptionSnapshot> availableModels = new List<HostModelOptionSnapshot>();
         private readonly List<float> tpsHistory = new List<float>();
         private readonly List<float> heatHistory = new List<float>();
 
         private List<int> assignmentPawnIds;
         private List<int> assignmentGpuIds;
-
-        private Thing connectedMemoryDisk;
-        private string modelName = "(none)";
-        private float modelWorkSpeedMultiplier = 1f;
-        private Color modelColor = Color.white;
+        private List<int> gpuModelGpuIds;
+        private List<int> gpuModelDiskIds;
 
         private int totalVram;
         private int usedVram;
@@ -103,10 +116,9 @@ namespace RimClaw
             Scribe_Collections.Look(ref connectedClaws, "connectedClaws", LookMode.Reference);
             Scribe_Collections.Look(ref assignmentPawnIds, "assignmentPawnIds", LookMode.Value);
             Scribe_Collections.Look(ref assignmentGpuIds, "assignmentGpuIds", LookMode.Value);
+            Scribe_Collections.Look(ref gpuModelGpuIds, "gpuModelGpuIds", LookMode.Value);
+            Scribe_Collections.Look(ref gpuModelDiskIds, "gpuModelDiskIds", LookMode.Value);
             Scribe_Values.Look(ref activeTimeSeconds, "activeTimeSeconds", 0f);
-            Scribe_Values.Look(ref modelName, "modelName", "(none)");
-            Scribe_Values.Look(ref modelWorkSpeedMultiplier, "modelWorkSpeedMultiplier", 1f);
-            Scribe_Values.Look(ref modelColor, "modelColor", Color.white);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
@@ -122,6 +134,16 @@ namespace RimClaw
                     for (int i = 0; i < count; i++)
                     {
                         clawToGpuThing[assignmentPawnIds[i]] = assignmentGpuIds[i];
+                    }
+                }
+
+                gpuToModelDiskThing.Clear();
+                if (gpuModelGpuIds != null && gpuModelDiskIds != null)
+                {
+                    int count = Math.Min(gpuModelGpuIds.Count, gpuModelDiskIds.Count);
+                    for (int i = 0; i < count; i++)
+                    {
+                        gpuToModelDiskThing[gpuModelGpuIds[i]] = gpuModelDiskIds[i];
                     }
                 }
             }
@@ -172,16 +194,29 @@ namespace RimClaw
                 }
             }
 
-            if (connectedMemoryDisk != null && connectedMemoryDisk.Spawned && connectedMemoryDisk.Map == parent.Map)
+            for (int i = 0; i < connectedMemoryDisks.Count; i++)
             {
-                GenDraw.DrawLineBetween(parent.DrawPos, connectedMemoryDisk.DrawPos, YellowLineMat);
+                Thing diskThing = connectedMemoryDisks[i]?.parent;
+                if (diskThing != null && diskThing.Spawned && diskThing.Map == parent.Map)
+                {
+                    GenDraw.DrawLineBetween(parent.DrawPos, diskThing.DrawPos, YellowLineMat);
+                }
             }
         }
 
         public override string CompInspectStringExtra()
         {
             RefreshSnapshot(force: false);
-            return $"Model: {modelName}\nCurrent TPS: {totalUsedTokenRate:0.0}/{totalTokenCapacity:0.0} needed\nConnected Clawfish: {connectedClaws.Count}\nConnected GPU: {connectedGpus.Count}\nVRAM: {usedVram}/{totalVram} GB";
+            int activeGpuCount = 0;
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                if (gpuSnapshots[i].IsActive)
+                {
+                    activeGpuCount++;
+                }
+            }
+
+            return $"Models connected: {availableModels.Count}\nCurrent TPS: {totalUsedTokenRate:0.0}/{totalTokenCapacity:0.0} needed\nConnected Clawfish: {connectedClaws.Count}\nConnected GPU: {activeGpuCount}/{connectedGpus.Count}\nVRAM: {usedVram}/{totalVram} GB";
         }
 
         public void AddConnectedClaw(Pawn claw)
@@ -231,7 +266,7 @@ namespace RimClaw
             }
 
             HostGpuSnapshot assigned = GetGpuSnapshot(gpuThingId);
-            if (assigned == null)
+            if (assigned == null || !assigned.IsActive)
             {
                 return 0f;
             }
@@ -248,6 +283,11 @@ namespace RimClaw
 
             HostGpuSnapshot snapshot = GetGpuSnapshot(gpuThingId);
             if (snapshot == null)
+            {
+                return false;
+            }
+
+            if (!snapshot.IsActive)
             {
                 return false;
             }
@@ -271,24 +311,81 @@ namespace RimClaw
         {
             if (claw == null)
             {
-                return "Unassigned";
+                return "None";
             }
 
             if (!clawToGpuThing.TryGetValue(claw.thingIDNumber, out int gpuThingId))
             {
-                return "Unassigned";
+                return "None";
             }
 
             HostGpuSnapshot snapshot = GetGpuSnapshot(gpuThingId);
-            return snapshot?.Name ?? "Unassigned";
+            if (snapshot == null || !snapshot.IsActive)
+            {
+                return "None";
+            }
+
+            return snapshot.Name;
+        }
+
+        public bool SetGpuModelForGpu(int gpuThingId, int diskThingId)
+        {
+            RefreshSnapshot(force: true);
+            HostGpuSnapshot gpu = GetGpuSnapshot(gpuThingId);
+            if (gpu == null)
+            {
+                return false;
+            }
+
+            int normalizedDiskId = diskThingId;
+            if (normalizedDiskId >= 0 && GetModelOption(normalizedDiskId) == null)
+            {
+                return false;
+            }
+
+            if (gpuToModelDiskThing.TryGetValue(gpuThingId, out int existingDiskId) && existingDiskId == normalizedDiskId)
+            {
+                return true;
+            }
+
+            gpuToModelDiskThing[gpuThingId] = normalizedDiskId;
+            int unassigned = RemoveAssignmentsForGpu(gpuThingId);
+            RefreshSnapshot(force: true);
+
+            if (unassigned > 0)
+            {
+                Messages.Message("Clawfish on that GPU were deassigned. Reassign them to active instances.", parent, MessageTypeDefOf.CautionInput, historical: false);
+            }
+
+            return true;
         }
 
         public HostComputerSnapshot GetSnapshot()
         {
             RefreshSnapshot(force: false);
+            int activeGpuCount = 0;
+            string firstModelName = "(none)";
+            float firstWorkSpeedMultiplier = 1f;
+            float firstHeatRate = 0f;
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                if (!gpuSnapshots[i].IsActive)
+                {
+                    continue;
+                }
+
+                activeGpuCount++;
+                if (firstModelName == "(none)")
+                {
+                    firstModelName = gpuSnapshots[i].ModelName;
+                    firstWorkSpeedMultiplier = gpuSnapshots[i].WorkSpeedMultiplier;
+                    firstHeatRate = gpuSnapshots[i].HeatRate;
+                }
+            }
+
             HostComputerSnapshot snapshot = new HostComputerSnapshot
             {
-                ActiveGpuCount = connectedGpus.Count,
+                ActiveGpuCount = activeGpuCount,
                 TotalGpuCount = connectedGpus.Count,
                 RoomTemperature = parent.MapHeld == null ? 21f : parent.Position.GetTemperature(parent.MapHeld),
                 TotalLiveTokenRate = totalUsedTokenRate,
@@ -296,16 +393,17 @@ namespace RimClaw
                 TotalConnectedClaws = connectedClaws.Count,
                 UsedVram = usedVram,
                 TotalVram = totalVram,
-                ModelCount = modelName == "(none)" ? 0 : 1,
+                ModelCount = availableModels.Count,
                 UsedInstances = usedInstances,
                 TotalInstances = totalInstances,
-                ModelName = modelName,
-                WorkSpeedMultiplier = modelWorkSpeedMultiplier,
-                HeatRate = totalHeatRate,
+                ModelName = firstModelName,
+                WorkSpeedMultiplier = firstWorkSpeedMultiplier,
+                HeatRate = firstHeatRate,
                 ActiveTimeSeconds = activeTimeSeconds
             };
 
             snapshot.Gpus.AddRange(gpuSnapshots);
+            snapshot.AvailableModels.AddRange(availableModels);
             snapshot.TpsHistory.AddRange(tpsHistory);
             snapshot.HeatHistory.AddRange(heatHistory);
 
@@ -349,7 +447,7 @@ namespace RimClaw
             CalculateUsage();
             PersistAssignments();
 
-            if (tickDelta > 0 && IsValidSupplier && modelName != "(none)" && connectedClaws.Count > 0)
+            if (tickDelta > 0 && IsValidSupplier && connectedClaws.Count > 0 && availableModels.Count > 0)
             {
                 activeTimeSeconds += tickDelta / 60f;
             }
@@ -381,19 +479,14 @@ namespace RimClaw
         private void ResolveHardwareNetwork()
         {
             connectedGpus.Clear();
+            connectedMemoryDisks.Clear();
             gpuSnapshots.Clear();
-            connectedMemoryDisk = null;
-            modelName = "(none)";
-            modelWorkSpeedMultiplier = 1f;
-            modelColor = Color.white;
+            availableModels.Clear();
 
             if (parent.MapHeld == null)
             {
                 return;
             }
-
-            CompMemoryDisk bestDisk = null;
-            float bestDiskDist = float.MaxValue;
 
             foreach (Thing thing in GenRadial.RadialDistinctThingsAround(parent.Position, parent.MapHeld, Props.connectionRadius, useCenter: true))
             {
@@ -408,13 +501,8 @@ namespace RimClaw
                 CompMemoryDisk disk = thing.TryGetComp<CompMemoryDisk>();
                 if (disk != null)
                 {
-                    float dist = thing.Position.DistanceTo(parent.Position);
-                    if (dist < bestDiskDist)
-                    {
-                        bestDiskDist = dist;
-                        bestDisk = disk;
-                        connectedMemoryDisk = thing;
-                    }
+                    disk.AssignHost(parent);
+                    connectedMemoryDisks.Add(disk);
                 }
             }
 
@@ -424,21 +512,23 @@ namespace RimClaw
                 return zCompare != 0 ? zCompare : a.Position.x.CompareTo(b.Position.x);
             });
 
-            int requiredVramPerInstance = 0;
-            float tokenPerInstance = 0f;
+            for (int i = 0; i < connectedMemoryDisks.Count; i++)
+            {
+                CompMemoryDisk disk = connectedMemoryDisks[i];
+                if (disk == null || !disk.HasModel)
+                {
+                    continue;
+                }
 
-            if (bestDisk != null && bestDisk.HasModel)
-            {
-                bestDisk.AssignHost(parent);
-                modelName = bestDisk.ModelName;
-                modelColor = bestDisk.ModelColor;
-                modelWorkSpeedMultiplier = 1f + bestDisk.WorkSpeedBonus;
-                requiredVramPerInstance = bestDisk.RequiredVram;
-                tokenPerInstance = bestDisk.TokenPerSecondPerInstance;
-            }
-            else
-            {
-                connectedMemoryDisk = null;
+                availableModels.Add(new HostModelOptionSnapshot
+                {
+                    DiskThingId = disk.parent.thingIDNumber,
+                    ModelName = disk.ModelName,
+                    ModelColor = disk.ModelColor,
+                    RequiredVram = disk.RequiredVram,
+                    TokenPerSecondPerInstance = disk.TokenPerSecondPerInstance,
+                    WorkSpeedBonus = disk.WorkSpeedBonus
+                });
             }
 
             for (int i = 0; i < connectedGpus.Count; i++)
@@ -446,15 +536,33 @@ namespace RimClaw
                 Thing gpuThing = connectedGpus[i];
                 CompGPUCluster gpuComp = gpuThing.TryGetComp<CompGPUCluster>();
                 int gpuVram = gpuComp?.Props?.providedVRAM ?? 0;
+
+                int selectedDiskId;
+                if (!gpuToModelDiskThing.TryGetValue(gpuThing.thingIDNumber, out selectedDiskId))
+                {
+                    selectedDiskId = availableModels.Count > 0 ? availableModels[0].DiskThingId : -1;
+                    gpuToModelDiskThing[gpuThing.thingIDNumber] = selectedDiskId;
+                }
+
+                HostModelOptionSnapshot selectedModel = GetModelOption(selectedDiskId);
+                bool isActive = selectedModel != null;
+                int requiredVramPerInstance = isActive ? Mathf.Max(0, selectedModel.RequiredVram) : 0;
+                float tokenPerInstance = isActive ? Mathf.Max(0f, selectedModel.TokenPerSecondPerInstance) : 0f;
                 int gpuTotalInstances = requiredVramPerInstance > 0 ? gpuVram / requiredVramPerInstance : 0;
                 float gpuCapacity = gpuTotalInstances * tokenPerInstance;
+                Color gpuColor = isActive ? selectedModel.ModelColor : new Color32(100, 100, 100, 255);
+                string gpuModelName = isActive ? selectedModel.ModelName : "(None)";
+                float workSpeedMultiplier = isActive ? 1f + selectedModel.WorkSpeedBonus : 1f;
+                float heatRate = isActive ? (gpuComp?.Props?.heatPerSecond ?? 0f) : 0f;
 
                 gpuSnapshots.Add(new HostGpuSnapshot
                 {
                     ThingId = gpuThing.thingIDNumber,
                     Name = $"GPU {i}",
-                    ModelName = modelName,
-                    ModelColor = modelColor,
+                    ModelName = gpuModelName,
+                    ModelColor = gpuColor,
+                    ModelDiskThingId = isActive ? selectedModel.DiskThingId : -1,
+                    IsActive = isActive,
                     TotalVram = gpuVram,
                     UsedVram = gpuTotalInstances * requiredVramPerInstance,
                     TotalInstances = gpuTotalInstances,
@@ -462,11 +570,14 @@ namespace RimClaw
                     PerInstanceCapacityTps = tokenPerInstance,
                     CapacityTps = gpuCapacity,
                     UsedTps = 0f,
-                    HeatRate = gpuComp?.Props?.heatPerSecond ?? 0f,
-                    WorkSpeedMultiplier = modelWorkSpeedMultiplier,
+                    HeatRate = heatRate,
+                    WorkSpeedMultiplier = workSpeedMultiplier,
                     TotalUsageFraction = 0f
                 });
             }
+
+            CleanupInactiveAssignments();
+            CleanupStaleModelAssignments();
         }
 
         private void CalculateUsage()
@@ -493,9 +604,9 @@ namespace RimClaw
                 totalPowerConsumption += GetPowerConsumption(gpuThing as ThingWithComps);
             }
 
-            if (connectedMemoryDisk != null)
+            for (int i = 0; i < connectedMemoryDisks.Count; i++)
             {
-                totalPowerConsumption += GetPowerConsumption(connectedMemoryDisk as ThingWithComps);
+                totalPowerConsumption += GetPowerConsumption(connectedMemoryDisks[i]?.parent as ThingWithComps);
             }
 
             for (int i = 0; i < connectedClaws.Count; i++)
@@ -514,7 +625,7 @@ namespace RimClaw
                 }
 
                 HostGpuSnapshot gpu = GetGpuSnapshot(gpuId);
-                if (gpu == null || gpu.TotalInstances <= 0)
+                if (gpu == null || !gpu.IsActive || gpu.TotalInstances <= 0)
                 {
                     continue;
                 }
@@ -559,6 +670,11 @@ namespace RimClaw
             for (int i = 0; i < gpuSnapshots.Count; i++)
             {
                 HostGpuSnapshot gpu = gpuSnapshots[i];
+                if (!gpu.IsActive)
+                {
+                    continue;
+                }
+
                 int free = gpu.TotalInstances - GetAssignedClawCountForGpu(gpu.ThingId);
                 if (free > bestFree)
                 {
@@ -641,15 +757,104 @@ namespace RimClaw
             return null;
         }
 
+        private HostModelOptionSnapshot GetModelOption(int diskThingId)
+        {
+            for (int i = 0; i < availableModels.Count; i++)
+            {
+                if (availableModels[i].DiskThingId == diskThingId)
+                {
+                    return availableModels[i];
+                }
+            }
+
+            return null;
+        }
+
+        private int RemoveAssignmentsForGpu(int gpuThingId)
+        {
+            List<int> toRemove = new List<int>();
+            foreach (KeyValuePair<int, int> kvp in clawToGpuThing)
+            {
+                if (kvp.Value == gpuThingId)
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < toRemove.Count; i++)
+            {
+                clawToGpuThing.Remove(toRemove[i]);
+            }
+
+            return toRemove.Count;
+        }
+
+        private void CleanupInactiveAssignments()
+        {
+            HashSet<int> activeGpuIds = new HashSet<int>();
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                if (gpuSnapshots[i].IsActive)
+                {
+                    activeGpuIds.Add(gpuSnapshots[i].ThingId);
+                }
+            }
+
+            List<int> toRemove = new List<int>();
+            foreach (KeyValuePair<int, int> kvp in clawToGpuThing)
+            {
+                if (!activeGpuIds.Contains(kvp.Value))
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < toRemove.Count; i++)
+            {
+                clawToGpuThing.Remove(toRemove[i]);
+            }
+        }
+
+        private void CleanupStaleModelAssignments()
+        {
+            HashSet<int> validGpuIds = new HashSet<int>();
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                validGpuIds.Add(gpuSnapshots[i].ThingId);
+            }
+
+            List<int> stale = new List<int>();
+            foreach (KeyValuePair<int, int> kvp in gpuToModelDiskThing)
+            {
+                if (!validGpuIds.Contains(kvp.Key))
+                {
+                    stale.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < stale.Count; i++)
+            {
+                gpuToModelDiskThing.Remove(stale[i]);
+            }
+        }
+
         private void PersistAssignments()
         {
             assignmentPawnIds = new List<int>();
             assignmentGpuIds = new List<int>();
+            gpuModelGpuIds = new List<int>();
+            gpuModelDiskIds = new List<int>();
 
             foreach (KeyValuePair<int, int> kvp in clawToGpuThing)
             {
                 assignmentPawnIds.Add(kvp.Key);
                 assignmentGpuIds.Add(kvp.Value);
+            }
+
+            foreach (KeyValuePair<int, int> kvp in gpuToModelDiskThing)
+            {
+                gpuModelGpuIds.Add(kvp.Key);
+                gpuModelDiskIds.Add(kvp.Value);
             }
         }
 
