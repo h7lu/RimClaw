@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RimWorld;
 using Verse;
 using Verse.AI;
 
@@ -52,7 +53,11 @@ namespace RimClaw
                     return;
                 }
 
-                comp.TryStoreModelFromCardThing(carried, consumeThing: true);
+                bool stored = comp.TryStoreModelFromCardThing(carried, consumeThing: true);
+                if (!stored)
+                {
+                    Messages.Message("RimClaw_MemoryDisk_InsertFailed".Translate(), disk, MessageTypeDefOf.RejectInput, historical: false);
+                }
             };
             insert.defaultCompleteMode = ToilCompleteMode.Instant;
             yield return insert;

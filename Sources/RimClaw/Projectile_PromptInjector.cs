@@ -1,4 +1,5 @@
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace RimClaw
@@ -15,6 +16,12 @@ namespace RimClaw
             }
 
             if (hitThing is not Pawn target || !ClawfishUtility.IsClawfish(target) || target.Dead)
+            {
+                return;
+            }
+
+            float resistanceFactor = Mathf.Clamp01(SkillsImplantUtility.GetPromptInjectionResistanceFactor(target));
+            if (Rand.Value > resistanceFactor)
             {
                 return;
             }

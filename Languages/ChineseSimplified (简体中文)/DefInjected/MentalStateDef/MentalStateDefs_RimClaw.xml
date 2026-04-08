@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: context collapse -->
+  <RimClaw_ContextCollapse.label>上下文崩溃</RimClaw_ContextCollapse.label>
+  <!-- EN: Context collapsed -->
+  <RimClaw_ContextCollapse.baseInspectLine>上下文已崩溃</RimClaw_ContextCollapse.baseInspectLine>
+  <!-- EN: {PAWN_nameDef} has entered context collapse and is behaving unpredictably. -->
+  <RimClaw_ContextCollapse.beginLetter>[PAWN_nameDef] 已进入上下文崩溃状态，行为变得不可预测。</RimClaw_ContextCollapse.beginLetter>
+  <!-- EN: Context collapse -->
+  <RimClaw_ContextCollapse.beginLetterLabel>上下文崩溃</RimClaw_ContextCollapse.beginLetterLabel>
+  
+</LanguageData>

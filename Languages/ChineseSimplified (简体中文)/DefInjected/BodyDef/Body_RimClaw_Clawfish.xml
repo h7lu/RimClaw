@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: left claw -->
+  <RimClaw_ClawfishBody.corePart.parts.left_claw.customLabel>左螯</RimClaw_ClawfishBody.corePart.parts.left_claw.customLabel>
+  <!-- EN: right claw -->
+  <RimClaw_ClawfishBody.corePart.parts.right_claw.customLabel>右螯</RimClaw_ClawfishBody.corePart.parts.right_claw.customLabel>
+  <!-- EN: left eye -->
+  <RimClaw_ClawfishBody.corePart.parts.left_eye.customLabel>左眼</RimClaw_ClawfishBody.corePart.parts.left_eye.customLabel>
+  <!-- EN: right eye -->
+  <RimClaw_ClawfishBody.corePart.parts.right_eye.customLabel>右眼</RimClaw_ClawfishBody.corePart.parts.right_eye.customLabel>
+  <!-- EN: left antenna -->
+  <RimClaw_ClawfishBody.corePart.parts.left_antenna.customLabel>左触角</RimClaw_ClawfishBody.corePart.parts.left_antenna.customLabel>
+  <!-- EN: right antenna -->
+  <RimClaw_ClawfishBody.corePart.parts.right_antenna.customLabel>右触角</RimClaw_ClawfishBody.corePart.parts.right_antenna.customLabel>
+  
+</LanguageData>

@@ -3,7 +3,13 @@
   <ThingDef ParentName="BuildingBase">
     <defName>RimClaw_LLMServiceSubscription</defName>
     <label>LLM Service Subscription</label>
-    <description>Remote token service endpoint for connected Clawfish agents.</description>
+    <tickerType>Normal</tickerType>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <description>A portable remote endpoint that connects to a datacenter far away. Provides LLM service for connected Clawfish agents. Automatically consumes silver nearby to provide token I/O. Disconnects upon the depletion of fee.</description>
     <thingClass>Building</thingClass>
     <graphicData>
       <texPath>llm_subscription</texPath>
@@ -28,7 +34,6 @@
       <ComponentIndustrial>2</ComponentIndustrial>
       <Steel>70</Steel>
     </costList>
-    <designationCategory>Production</designationCategory>
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
@@ -41,26 +46,37 @@
       </li>
       <li Class="RimClaw.CompProperties_ModelCard" />
       <li Class="RimClaw.CompProperties_LLMSubscriptionService">
-        <baseTokenCapacityPerSecond>220</baseTokenCapacityPerSecond>
+        <baseTokenCapacityPerSecond>440</baseTokenCapacityPerSecond>
         <maxCapacityPerClaw>400</maxCapacityPerClaw>
-        <pricePerKTokens>0.1</pricePerKTokens>
+        <pricePerKTokens>0.5</pricePerKTokens>
         <silverSearchRadius>5</silverSearchRadius>
         <historyLength>360</historyLength>
       </li>
+      <li Class="CompProperties_Glower">
+        <glowRadius>4</glowRadius>
+        <glowColor>(220,245,255,0)</glowColor>
+      </li>
+      <li Class="CompProperties_Flickable"/>
     </comps>
     <placeWorkers>
       <li>RimClaw.PlaceWorker_NotUnderThickRoof</li>
     </placeWorkers>
     <researchPrerequisites>
-      <li>MicroelectronicsBasics</li>
+      <li>ClusterComputing</li>
     </researchPrerequisites>
   </ThingDef>
 
   <ThingDef ParentName="BuildingBase">
     <defName>RimClaw_HostComputer</defName>
     <label>Host Computer</label>
-    <description>Central datacenter host that orchestrates model instances and token throughput.</description>
+    <description>Central datacenter host that orchestrates model instances and token throughput. Connects to Memory disks to read model data, and connects to GPU Clusters for computing power.</description>
     <thingClass>Building</thingClass>
+    <tickerType>Normal</tickerType>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <drawerType>MapMeshAndRealTime</drawerType>
     <graphicData>
       <texPath>hostcomputer_south</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -84,7 +100,6 @@
       <Plasteel>20</Plasteel>
       <Steel>20</Steel>
     </costList>
-    <designationCategory>Production</designationCategory>
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
@@ -98,6 +113,11 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>800</basePowerConsumption>
       </li>
+      <li Class="CompProperties_Glower">
+        <glowRadius>5</glowRadius>
+        <glowColor>(200,255,200,0)</glowColor>
+      </li>
+      <li Class="CompProperties_Flickable"/>
       <li Class="RimClaw.CompProperties_HostComputerService">
         <connectionRadius>9</connectionRadius>
       </li>
@@ -110,7 +130,11 @@
   <ThingDef ParentName="BuildingBase">
     <defName>RimClaw_GPUCluster</defName>
     <label>GPU Cluster</label>
-    <description>Compute accelerator unit for Host Computer model instances.</description>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <description>High end computational Unit, produce heat while running. This device is also fragile, where any bit of dust will shut it down.</description>
     <thingClass>Building</thingClass>
     <graphicData>
       <texPath>GPU</texPath>
@@ -132,7 +156,6 @@
       <ComponentSpacer>8</ComponentSpacer>
       <Plasteel>20</Plasteel>
     </costList>
-    <designationCategory>Production</designationCategory>
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
@@ -151,14 +174,20 @@
       </li>
     </comps>
     <researchPrerequisites>
-      <li>MultiAnalyzer</li>
+      <li>ClusterComputing</li>
     </researchPrerequisites>
   </ThingDef>
 
   <ThingDef ParentName="BuildingBase">
     <defName>RimClaw_MemoryDisk</defName>
     <label>memory disk</label>
-    <description>Stores one model package that can be read by a linked Host Computer.</description>
+    <tickerType>Normal</tickerType>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <description>Loads one model package that can be run by a linked Host Computer.</description>
     <thingClass>RimClaw.Building_MemoryDisk</thingClass>
     <graphicData>
       <texPath>Memory</texPath>
@@ -179,30 +208,36 @@
     <costList>
       <ComponentIndustrial>2</ComponentIndustrial>
       <Steel>30</Steel>
+      <ComponentSpacer>1</ComponentSpacer>
     </costList>
-    <designationCategory>Production</designationCategory>
     <building>
       <isEdifice>false</isEdifice>
       <canBuildNonEdificesUnder>true</canBuildNonEdificesUnder>
     </building>
     <comps>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="CompProperties_Glower">
+        <glowRadius>3</glowRadius>
+        <glowColor>(220,220,255,0)</glowColor>
+      </li>
       <li Class="RimClaw.CompProperties_MemoryDisk">
         <formingGraphicData>
-          <texPath>model_sign</texPath>
+          <texPath>model_sign_glow</texPath>
           <graphicClass>Graphic_Single</graphicClass>
-          <drawSize>(0.55,0.55)</drawSize>
+          <drawSize>(0.4,0.4)</drawSize>
         </formingGraphicData>
-        <formingMechBobSpeed>0.0007</formingMechBobSpeed>
-        <formingMechYBobDistance>0.06</formingMechYBobDistance>
-        <formingGraphicYOffset>0.018292684</formingGraphicYOffset>
-        <northOffset>(0,0,0.18)</northOffset>
-        <eastOffset>(0,0,0.18)</eastOffset>
-        <southOffset>(0,0,0.18)</southOffset>
-        <westOffset>(0,0,0.18)</westOffset>
+        <formingGraphicAlpha>0.7</formingGraphicAlpha>
+        <formingMechBobSpeed>0.7</formingMechBobSpeed>
+        <formingMechYBobDistance>0.6</formingMechYBobDistance>
+        <formingGraphicYOffset>0.5</formingGraphicYOffset>
+        <northOffset>(0,0,0.4)</northOffset>
+        <eastOffset>(0,0,0)</eastOffset>
+        <southOffset>(0,0,0)</southOffset>
+        <westOffset>(0,0,0)</westOffset>
       </li>
     </comps>
     <researchPrerequisites>
-      <li>MultiAnalyzer</li>
+      <li>ClusterComputing</li>
     </researchPrerequisites>
   </ThingDef>
 </Defs>

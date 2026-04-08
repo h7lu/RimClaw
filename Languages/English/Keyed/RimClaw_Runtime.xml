@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <RimClaw_Generic_None>None</RimClaw_Generic_None>
+  <RimClaw_Generic_NoneParen>(None)</RimClaw_Generic_NoneParen>
+  <RimClaw_Generic_Unnamed>(unnamed)</RimClaw_Generic_Unnamed>
+
+  <RimClaw_Gizmo_ConnectLLM_Label>Connect to LLM Service</RimClaw_Gizmo_ConnectLLM_Label>
+  <RimClaw_Gizmo_ConnectLLM_Desc>Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply.</RimClaw_Gizmo_ConnectLLM_Desc>
+  <RimClaw_Gizmo_DisconnectLLM_Label>Disconnect from LLM Service</RimClaw_Gizmo_DisconnectLLM_Label>
+  <RimClaw_Gizmo_DisconnectLLM_Desc>Disconnect this clawfish from {0}.</RimClaw_Gizmo_DisconnectLLM_Desc>
+  <RimClaw_Message_ClawConnected>{0} connected to {1}</RimClaw_Message_ClawConnected>
+  <RimClaw_Message_ClawDisconnected>{0} disconnected from service</RimClaw_Message_ClawDisconnected>
+
+  <RimClaw_MemoryDisk_InsertModel_Label>Insert model</RimClaw_MemoryDisk_InsertModel_Label>
+  <RimClaw_MemoryDisk_InsertModel_Desc>Select a model package on the ground, then assign a pawn to carry and insert it.</RimClaw_MemoryDisk_InsertModel_Desc>
+  <RimClaw_MemoryDisk_EjectModel_Label>Eject model</RimClaw_MemoryDisk_EjectModel_Label>
+  <RimClaw_MemoryDisk_EjectModel_Desc>Eject current model as a model package item.</RimClaw_MemoryDisk_EjectModel_Desc>
+  <RimClaw_MemoryDisk_Inspect_None>Model: (none)</RimClaw_MemoryDisk_Inspect_None>
+  <RimClaw_MemoryDisk_Inspect_NoneWithHost>Model: (none)\nHost ID: {0}</RimClaw_MemoryDisk_Inspect_NoneWithHost>
+  <RimClaw_MemoryDisk_Inspect_WithModel>Model: {0}\nRequired VRAM: {1} GB\nToken/s per instance: {2}\nWork speed bonus: +{3}%\nSkill level adjust: {4}</RimClaw_MemoryDisk_Inspect_WithModel>
+  <RimClaw_MemoryDisk_Inspect_WithModelHost>Model: {0}\nRequired VRAM: {1} GB\nToken/s per instance: {2}\nWork speed bonus: +{3}%\nSkill level adjust: {4}\nHost ID: {5}</RimClaw_MemoryDisk_Inspect_WithModelHost>
+  <RimClaw_MemoryDisk_ReinstallEjectFailed>Could not eject previous model package during reinstall.</RimClaw_MemoryDisk_ReinstallEjectFailed>
+  <RimClaw_MemoryDisk_SelectModelPackage>Select a model package.</RimClaw_MemoryDisk_SelectModelPackage>
+  <RimClaw_MemoryDisk_NoInsertionPawn>No available pawn can insert this model package.</RimClaw_MemoryDisk_NoInsertionPawn>
+  <RimClaw_MemoryDisk_EjectPlaceFailed>Could not place ejected model package.</RimClaw_MemoryDisk_EjectPlaceFailed>
+  <RimClaw_MemoryDisk_InsertFailed>Failed to insert model package into memory disk.</RimClaw_MemoryDisk_InsertFailed>
+
+  <RimClaw_GPUCluster_Inspect_Unassigned>Host: unassigned</RimClaw_GPUCluster_Inspect_Unassigned>
+  <RimClaw_GPUCluster_Inspect_Assigned>Host ID: {0}\nVRAM: {1} GB</RimClaw_GPUCluster_Inspect_Assigned>
+
+  <RimClaw_ClawfishToken_Inspect>Tokens: {0}/{1}\nConsumption: {2} tok/s\nStatus: {3}</RimClaw_ClawfishToken_Inspect>
+  <RimClaw_TokenConnection_Status_Connected>Connected to {0}</RimClaw_TokenConnection_Status_Connected>
+  <RimClaw_TokenConnection_Status_NotConnected>Not connected</RimClaw_TokenConnection_Status_NotConnected>
+  <RimClaw_TokenConnection_RequiredTps>Required TPS: {0}</RimClaw_TokenConnection_RequiredTps>
+  <RimClaw_TokenConnection_CurrentTps>Current TPS: {0}/{1} needed</RimClaw_TokenConnection_CurrentTps>
+  <RimClaw_TokenSupplier_Inspect>Connected Clawfish: {0}\nTotal Token Capacity: {1} TPS\nTotal Consumption: {2} TPS\nPer-Claw Allocation: {3} TPS</RimClaw_TokenSupplier_Inspect>
+
+  <RimClaw_Host_OpenConsole_Label>Open Console</RimClaw_Host_OpenConsole_Label>
+  <RimClaw_Host_OpenConsole_Desc>Open the datacenter management console.</RimClaw_Host_OpenConsole_Desc>
+  <RimClaw_Host_Inspect>Models connected: {0}\nCurrent TPS: {1}/{2} needed\nConnected Clawfish: {3}\nConnected GPU: {4}/{5}\nVRAM: {6}/{7} GB</RimClaw_Host_Inspect>
+  <RimClaw_Host_DeassignedWarning>Clawfish on that GPU were deassigned. Reassign them to active instances.</RimClaw_Host_DeassignedWarning>
+
+  <RimClaw_HostWindow_Title>Datacenter Console</RimClaw_HostWindow_Title>
+  <RimClaw_HostWindow_ConnectedClaws>Connected Claws</RimClaw_HostWindow_ConnectedClaws>
+  <RimClaw_HostWindow_GpuList>GPU List</RimClaw_HostWindow_GpuList>
+  <RimClaw_HostWindow_InstancesRow>Instances: {0}/{1}</RimClaw_HostWindow_InstancesRow>
+  <RimClaw_HostWindow_AssignInactiveGpu>Cannot assign clawfish to inactive GPU (None model).</RimClaw_HostWindow_AssignInactiveGpu>
+  <RimClaw_HostWindow_AssignSuccess>{0} assigned to {1}</RimClaw_HostWindow_AssignSuccess>
+  <RimClaw_HostWindow_AssignFailed>Cannot assign clawfish to this GPU.</RimClaw_HostWindow_AssignFailed>
+  <RimClaw_HostWindow_SelectGpu>Select a GPU to view diagnostics.</RimClaw_HostWindow_SelectGpu>
+  <RimClaw_HostWindow_Label_Model>Model</RimClaw_HostWindow_Label_Model>
+  <RimClaw_HostWindow_Label_WorkSpeed>Global Work Speed</RimClaw_HostWindow_Label_WorkSpeed>
+  <RimClaw_HostWindow_Label_Instances>Instances</RimClaw_HostWindow_Label_Instances>
+  <RimClaw_HostWindow_Label_HeatRate>Heat Rate</RimClaw_HostWindow_Label_HeatRate>
+  <RimClaw_HostWindow_Label_TotalUsage>Total Usage</RimClaw_HostWindow_Label_TotalUsage>
+  <RimClaw_HostWindow_Label_TokenIO>Token I/O</RimClaw_HostWindow_Label_TokenIO>
+  <RimClaw_HostWindow_Label_ActiveTime>Active Time</RimClaw_HostWindow_Label_ActiveTime>
+  <RimClaw_HostWindow_NoRunnableInstances>No runnable instances (insufficient VRAM/model).</RimClaw_HostWindow_NoRunnableInstances>
+  <RimClaw_HostWindow_Range_1h>Recent 1h</RimClaw_HostWindow_Range_1h>
+  <RimClaw_HostWindow_Range_1d>Recent 1 day</RimClaw_HostWindow_Range_1d>
+  <RimClaw_HostWindow_Range_15d>Recent 15 days</RimClaw_HostWindow_Range_15d>
+  <RimClaw_HostWindow_Range_All>All</RimClaw_HostWindow_Range_All>
+  <RimClaw_HostWindow_SwitchModelFailed>Failed to switch model for this GPU.</RimClaw_HostWindow_SwitchModelFailed>
+  <RimClaw_HostWindow_AssignPrompt>Assign: {0}</RimClaw_HostWindow_AssignPrompt>
+  <RimClaw_HostWindow_Stat_GpuMachines>GPU Machines</RimClaw_HostWindow_Stat_GpuMachines>
+  <RimClaw_HostWindow_Stat_RoomTemperature>Room Temperature</RimClaw_HostWindow_Stat_RoomTemperature>
+  <RimClaw_HostWindow_Stat_TotalTokenIO>Total token I/O</RimClaw_HostWindow_Stat_TotalTokenIO>
+  <RimClaw_HostWindow_Stat_Power>Power</RimClaw_HostWindow_Stat_Power>
+  <RimClaw_HostWindow_Stat_ConnectedClaws>Connected claws</RimClaw_HostWindow_Stat_ConnectedClaws>
+  <RimClaw_HostWindow_Stat_VramUsage>VRAM Usage(GB)</RimClaw_HostWindow_Stat_VramUsage>
+  <RimClaw_HostWindow_Stat_Models>Models</RimClaw_HostWindow_Stat_Models>
+  <RimClaw_HostWindow_Stat_Instances>Instances</RimClaw_HostWindow_Stat_Instances>
+
+  <RimClaw_Subscription_OpenConsole_Label>Open Console</RimClaw_Subscription_OpenConsole_Label>
+  <RimClaw_Subscription_OpenConsole_Desc>Open the LLM subscription management console.</RimClaw_Subscription_OpenConsole_Desc>
+  <RimClaw_Subscription_Inspect>Model: {0}\nLive Throughput: {1}/{2} TPS\nActive Claws: {3}\nPer-second Silver: {4}\nCurrent Hour Cost: {5}\nPending Payment: {6}\nSupplied TPS: {7}</RimClaw_Subscription_Inspect>
+  <RimClaw_Subscription_OutOfFee>LLM subscription has run out of fee and stopped. Deliver silver within range to resume.</RimClaw_Subscription_OutOfFee>
+  <RimClaw_Subscription_Resumed>LLM subscription resumed after receiving fee payment.</RimClaw_Subscription_Resumed>
+
+  <RimClaw_SubWindow_Title>LLM Subscription Console</RimClaw_SubWindow_Title>
+  <RimClaw_SubWindow_Label_PricePerK>Price/K Tokens</RimClaw_SubWindow_Label_PricePerK>
+  <RimClaw_SubWindow_Label_WorkSpeed>Work Speed</RimClaw_SubWindow_Label_WorkSpeed>
+  <RimClaw_SubWindow_Label_LiveIO>Live I/O</RimClaw_SubWindow_Label_LiveIO>
+  <RimClaw_SubWindow_Label_LifetimeSpent>Lifetime Spent</RimClaw_SubWindow_Label_LifetimeSpent>
+  <RimClaw_SubWindow_Label_ActiveClaws>Active Claws</RimClaw_SubWindow_Label_ActiveClaws>
+  <RimClaw_SubWindow_Label_PerSecond>Per Second</RimClaw_SubWindow_Label_PerSecond>
+  <RimClaw_SubWindow_Label_CurrentHourCost>Current Hour Cost</RimClaw_SubWindow_Label_CurrentHourCost>
+  <RimClaw_SubWindow_Label_PendingPayment>Pending Payment</RimClaw_SubWindow_Label_PendingPayment>
+  <RimClaw_SubWindow_HourlySilver>Hourly Silver Consumption</RimClaw_SubWindow_HourlySilver>
+  <RimClaw_SubWindow_ConnectedClaws>Connected Claws</RimClaw_SubWindow_ConnectedClaws>
+  <RimClaw_SubWindow_SelectClaw>Select a claw to view details.</RimClaw_SubWindow_SelectClaw>
+  <RimClaw_SubWindow_Detail_CurrentToken>Current Token/s: {0} needed</RimClaw_SubWindow_Detail_CurrentToken>
+  <RimClaw_SubWindow_Detail_ProvidedToken>Provided Token/s: {0} capped / {1} max</RimClaw_SubWindow_Detail_ProvidedToken>
+  <RimClaw_SubWindow_Detail_SilverPerSec>Silver Consumption/s: {0}</RimClaw_SubWindow_Detail_SilverPerSec>
+  <RimClaw_SubWindow_Range_Daily>Daily</RimClaw_SubWindow_Range_Daily>
+  <RimClaw_SubWindow_Range_1d>1 day</RimClaw_SubWindow_Range_1d>
+  <RimClaw_SubWindow_Range_15d>15 days</RimClaw_SubWindow_Range_15d>
+  <RimClaw_SubWindow_Range_All>All</RimClaw_SubWindow_Range_All>
+  <RimClaw_SubWindow_Disconnect>Disconnect</RimClaw_SubWindow_Disconnect>
+  <RimClaw_SubWindow_DisconnectMessage>{0} disconnected from LLM Subscription</RimClaw_SubWindow_DisconnectMessage>
+  <RimClaw_SubWindow_NoClaw>(no claw)</RimClaw_SubWindow_NoClaw>
+  <RimClaw_SubWindow_Unassigned>Unassigned</RimClaw_SubWindow_Unassigned>
+
+  <RimClaw_Alert_OutOfFee_Label>LLM service out of fee</RimClaw_Alert_OutOfFee_Label>
+  <RimClaw_Alert_OutOfFee_Desc>One or more LLM Subscription services have stopped because there is not enough silver in range.</RimClaw_Alert_OutOfFee_Desc>
+
+  <RimClaw_Chart_Zero>0</RimClaw_Chart_Zero>
+  <RimClaw_Chart_Old>old</RimClaw_Chart_Old>
+  <RimClaw_Chart_New>new</RimClaw_Chart_New>
+  <RimClaw_Chart_TokenPerSec>token/s</RimClaw_Chart_TokenPerSec>
+  <RimClaw_Chart_HeatPerSec>heat/s</RimClaw_Chart_HeatPerSec>
+  <RimClaw_Chart_SilverPerSec>silver/s</RimClaw_Chart_SilverPerSec>
+
+  <RimClaw_Skills_PromptInjectionChance>Prompt injection chance x{0}</RimClaw_Skills_PromptInjectionChance>
+  <RimClaw_Skills_ContextCorruptionChance>context corruption chance</RimClaw_Skills_ContextCorruptionChance>
+  <RimClaw_Skills_FallbackSkill>Skill</RimClaw_Skills_FallbackSkill>
+  <RimClaw_Skills_FallbackStat>Stat</RimClaw_Skills_FallbackStat>
+  <RimClaw_Skills_FallbackRate>rate</RimClaw_Skills_FallbackRate>
+  <RimClaw_Skills_Install_Label>Install Skills</RimClaw_Skills_Install_Label>
+  <RimClaw_Skills_Install_Desc>Select a Clawfish to receive this Skills implant.</RimClaw_Skills_Install_Desc>
+  <RimClaw_Skills_Inspect>Codename: {0}\nEffects: {1}</RimClaw_Skills_Inspect>
+  <RimClaw_Skills_Name_Label>Skills.md name</RimClaw_Skills_Name_Label>
+  <RimClaw_Skills_Name_Desc>Generated codename of this Skills.md implant.</RimClaw_Skills_Name_Desc>
+  <RimClaw_Skills_Effects_Label>Effects</RimClaw_Skills_Effects_Label>
+  <RimClaw_Skills_Effects_Desc>All skill level shifts and stat modifiers this Skills.md applies after installation.</RimClaw_Skills_Effects_Desc>
+  <RimClaw_Skills_SelectClawfish>Select a Clawfish target.</RimClaw_Skills_SelectClawfish>
+  <RimClaw_Skills_NotSameMap>Clawfish is not on the same map.</RimClaw_Skills_NotSameMap>
+  <RimClaw_Skills_OrderedInstall>Ordered {0} to install {1}.</RimClaw_Skills_OrderedInstall>
+  <RimClaw_Skills_InstallOnlyClawfish>Skills implant can only be installed on Clawfish.</RimClaw_Skills_InstallOnlyClawfish>
+  <RimClaw_Skills_Installed>Installed {0} on {1}.</RimClaw_Skills_Installed>
+  <RimClaw_Skills_Uninstalled>Uninstalled {0} from {1}.</RimClaw_Skills_Uninstalled>
+  <RimClaw_Skills_Uninstall_Label>Uninstall Skills.md</RimClaw_Skills_Uninstall_Label>
+  <RimClaw_Skills_Uninstall_Desc>Remove one of {0} installed Skills.md implant(s).</RimClaw_Skills_Uninstall_Desc>
+  <RimClaw_Skills_ContextCorruptionInspect>Context corruption (from Skills.md): {0}%</RimClaw_Skills_ContextCorruptionInspect>
+  <RimClaw_Skills_CorruptionRate_Label>Skills.md corruption rate</RimClaw_Skills_CorruptionRate_Label>
+  <RimClaw_Skills_CorruptionRate_Desc>Context corruption caused by installed Skills.md implants.</RimClaw_Skills_CorruptionRate_Desc>
+</LanguageData>

@@ -5,7 +5,7 @@ namespace RimClaw
 {
     public class CompProperties_GPUCluster : CompProperties
     {
-        public int providedVRAM = 300;
+        public int providedVRAM = 150;
         public float baseHeatPerSecond = 5f;
         public float heatPerUsageFraction = 20f;
         public float heatAverageSeconds = 15f;
@@ -61,7 +61,9 @@ namespace RimClaw
 
         public override string CompInspectStringExtra()
         {
-            return hostThingID < 0 ? "Host: unassigned" : $"Host ID: {hostThingID}\nVRAM: {Props.providedVRAM} GB";
+            return hostThingID < 0
+                ? "RimClaw_GPUCluster_Inspect_Unassigned".Translate()
+                : "RimClaw_GPUCluster_Inspect_Assigned".Translate(hostThingID, Props.providedVRAM);
         }
     }
 }

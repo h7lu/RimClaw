@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: antenna -->
+  <RimClaw_Antenna.label>触角</RimClaw_Antenna.label>
+  
+  <!-- EN: claw -->
+  <RimClaw_Claw.label>螯</RimClaw_Claw.label>
+  
+  <!-- EN: swimming legs -->
+  <RimClaw_SwimmingLegs.label>游泳足</RimClaw_SwimmingLegs.label>
+  
+  <!-- EN: tail -->
+  <RimClaw_Tail.label>尾</RimClaw_Tail.label>
+  
+  <!-- EN: walking legs -->
+  <RimClaw_WalkingLegs.label>步行足</RimClaw_WalkingLegs.label>
+  
+</LanguageData>

@@ -12,6 +12,7 @@ namespace RimClaw
         public float walkingRate = 100f;
         public float rangedCombatRate = 400f;
         public float meleeCombatRate = 500f;
+        public float draftedIdleRate = 130f;
         public float organHarvestRate = 800f;
         public float surgeryRate = 600f;
         public float medicalHumanRate = 400f;
@@ -26,7 +27,8 @@ namespace RimClaw
         public List<string> organHarvestKeywords = new List<string> { "Harvest", "Extract" };
         public List<string> medicalKeywords = new List<string> { "Tend", "Doctor", "Treat" };
         public List<string> meleeKeywords = new List<string> { "AttackMelee", "Melee", "BeatFire", "HuntMelee" };
-        public List<string> rangedKeywords = new List<string> { "AttackStatic", "Attack", "Hunt", "CastShot", "Shoot", "Suppress", "Wait_Combat" };
+        public List<string> rangedKeywords = new List<string> { "AttackStatic", "Attack", "Hunt", "CastShot", "Shoot", "Suppress" };
+        public List<string> draftedIdleKeywords = new List<string> { "Wait_Combat" };
         public List<string> walkingKeywords = new List<string> { "Goto", "HaulToCell", "Deliver", "Carry", "Escort", "Follow", "Flee", "Travel" };
         public List<string> idleKeywords = new List<string> { "Wait", "Wander", "Idle" };
         public List<string> heavyWorkKeywords = new List<string> { "DoBill", "Cook", "Construct", "Repair", "Mine", "CutPlant", "Harvest", "Plant", "Smooth", "Refuel", "Load" };
@@ -42,12 +44,14 @@ namespace RimClaw
     {
         private Thing connectedSupplier; // Host Computer or LLM Subscription building
         private float currentTokenConsumptionRate = 0f; // tokens/s based on current job
+        private int lastAppliedModelSkillAdjustment = int.MinValue;
 
         private CompProperties_ClawfishTokenConnection Props => (CompProperties_ClawfishTokenConnection)props;
 
         public Thing ConnectedSupplier => connectedSupplier;
         public bool IsConnected => connectedSupplier != null && !connectedSupplier.Destroyed;
         public float CurrentTokenConsumptionRate => currentTokenConsumptionRate;
+        public float EffectiveTokenConsumptionRate => GetAdjustedTokenConsumptionRate(parent as Pawn);
 
         public override void PostExposeData()
         {
@@ -74,6 +78,13 @@ namespace RimClaw
             // Update consumption rate based on current job
             currentTokenConsumptionRate = GetCurrentTokenConsumptionRate(pawn);
 
+            int currentModelSkillAdjustment = GetModelSkillAdjustment(pawn);
+            if (currentModelSkillAdjustment != lastAppliedModelSkillAdjustment)
+            {
+                lastAppliedModelSkillAdjustment = currentModelSkillAdjustment;
+                SkillsImplantUtility.RefreshPawnSkills(pawn);
+            }
+
             // Check if we have sufficient I/O rate from supplier
             if (IsConnected)
             {
@@ -88,11 +99,13 @@ namespace RimClaw
                 }
 
                 ApplyInsufficientIOHediff(pawn, providedRate);
+                ApplyModelWorkSpeedBonusHediff(pawn);
             }
             else
             {
                 ApplyDisconnectedShutdown(pawn);
                 ApplyInsufficientIOHediff(pawn, 0f);
+                RemoveModelWorkSpeedBonusHediff(pawn);
             }
         }
 
@@ -133,12 +146,13 @@ namespace RimClaw
             if (ContainsAny(jobName, Props.rangedKeywords))
                 return Props.rangedCombatRate;
 
+            if (pawn.Drafted && ContainsAny(jobName, Props.draftedIdleKeywords))
+                return Props.draftedIdleRate;
+
             if (pawn.Drafted)
             {
-                ThingWithComps primary = pawn.equipment?.Primary;
-                if (primary != null && primary.def != null && primary.def.IsRangedWeapon)
-                    return Props.rangedCombatRate;
-                return Props.meleeCombatRate;
+                // Drafted but not actively in combat/special work should stay at low movement/standby cost.
+                return Props.walkingRate;
             }
 
             // Motion and logistics.
@@ -199,7 +213,8 @@ namespace RimClaw
 
         private void ApplyInsufficientIOHediff(Pawn pawn, float providedRate)
         {
-            float ratio = currentTokenConsumptionRate > 0 ? providedRate / currentTokenConsumptionRate : 1f;
+            float adjustedRequiredRate = GetAdjustedTokenConsumptionRate(pawn);
+            float ratio = adjustedRequiredRate > 0 ? providedRate / adjustedRequiredRate : 1f;
             ratio = Mathf.Clamp01(ratio); // 0 to 1
 
             Hediff_InsufficientIORate existing = pawn.health?.hediffSet?.GetFirstHediffOfDef(RimClawDefOf.RimClaw_InsufficientIORate) as Hediff_InsufficientIORate;
@@ -223,6 +238,95 @@ namespace RimClaw
             {
                 pawn.health?.RemoveHediff(existing);
             }
+        }
+
+        private void ApplyModelWorkSpeedBonusHediff(Pawn pawn)
+        {
+            if (pawn?.health?.hediffSet == null)
+                return;
+
+            float modelMultiplier = GetModelWorkSpeedMultiplier();
+            Hediff_ModelWorkSpeedBonus existing = pawn.health.hediffSet.GetFirstHediffOfDef(RimClawDefOf.RimClaw_ModelWorkSpeedBonus) as Hediff_ModelWorkSpeedBonus;
+
+            if (modelMultiplier > 1.001f)
+            {
+                // Need the hediff if multiplier is noticeably above 1.0
+                if (existing == null)
+                {
+                    Hediff hediff = HediffMaker.MakeHediff(RimClawDefOf.RimClaw_ModelWorkSpeedBonus, pawn);
+                    pawn.health.AddHediff(hediff);
+                    existing = hediff as Hediff_ModelWorkSpeedBonus;
+                }
+
+                if (existing != null)
+                {
+                    existing.SetWorkSpeedMultiplier(modelMultiplier);
+                }
+            }
+            else if (existing != null)
+            {
+                pawn.health.RemoveHediff(existing);
+            }
+        }
+
+        private void RemoveModelWorkSpeedBonusHediff(Pawn pawn)
+        {
+            if (pawn?.health?.hediffSet == null)
+                return;
+
+            Hediff existing = pawn.health.hediffSet.GetFirstHediffOfDef(RimClawDefOf.RimClaw_ModelWorkSpeedBonus);
+            if (existing != null)
+            {
+                pawn.health.RemoveHediff(existing);
+            }
+        }
+
+        private float GetModelWorkSpeedMultiplier()
+        {
+            if (connectedSupplier == null || connectedSupplier.Destroyed)
+                return 1f;
+
+            CompLLMSubscriptionService subscription = connectedSupplier.TryGetComp<CompLLMSubscriptionService>();
+            if (subscription != null)
+            {
+                return subscription.GetSpeedMultiplier();
+            }
+
+            CompHostComputerService host = connectedSupplier.TryGetComp<CompHostComputerService>();
+            if (host != null)
+            {
+                return host.GetModelWorkSpeedMultiplier();
+            }
+
+            return 1f;
+        }
+
+        public int GetCurrentModelSkillAdjustment()
+        {
+            return GetModelSkillAdjustment(parent as Pawn);
+        }
+
+        private int GetModelSkillAdjustment(Pawn pawn)
+        {
+            if (connectedSupplier == null || connectedSupplier.Destroyed || pawn == null)
+            {
+                return 0;
+            }
+
+            CompHostComputerService host = connectedSupplier.TryGetComp<CompHostComputerService>();
+            if (host != null)
+            {
+                return host.GetModelSkillAdjustmentForClaw(pawn);
+            }
+
+            CompModelCard modelCard = connectedSupplier.TryGetComp<CompModelCard>();
+            if (modelCard != null)
+            {
+                modelCard.EnsureInitialized();
+                return modelCard.ModelSkillLevelAdjustment;
+            }
+
+            return 0;
         }
 
         public void Connect(Thing supplier)
@@ -277,13 +381,14 @@ namespace RimClaw
                 return null;
 
             Pawn pawn = parent as Pawn;
-            string status = IsConnected ? $"Connected to {connectedSupplier.Label}" : "Not connected";
-            string consumption = $"Required TPS: {currentTokenConsumptionRate:F0}";
+            string status = IsConnected ? "RimClaw_TokenConnection_Status_Connected".Translate(connectedSupplier.Label) : "RimClaw_TokenConnection_Status_NotConnected".Translate();
+            float required = GetAdjustedTokenConsumptionRate(pawn);
+            string consumption = "RimClaw_TokenConnection_RequiredTps".Translate(required.ToString("F0"));
 
             if (IsConnected)
             {
                 float provided = GetProvidedRate(pawn);
-                consumption += $"\nCurrent TPS: {provided:F0}/{currentTokenConsumptionRate:F0} needed";
+                consumption += "\n" + "RimClaw_TokenConnection_CurrentTps".Translate(provided.ToString("F0"), required.ToString("F0"));
             }
 
             return $"{status}\n{consumption}";
@@ -309,6 +414,17 @@ namespace RimClaw
             }
 
             return 0f;
+        }
+
+        public float GetAdjustedTokenConsumptionRate(Pawn pawn)
+        {
+            if (pawn == null)
+            {
+                return currentTokenConsumptionRate;
+            }
+
+            float factor = Mathf.Max(0.2f, SkillsImplantUtility.GetTokenConsumptionFactor(pawn));
+            return currentTokenConsumptionRate * factor;
         }
 
         private static bool IsValidSupplierThing(Thing supplierThing)

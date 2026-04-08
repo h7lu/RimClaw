@@ -138,7 +138,13 @@ namespace RimClaw
             PortraitsCache.SetDirty(colonist);
             target.Destroy(DestroyMode.Vanish);
 
-            Messages.Message($"{colonist.LabelShortCap} joined your faction.", colonist, MessageTypeDefOf.PositiveEvent, historical: false);
+            RimClawConfigExtension cfg = RimClawConfig.Values;
+
+            Find.LetterStack.ReceiveLetter(
+                cfg.promptInjectorSuccessLetterLabel,
+                string.Format(cfg.promptInjectorSuccessLetterText, colonist.LabelShortCap),
+                LetterDefOf.PositiveEvent,
+                colonist);
         }
     }
 }

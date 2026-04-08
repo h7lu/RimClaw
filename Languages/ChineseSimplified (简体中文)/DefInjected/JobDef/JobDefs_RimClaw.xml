@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: inserting model package. -->
+  <RimClaw_InsertModelIntoDisk.reportString>正在插入模型数据包。</RimClaw_InsertModelIntoDisk.reportString>
+  
+  <!-- EN: installing Skills.md implant. -->
+  <RimClaw_InstallSkillsMd.reportString>正在安装 SKILLS.md 植入体。</RimClaw_InstallSkillsMd.reportString>
+  
+  <!-- EN: self deleting. -->
+  <RimClaw_SelfDelete.reportString>正在自我删除。</RimClaw_SelfDelete.reportString>
+  
+  <!-- EN: self reprogramming. -->
+  <RimClaw_SelfReprogramming.reportString>正在自我重编程。</RimClaw_SelfReprogramming.reportString>
+  
+  <!-- EN: uninstalling Skills.md implant. -->
+  <RimClaw_UninstallSkillsMd.reportString>正在卸载 SKILLS.md 植入体。</RimClaw_UninstallSkillsMd.reportString>
+  
+</LanguageData>

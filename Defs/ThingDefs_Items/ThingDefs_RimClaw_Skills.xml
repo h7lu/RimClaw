@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimClaw_SkillsMd</defName>
+    <label>SKILLS.md</label>
+    <description>An open-standard Markdown file format implant that instructs AI agents on how to perform specific, specialized tasks. It includes metadata, instructions, and tools that allow agents to execute complex workflows, follow brand guidelines, or use external tools efficiently. Boosts the clawfish's ability in some specializations. Each SKILLS.md installed contribute to additional 5% token I/O consumption rate.</description>
+    <graphicData>
+      <texPath>SKILLS_md</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.8,0.8)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <MarketValue>180</MarketValue>
+      <Mass>0.5</Mass>
+      <Flammability>0</Flammability>
+    </statBases>
+    <tradeability>Buyable</tradeability>
+    <techLevel>Spacer</techLevel>
+    <thingSetMakerTags>
+      <li>RewardStandardMidFreq</li>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+    <comps>
+      <li Class="CompProperties">
+        <compClass>RimWorld.CompQuality</compClass>
+      </li>
+      <li Class="RimClaw.CompProperties_SkillsMd">
+        <namePrefixes>
+          <li>cipher</li>    
+          <li>vector</li>    
+          <li>atlas</li>    
+          <li>kernel</li>   
+          <li>signal</li>    
+          <li>index</li>    
+          <li>syntax</li>    
+          <li>prism</li>     
+          <li>logic</li>     
+          <li>flow</li>  
+          <li>nexus</li>
+          <li>quantum</li>
+          <li>kinetic</li>
+          <li>static</li>
+          <li>orbit</li>
+          <li>logic</li>
+          <li>prism</li>
+          <li>phase</li>
+          <li>sonic</li>
+          <li>latent</li>    
+        </namePrefixes>
+        <nameSuffixes>
+          <li>core</li>      
+          <li>stack</li>     
+          <li>prime</li>     
+          <li>node</li>      
+          <li>grid</li>      
+          <li>line</li>      
+          <li>mirror</li>    
+          <li>script</li>    
+          <li>shard</li>    
+          <li>base</li>      
+          <li>link</li>      
+          <li>vault</li>  
+          <li>engine</li>
+          <li>bridge</li>
+          <li>frame</li>
+          <li>vault</li>
+          <li>agent</li>
+          <li>layer</li>
+          <li>point</li>
+          <li>sync</li>
+          <li>flow</li>
+          <li>pulse</li>   
+        </nameSuffixes>
+        <minEffects>1</minEffects>
+        <maxEffects>4</maxEffects>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>

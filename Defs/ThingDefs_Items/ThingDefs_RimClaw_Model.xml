@@ -3,7 +3,7 @@
   <ThingDef ParentName="ResourceBase">
     <defName>RimClaw_ModelCard</defName>
     <label>model package</label>
-    <description>A packaged model definition with randomized VRAM requirements and token throughput.</description>
+    <description>A data package containing the inferrence framework and full parameter of a Large Language Model. Install this on a memory disk of a datacenter to run locally.</description>
     <graphicData>
       <texPath>model</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -35,12 +35,12 @@
           <li>4.0_72b</li>
           <li>mini_8b</li>
         </nameSuffixes>
-        <requiredVramMin>20</requiredVramMin>
-        <requiredVramMax>120</requiredVramMax>
+        <requiredVramMin>10</requiredVramMin>
+        <requiredVramMax>60</requiredVramMax>
         <tokenPerSecondPerInstanceMin>80</tokenPerSecondPerInstanceMin>
         <tokenPerSecondPerInstanceMax>260</tokenPerSecondPerInstanceMax>
-        <workSpeedBonusMin>0.01</workSpeedBonusMin>
-        <workSpeedBonusMax>0.06</workSpeedBonusMax>
+        <workSpeedBonusMin>-0.7</workSpeedBonusMin>
+        <workSpeedBonusMax>0.02</workSpeedBonusMax>
       </li>
     </comps>
   </ThingDef>

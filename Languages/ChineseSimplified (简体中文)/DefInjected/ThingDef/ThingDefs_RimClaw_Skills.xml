@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: SKILLS.md -->
+  <RimClaw_SkillsMd.label>SKILLS.md</RimClaw_SkillsMd.label>
+  <!-- EN: An open-standard Markdown file format implant that instructs AI agents on how to perform specific, specialized tasks. It includes metadata, instructions, and tools that allow agents to execute complex workflows, follow brand guidelines, or use external tools efficiently. Boosts the clawfish's ability in some specializations. Each SKILLS.md installed contribute to additional 5% token I/O consumption rate. -->
+  <RimClaw_SkillsMd.description>一种开放标准的 Markdown 文件格式植入体，用于指导 AI 代理执行特定的专业任务。它包含元数据、指令和工具，能帮助代理高效执行复杂工作流、遵循规范或使用外部工具。可提升龙虾在某些专长上的能力。每安装一个 SKILLS.md 都会额外增加 5% 的 token I/O 消耗率。</RimClaw_SkillsMd.description>
+  
+</LanguageData>

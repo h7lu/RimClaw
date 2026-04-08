@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: Prompt Injector -->
+  <RimClaw_PromptInjector.label>提示词注入器</RimClaw_PromptInjector.label>
+  <!-- EN: An EMP launcher loaded with Prompt Injection Database. Launches hostile prompt payloads that can force Clawfish behavioral collapse. -->
+  <RimClaw_PromptInjector.description>装载了提示词注入数据库的 EMP 发射器。会发射恶意提示词载荷，迫使龙虾的行为崩溃。</RimClaw_PromptInjector.description>
+  <!-- EN: Prompt Injector -->
+  <RimClaw_PromptInjector.verbs.Verb_Shoot.label>提示词注入器</RimClaw_PromptInjector.verbs.Verb_Shoot.label>
+  
+  <!-- EN: prompt injection payload -->
+  <RimClaw_PromptInjectorProjectile.label>提示词注入载荷</RimClaw_PromptInjectorProjectile.label>
+  
+</LanguageData>

@@ -58,7 +58,7 @@ namespace RimClaw
                 var comp = connectedClawfish[i].TryGetComp<CompClawfishTokenConnection>();
                 if (comp != null)
                 {
-                    total += comp.CurrentTokenConsumptionRate;
+                    total += comp.GetAdjustedTokenConsumptionRate(connectedClawfish[i]);
                 }
             }
             return total;
@@ -69,10 +69,7 @@ namespace RimClaw
             float consumed = GetTotalConsumptionRate();
             float available = GetAvailableTokenRateForClawfish(null); // Average per claw
 
-            return $"Connected Clawfish: {connectedClawfish.Count}\n" +
-                   $"Total Token Capacity: {totalTokenCapacityPerSecond:F0} TPS\n" +
-                   $"Total Consumption: {consumed:F2} TPS\n" +
-                   $"Per-Claw Allocation: {available:F2} TPS";
+            return "RimClaw_TokenSupplier_Inspect".Translate(connectedClawfish.Count, totalTokenCapacityPerSecond.ToString("F0"), consumed.ToString("F2"), available.ToString("F2"));
         }
     }
 }

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: model package -->
+  <RimClaw_ModelCard.label>模型包</RimClaw_ModelCard.label>
+  <!-- EN: A data package containing the inferrence framework and full parameter of a Large Language Model. Install this on a memory disk of a datacenter to run locally. -->
+  <RimClaw_ModelCard.description>包含一个大语言模型推理框架和完整参数的数据包。将其安装到数据中心的内存盘上即可本地部署。</RimClaw_ModelCard.description>
+  
+</LanguageData>

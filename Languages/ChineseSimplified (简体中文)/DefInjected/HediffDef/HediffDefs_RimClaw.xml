@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: context load -->
+  <RimClaw_ContextLoad.label>上下文负载</RimClaw_ContextLoad.label>
+  <!-- EN: Aggregates context corruption and token consumption pressure from installed SKILLS.md implants. -->
+  <RimClaw_ContextLoad.description>已安装的 SKILLS.md 植入体带来的 token 消耗压力。</RimClaw_ContextLoad.description>
+  <!-- EN: loaded -->
+  <RimClaw_ContextLoad.stages.loaded.label>已加载</RimClaw_ContextLoad.stages.loaded.label>
+  
+  <!-- EN: clawfish disguise -->
+  <RimClaw_DisguisedClawfish.label>龙虾伪装</RimClaw_DisguisedClawfish.label>
+  <!-- EN: This is a clawfish. -->
+  <RimClaw_DisguisedClawfish.description>这是一只龙虾。</RimClaw_DisguisedClawfish.description>
+  <!-- EN: active -->
+  <RimClaw_DisguisedClawfish.stages.active.label>启用</RimClaw_DisguisedClawfish.stages.active.label>
+  
+  <!-- EN: insufficient I/O rate -->
+  <RimClaw_InsufficientIORate.label>Token 吞吐速率不足</RimClaw_InsufficientIORate.label>
+  <!-- EN: This Clawfish is not receiving sufficient token throughput from its connected supplier, causing reduced work speed. -->
+  <RimClaw_InsufficientIORate.description>这只龙虾从模型供应方获得的 token 吞吐不足，导致工作速度下降。\n HTTP 429 rate limit.</RimClaw_InsufficientIORate.description>
+  <!-- EN: negligible stagnation -->
+  <RimClaw_InsufficientIORate.stages.negligible_stagnation.label>几乎无阻滞</RimClaw_InsufficientIORate.stages.negligible_stagnation.label>
+  <!-- EN: minor stagnation -->
+  <RimClaw_InsufficientIORate.stages.minor_stagnation.label>轻度阻滞</RimClaw_InsufficientIORate.stages.minor_stagnation.label>
+  <!-- EN: moderate stagnation -->
+  <RimClaw_InsufficientIORate.stages.moderate_stagnation.label>中度阻滞</RimClaw_InsufficientIORate.stages.moderate_stagnation.label>
+  <!-- EN: major stagnation -->
+  <RimClaw_InsufficientIORate.stages.major_stagnation.label>重度阻滞</RimClaw_InsufficientIORate.stages.major_stagnation.label>
+  <!-- EN: critical stagnation -->
+  <RimClaw_InsufficientIORate.stages.critical_stagnation.label>极重阻滞</RimClaw_InsufficientIORate.stages.critical_stagnation.label>
+  
+  <!-- EN: model enhancement -->
+  <RimClaw_ModelWorkSpeedBonus.label>模型增益</RimClaw_ModelWorkSpeedBonus.label>
+  <!-- EN: This Clawfish is running a on an upstream language model that enhances work speed, skill level and maneuverability. -->
+  <RimClaw_ModelWorkSpeedBonus.description>这只龙虾正在运行一个语言模型，可增强工作速度、技能等级和机动性。</RimClaw_ModelWorkSpeedBonus.description>
+  <!-- EN: boosted -->
+  <RimClaw_ModelWorkSpeedBonus.stages.boosted.label>增强</RimClaw_ModelWorkSpeedBonus.stages.boosted.label>
+  
+  <!-- EN: self reprogramming -->
+  <RimClaw_SelfReprogrammingRegen.label>自我重编程</RimClaw_SelfReprogrammingRegen.label>
+  <!-- EN: The Clawfish is regenerating internal systems while consuming large token throughput. -->
+  <RimClaw_SelfReprogrammingRegen.description>这只龙虾在消耗大量 token 的同时修复内部系统。</RimClaw_SelfReprogrammingRegen.description>
+  <!-- EN: regenerating -->
+  <RimClaw_SelfReprogrammingRegen.stages.regenerating.label>再生中</RimClaw_SelfReprogrammingRegen.stages.regenerating.label>
+  
+  <!-- EN: service acceleration -->
+  <RimClaw_ServiceBoost.label>服务加速</RimClaw_ServiceBoost.label>
+  <!-- EN: This Clawfish is actively synchronized with an upstream LLM service. -->
+  <RimClaw_ServiceBoost.description>这只龙虾正与上游 LLM 服务保持同步。</RimClaw_ServiceBoost.description>
+  <!-- EN: accelerated -->
+  <RimClaw_ServiceBoost.stages.accelerated.label>加速中</RimClaw_ServiceBoost.stages.accelerated.label>
+  
+  <!-- EN: SKILLS.md implant -->
+  <RimClaw_SkillsImplant.label>SKILLS.md</RimClaw_SkillsImplant.label>
+  <!-- EN: A temporary SKILLS.md implant that improves specific skills and performances. -->
+  <RimClaw_SkillsImplant.description>一种临时的 SKILLS.md 植入体，可提升特定技能与表现。</RimClaw_SkillsImplant.description>
+  <!-- EN: installed -->
+  <RimClaw_SkillsImplant.stages.installed.label>已安装</RimClaw_SkillsImplant.stages.installed.label>
+  
+  <!-- EN: token depleted -->
+  <RimClaw_TokenDepleted.label>token 耗尽</RimClaw_TokenDepleted.label>
+  <!-- EN: This Clawfish has consumed all available tokens and shut down. -->
+  <RimClaw_TokenDepleted.description>HTTP 402 payment required \n HTTP 502 endpoint not available.</RimClaw_TokenDepleted.description>
+  <!-- EN: offline -->
+  <RimClaw_TokenDepleted.stages.offline.label>离线</RimClaw_TokenDepleted.stages.offline.label>
+  
+</LanguageData>

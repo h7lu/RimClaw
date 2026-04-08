@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ResearchProjectDef>
+    <defName>ClusterComputing</defName>
+    <label>cluster computing</label>
+    <description>Build out the core datacenter hardware to run Large Language Models locally.</description>
+    <baseCost>3000</baseCost>
+    <techLevel>Spacer</techLevel>
+    <researchViewX>20</researchViewX>
+    <researchViewY>5.4</researchViewY>
+    <prerequisites>
+      <li>AdvancedFabrication</li>
+    </prerequisites>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>AgenticDesign</defName>
+    <label>agentic design</label>
+    <description>Understand Agentic Design, craft harness for LLM agents.</description>
+    <baseCost>1000</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>11</researchViewX>
+    <researchViewY>5.6</researchViewY>
+    <prerequisites>
+      <li>MicroelectronicsBasics</li>
+    </prerequisites>
+  </ResearchProjectDef>
+</Defs>

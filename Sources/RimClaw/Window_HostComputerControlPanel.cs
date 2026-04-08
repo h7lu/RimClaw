@@ -5,6 +5,7 @@ using Verse;
 
 namespace RimClaw
 {
+    [StaticConstructorOnStartup]
     public class Window_HostComputerControlPanel : Window
     {
         private enum PlotTimeRange
@@ -62,7 +63,7 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "Datacenter Console");
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "RimClaw_HostWindow_Title".Translate());
             Text.Font = oldFont;
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
@@ -92,7 +93,7 @@ namespace RimClaw
             Rect summaryRect = new Rect(rect.x + 8f, rect.y + 12f, Mathf.Min(desiredSummaryWidth, maxSummaryWidth), rect.height - 20f);
             DrawSection1Stats(summaryRect, snapshot);
 
-            Widgets.Label(new Rect(clawsRect.x + 8f, clawsRect.y + 4f, clawsRect.width - 16f, 24f), "Connected Claws");
+            Widgets.Label(new Rect(clawsRect.x + 8f, clawsRect.y + 4f, clawsRect.width - 16f, 24f), "RimClaw_HostWindow_ConnectedClaws".Translate());
 
             float cellSize = 56f;
             float spacing = 6f;
@@ -118,7 +119,7 @@ namespace RimClaw
                 TextAnchor oldAnchor = Text.Anchor;
                 GameFont oldFont = Text.Font;
                 string assignedLabel = host.GetAssignedGpuLabel(claw);
-                bool isNone = assignedLabel == "None";
+                bool isNone = assignedLabel == "RimClaw_Generic_None".Translate().ToString();
                 Color oldColor = GUI.color;
                 if (isNone)
                 {
@@ -153,7 +154,7 @@ namespace RimClaw
         private void DrawLeftPane(Rect rect, HostComputerSnapshot snapshot)
         {
             Rect titleRect = new Rect(rect.x + 8f, rect.y + 8f, rect.width - 16f, 24f);
-            Widgets.Label(titleRect, "GPU List");
+            Widgets.Label(titleRect, "RimClaw_HostWindow_GpuList".Translate());
 
             DrawLine(new Vector2(rect.x + 8f, titleRect.yMax + 2f), new Vector2(rect.xMax - 8f, titleRect.yMax + 2f));
 
@@ -204,7 +205,7 @@ namespace RimClaw
             float textX = iconRect.xMax + 12f;
             Widgets.Label(new Rect(textX, row.y + 8f, row.width - textX - 8f, 20f), gpu.Name);
             Widgets.Label(new Rect(textX, row.y + 30f, row.width - textX - 8f, 18f), gpu.ModelName);
-            Widgets.Label(new Rect(textX, row.y + 50f, row.width - textX - 8f, 18f), $"Instances: {gpu.UsedInstances}/{gpu.TotalInstances}");
+            Widgets.Label(new Rect(textX, row.y + 50f, row.width - textX - 8f, 18f), "RimClaw_HostWindow_InstancesRow".Translate(gpu.UsedInstances, gpu.TotalInstances));
 
             Rect usageBar = new Rect(textX, row.y + 72f, row.width - textX - 8f, 10f);
             DrawOutline(usageBar);
@@ -222,7 +223,7 @@ namespace RimClaw
             {
                 if (!gpu.IsActive)
                 {
-                    Messages.Message("Cannot assign clawfish to inactive GPU (None model).", MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message("RimClaw_HostWindow_AssignInactiveGpu".Translate(), MessageTypeDefOf.RejectInput, historical: false);
                     draggingClaw = null;
                     Event.current.Use();
                     return;
@@ -230,11 +231,11 @@ namespace RimClaw
 
                 if (host.AssignClawToGpu(draggingClaw, gpu.ThingId))
                 {
-                    Messages.Message($"{draggingClaw.NameShortColored} assigned to {gpu.Name}", MessageTypeDefOf.TaskCompletion, historical: false);
+                    Messages.Message("RimClaw_HostWindow_AssignSuccess".Translate(draggingClaw.NameShortColored, gpu.Name), MessageTypeDefOf.TaskCompletion, historical: false);
                 }
                 else
                 {
-                    Messages.Message("Cannot assign clawfish to this GPU.", MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message("RimClaw_HostWindow_AssignFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
                 }
 
                 draggingClaw = null;
@@ -246,7 +247,7 @@ namespace RimClaw
         {
             if (selectedGpuIndex < 0 || selectedGpuIndex >= snapshot.Gpus.Count)
             {
-                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "Select a GPU to view diagnostics.");
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "RimClaw_HostWindow_SelectGpu".Translate());
                 return;
             }
 
@@ -271,13 +272,13 @@ namespace RimClaw
             string[] labels =
             {
                 gpu.Name,
-                "Model",
-                "Global Work Speed",
-                "Instances",
-                "Heat Rate",
-                "Total Usage",
-                "Token I/O",
-                "Active Time"
+                "RimClaw_HostWindow_Label_Model".Translate(),
+                "RimClaw_HostWindow_Label_WorkSpeed".Translate(),
+                "RimClaw_HostWindow_Label_Instances".Translate(),
+                "RimClaw_HostWindow_Label_HeatRate".Translate(),
+                "RimClaw_HostWindow_Label_TotalUsage".Translate(),
+                "RimClaw_HostWindow_Label_TokenIO".Translate(),
+                "RimClaw_HostWindow_Label_ActiveTime".Translate()
             };
 
             string[] values =
@@ -316,7 +317,7 @@ namespace RimClaw
             if (gpu.TotalInstances <= 0)
             {
                 DrawOutline(rect);
-                Widgets.Label(new Rect(rect.x + 6f, rect.y + 8f, rect.width - 12f, 24f), "No runnable instances (insufficient VRAM/model).");
+                Widgets.Label(new Rect(rect.x + 6f, rect.y + 8f, rect.width - 12f, 24f), "RimClaw_HostWindow_NoRunnableInstances".Translate());
                 return;
             }
 
@@ -382,10 +383,10 @@ namespace RimClaw
 
             string[] labels =
             {
-                "Recent 1h",
-                "Recent 1 day",
-                "Recent 15 days",
-                "All"
+                "RimClaw_HostWindow_Range_1h".Translate(),
+                "RimClaw_HostWindow_Range_1d".Translate(),
+                "RimClaw_HostWindow_Range_15d".Translate(),
+                "RimClaw_HostWindow_Range_All".Translate()
             };
 
             float totalWidth = ranges.Length * buttonWidth + (ranges.Length - 1) * spacing;
@@ -408,11 +409,11 @@ namespace RimClaw
         private void OpenModelMenuForGpu(HostGpuSnapshot gpu, HostComputerSnapshot snapshot)
         {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
-            options.Add(new FloatMenuOption("(None)", delegate
+            options.Add(new FloatMenuOption("RimClaw_Generic_NoneParen".Translate(), delegate
             {
                 if (!host.SetGpuModelForGpu(gpu.ThingId, -1))
                 {
-                    Messages.Message("Failed to switch model for this GPU.", MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message("RimClaw_HostWindow_SwitchModelFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
                 }
             }, (Thing)null, new Color32(100, 100, 100, 255), MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
 
@@ -426,7 +427,7 @@ namespace RimClaw
                 {
                     if (!host.SetGpuModelForGpu(gpu.ThingId, diskThingId))
                     {
-                        Messages.Message("Failed to switch model for this GPU.", MessageTypeDefOf.RejectInput, historical: false);
+                        Messages.Message("RimClaw_HostWindow_SwitchModelFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
                     }
                 }, (Thing)null, modelColor, MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
             }
@@ -483,7 +484,7 @@ namespace RimClaw
             Widgets.DrawBoxSolid(dragRect, new Color(0f, 0f, 0f, 0.7f));
             DrawOutline(dragRect);
             DrawClawPortrait(new Rect(dragRect.x + 4f, dragRect.y + 3f, 44f, 44f), draggingClaw);
-            Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 8f, dragRect.width - 60f, 18f), $"Assign: {AbbreviateName(draggingClaw.LabelShortCap ?? draggingClaw.LabelCap ?? string.Empty, 8)}");
+            Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 8f, dragRect.width - 60f, 18f), "RimClaw_HostWindow_AssignPrompt".Translate(AbbreviateName(draggingClaw.LabelShortCap ?? draggingClaw.LabelCap ?? string.Empty, 8)));
             Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 26f, dragRect.width - 60f, 18f), host.GetAssignedGpuLabel(draggingClaw));
         }
 
@@ -564,14 +565,14 @@ namespace RimClaw
         {
             string[] labels =
             {
-                "GPU Machines",
-                "Room Temperature",
-                "Total token I/O",
-                "Power",
-                "Connected claws",
-                "VRAM Usage(GB)",
-                "Models",
-                "Instances"
+                "RimClaw_HostWindow_Stat_GpuMachines".Translate(),
+                "RimClaw_HostWindow_Stat_RoomTemperature".Translate(),
+                "RimClaw_HostWindow_Stat_TotalTokenIO".Translate(),
+                "RimClaw_HostWindow_Stat_Power".Translate(),
+                "RimClaw_HostWindow_Stat_ConnectedClaws".Translate(),
+                "RimClaw_HostWindow_Stat_VramUsage".Translate(),
+                "RimClaw_HostWindow_Stat_Models".Translate(),
+                "RimClaw_HostWindow_Stat_Instances".Translate()
             };
 
             string[] values =

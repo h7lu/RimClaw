@@ -20,6 +20,20 @@
   </HediffDef>
 
   <HediffDef>
+    <defName>RimClaw_ContextLoad</defName>
+    <label>context load</label>
+    <description>Aggregates context corruption and token consumption pressure from installed SKILLS.md implants.</description>
+    <hediffClass>RimClaw.Hediff_ContextLoad</hediffClass>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <stages>
+      <li>
+        <label>loaded</label>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
     <defName>RimClaw_ServiceBoost</defName>
     <label>service acceleration</label>
     <description>This Clawfish is actively synchronized with an upstream LLM service.</description>
@@ -51,7 +65,7 @@
   <HediffDef>
     <defName>RimClaw_DisguisedClawfish</defName>
     <label>clawfish disguise</label>
-    <description>This colonist keeps a clawfish visual shell.</description>
+    <description>This is a clawfish.</description>
     <hediffClass>RimClaw.Hediff_DisguisedClawfish</hediffClass>
     <isBad>false</isBad>
     <scenarioCanAdd>false</scenarioCanAdd>
@@ -71,10 +85,71 @@
     <scenarioCanAdd>false</scenarioCanAdd>
     <stages>
       <li>
-        <label>throttled</label>
-        <statOffsets>
-          <WorkSpeedGlobal>-0.5</WorkSpeedGlobal>
-        </statOffsets>
+        <minSeverity>0.0</minSeverity>
+        <label>negligible stagnation</label>
+        <statFactors>
+          <WorkSpeedGlobal>0.9</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+      <li>
+        <minSeverity>0.1</minSeverity>
+        <label>minor stagnation</label>
+        <statFactors>
+          <WorkSpeedGlobal>0.8</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+      <li>
+        <minSeverity>0.2</minSeverity>
+        <label>moderate stagnation</label>
+        <statFactors>
+          <WorkSpeedGlobal>0.6</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+      <li>
+        <minSeverity>0.4</minSeverity>
+        <label>major stagnation</label>
+        <statFactors>
+          <WorkSpeedGlobal>0.4</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+      <li>
+        <minSeverity>0.6</minSeverity>
+        <label>critical stagnation</label>
+        <statFactors>
+          <WorkSpeedGlobal>0.2</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>RimClaw_ModelWorkSpeedBonus</defName>
+    <label>model enhancement</label>
+    <defaultLabelColor>(0.6, 0.8, 1.0)</defaultLabelColor>
+    <description>This Clawfish is running a on an upstream language model that enhances work speed, skill level and maneuverability.</description>
+    <hediffClass>RimClaw.Hediff_ModelWorkSpeedBonus</hediffClass>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <stages>
+      <li>
+        <label>boosted</label>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef ParentName="ImplantHediffBase">
+    <defName>RimClaw_SkillsImplant</defName>
+    <label>SKILLS.md implant</label>
+    <description>A temporary SKILLS.md implant that improves specific skills and performances.</description>
+    <hediffClass>RimClaw.Hediff_SkillsImplant</hediffClass>
+    <isBad>false</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+    <comps>
+      <li Class="RimClaw.HediffCompProperties_SkillsMdSync" />
+    </comps>
+    <stages>
+      <li>
+        <label>installed</label>
       </li>
     </stages>
   </HediffDef>

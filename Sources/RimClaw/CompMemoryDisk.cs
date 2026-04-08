@@ -15,6 +15,7 @@ namespace RimClaw
         public float formingMechBobSpeed = 0.0007f;
         public float formingMechYBobDistance = 0.06f;
         public float formingGraphicYOffset = 0.018292684f;
+        public float formingGraphicAlpha = 0.8f;
         public Vector3 northOffset = new Vector3(0f, 0f, 0.18f);
         public Vector3 eastOffset = new Vector3(0f, 0f, 0.18f);
         public Vector3 southOffset = new Vector3(0f, 0f, 0.18f);
@@ -56,7 +57,7 @@ namespace RimClaw
 
     public class CompMemoryDisk : ThingComp
     {
-        private const string DebugPrefix = "[RimClaw][MemoryDisk][Comp]";
+        private Material pendingInsertLineMat;
 
         private bool hasModel;
         private string modelName;
@@ -64,6 +65,7 @@ namespace RimClaw
         private int requiredVram;
         private float tokenPerSecondPerInstance;
         private float workSpeedBonus;
+        private int modelSkillLevelAdjustment;
         private int hostThingID = -1;
 
         public CompProperties_MemoryDisk Props => (CompProperties_MemoryDisk)props;
@@ -73,6 +75,7 @@ namespace RimClaw
         public int RequiredVram => requiredVram;
         public float TokenPerSecondPerInstance => tokenPerSecondPerInstance;
         public float WorkSpeedBonus => workSpeedBonus;
+        public int ModelSkillLevelAdjustment => modelSkillLevelAdjustment;
         public int HostThingID => hostThingID;
 
         public void AssignHost(Thing host)
@@ -89,19 +92,18 @@ namespace RimClaw
             Scribe_Values.Look(ref requiredVram, "requiredVram", 0);
             Scribe_Values.Look(ref tokenPerSecondPerInstance, "tokenPerSecondPerInstance", 0f);
             Scribe_Values.Look(ref workSpeedBonus, "workSpeedBonus", 0f);
+            Scribe_Values.Look(ref modelSkillLevelAdjustment, "modelSkillLevelAdjustment", 0);
             Scribe_Values.Look(ref hostThingID, "hostThingID", -1);
-            Log.Message($"{DebugPrefix} PostExposeData thing={(parent != null ? parent.ThingID.ToString() : "null")} loaded={Scribe.mode} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID} requiredVram={requiredVram} tps={tokenPerSecondPerInstance:0.###} workBonus={workSpeedBonus:0.###}");
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            Log.Message($"{DebugPrefix} CompGetGizmosExtra thing={(parent != null ? parent.ThingID.ToString() : "null")} spawned={(parent?.Spawned ?? false)} mapHeld={(parent?.MapHeld != null)} hasModel={hasModel} modelName={modelName ?? "(null)"}");
             if (parent.MapHeld != null)
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "Insert model",
-                    defaultDesc = "Select a model package on the ground, then assign a pawn to carry and insert it.",
+                    defaultLabel = "RimClaw_MemoryDisk_InsertModel_Label".Translate(),
+                    defaultDesc = "RimClaw_MemoryDisk_InsertModel_Desc".Translate(),
                     icon = ContentFinder<Texture2D>.Get("Insert_Model", reportFailure: false),
                     action = delegate
                     {
@@ -114,8 +116,8 @@ namespace RimClaw
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "Eject model",
-                    defaultDesc = "Eject current model as a model package item.",
+                    defaultLabel = "RimClaw_MemoryDisk_EjectModel_Label".Translate(),
+                    defaultDesc = "RimClaw_MemoryDisk_EjectModel_Desc".Translate(),
                     icon = ContentFinder<Texture2D>.Get("Eject_Model", reportFailure: false),
                     action = delegate
                     {
@@ -127,15 +129,16 @@ namespace RimClaw
 
         public override string CompInspectStringExtra()
         {
-            Log.Message($"{DebugPrefix} CompInspectStringExtra thing={(parent != null ? parent.ThingID.ToString() : "null")} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID}");
             if (!hasModel)
             {
-                return hostThingID < 0 ? "Model: (none)" : $"Model: (none)\nHost ID: {hostThingID}";
+                return hostThingID < 0
+                    ? "RimClaw_MemoryDisk_Inspect_None".Translate()
+                    : "RimClaw_MemoryDisk_Inspect_NoneWithHost".Translate(hostThingID);
             }
 
             return hostThingID < 0
-                ? $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%"
-                : $"Model: {modelName}\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0}\nWork speed bonus: +{workSpeedBonus * 100f:0.0}%\nHost ID: {hostThingID}";
+                ? "RimClaw_MemoryDisk_Inspect_WithModel".Translate(modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment)
+                : "RimClaw_MemoryDisk_Inspect_WithModelHost".Translate(modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment, hostThingID);
         }
 
         public override void CompTick()
@@ -145,10 +148,9 @@ namespace RimClaw
             {
                 RimClawGlowUtility.SpawnPulseGlow(parent, RimClawGlowUtility.SoftenToGlow(modelColor), 4f);
             }
-
             if (parent != null && parent.IsHashIntervalTick(60))
             {
-                Log.Message($"{DebugPrefix} CompTick thing={parent.ThingID} spawned={parent.Spawned} mapHeld={(parent.MapHeld != null)} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID}");
+                UpdateGlowerColor();
             }
         }
 
@@ -166,12 +168,34 @@ namespace RimClaw
             }
 
             comp.EnsureInitialized();
+
+            if (hasModel)
+            {
+                if (parent?.MapHeld == null)
+                {
+                    return false;
+                }
+
+                Thing previousPackage = ThingMaker.MakeThing(RimClawDefOf.RimClaw_ModelCard);
+                CompModelCard previousCard = previousPackage.TryGetComp<CompModelCard>();
+                previousCard?.OverrideModelData(modelName, modelColor, requiredVram, tokenPerSecondPerInstance, workSpeedBonus, modelSkillLevelAdjustment);
+
+                bool placedPrevious = GenPlace.TryPlaceThing(previousPackage, parent.InteractionCell, parent.MapHeld, ThingPlaceMode.Near, out Thing _);
+                if (!placedPrevious)
+                {
+                    previousPackage.Destroy(DestroyMode.Vanish);
+                        Messages.Message("RimClaw_MemoryDisk_ReinstallEjectFailed".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                    return false;
+                }
+            }
+
             hasModel = true;
             modelName = comp.ModelName;
             modelColor = comp.ModelColor;
             requiredVram = comp.RequiredVram;
             tokenPerSecondPerInstance = comp.TokenPerSecondPerInstance;
             workSpeedBonus = comp.WorkSpeedBonus;
+            modelSkillLevelAdjustment = comp.ModelSkillLevelAdjustment;
 
             if (consumeThing)
             {
@@ -189,7 +213,66 @@ namespace RimClaw
                 return;
             }
 
-            RimClawGlowUtility.DrawGlow(parent.DrawPos, RimClawGlowUtility.SoftenToGlow(modelColor), 4f);
+            CompProperties_MemoryDisk compProperties = Props;
+            GraphicData formingGraphicData = compProperties?.formingGraphicData;
+            if (formingGraphicData != null)
+            {
+                Vector3 loc = parent.DrawPos + compProperties.GetRotationOffset(parent.Rotation);
+                int ticksGame = Find.TickManager?.TicksGame ?? 0;
+                float bob = Mathf.PingPong(ticksGame * compProperties.formingMechBobSpeed, compProperties.formingMechYBobDistance);
+                loc.y = AltitudeLayer.BuildingOnTop.AltitudeFor() + compProperties.formingGraphicYOffset + bob;
+
+                Graphic graphic = formingGraphicData.Graphic;
+                Color tintedColor = modelColor;
+                tintedColor.a *= compProperties.formingGraphicAlpha;
+                Material tintedMat = MaterialPool.MatFrom(formingGraphicData.texPath, graphic.Shader, tintedColor);
+                Mesh mesh = graphic.MeshAt(parent.Rotation);
+                Vector3 scale = new Vector3(2f, 1f, 2f);
+                Matrix4x4 matrix = Matrix4x4.TRS(loc, Quaternion.identity, scale);
+                Graphics.DrawMesh(mesh, matrix, tintedMat, 0);
+            }
+        }
+
+        public override void PostDrawExtraSelectionOverlays()
+        {
+            base.PostDrawExtraSelectionOverlays();
+
+            if (parent?.Spawned != true || parent.MapHeld == null)
+            {
+                return;
+            }
+
+            IReadOnlyList<Pawn> pawns = parent.MapHeld.mapPawns?.AllPawnsSpawned;
+            if (pawns == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < pawns.Count; i++)
+            {
+                Pawn p = pawns[i];
+                Job curJob = p?.CurJob;
+                if (curJob == null || curJob.def != RimClawDefOf.RimClaw_InsertModelIntoDisk)
+                {
+                    continue;
+                }
+
+                if (curJob.targetA.Thing != parent)
+                {
+                    continue;
+                }
+
+                Thing package = curJob.targetB.Thing;
+                if (package?.Spawned == true && package.Map == parent.MapHeld)
+                {
+                    if (pendingInsertLineMat == null)
+                    {
+                        pendingInsertLineMat = MaterialPool.MatFrom(GenDraw.LineTexPath, ShaderDatabase.Transparent, new Color(0.98f, 0.86f, 0.22f, 1f));
+                    }
+
+                    GenDraw.DrawLineBetween(parent.DrawPos, package.DrawPos, pendingInsertLineMat);
+                }
+            }
         }
 
         public void ClearStoredModel()
@@ -200,6 +283,8 @@ namespace RimClaw
             requiredVram = 0;
             tokenPerSecondPerInstance = 0f;
             workSpeedBonus = 0f;
+            modelSkillLevelAdjustment = 0;
+            UpdateGlowerColor();
         }
 
         private void StartSelectModelTarget()
@@ -224,18 +309,19 @@ namespace RimClaw
                 Thing selectedThing = target.Thing;
                 if (selectedThing == null || selectedThing.def != RimClawDefOf.RimClaw_ModelCard)
                 {
-                    Messages.Message("Select a model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message("RimClaw_MemoryDisk_SelectModelPackage".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
                     return;
                 }
 
                 Pawn worker = FindBestInsertionPawn(selectedThing);
                 if (worker == null)
                 {
-                    Messages.Message("No available pawn can insert this model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message("RimClaw_MemoryDisk_NoInsertionPawn".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
                     return;
                 }
 
                 Job job = JobMaker.MakeJob(RimClawDefOf.RimClaw_InsertModelIntoDisk, parent, selectedThing);
+                job.count = 1;
                 worker.jobs?.TryTakeOrderedJob(job, JobTag.Misc);
             });
         }
@@ -288,18 +374,53 @@ namespace RimClaw
 
             Thing package = ThingMaker.MakeThing(RimClawDefOf.RimClaw_ModelCard);
             CompModelCard card = package.TryGetComp<CompModelCard>();
-            card?.OverrideModelData(modelName, modelColor, requiredVram, tokenPerSecondPerInstance, workSpeedBonus);
+            card?.OverrideModelData(modelName, modelColor, requiredVram, tokenPerSecondPerInstance, workSpeedBonus, modelSkillLevelAdjustment);
 
             bool placed = GenPlace.TryPlaceThing(package, parent.InteractionCell, parent.MapHeld, ThingPlaceMode.Near, out Thing _);
             if (!placed)
             {
                 package.Destroy(DestroyMode.Vanish);
-                Messages.Message("Could not place ejected model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                Messages.Message("RimClaw_MemoryDisk_EjectPlaceFailed".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
                 return;
             }
 
             ClearStoredModel();
         }
 
+        private void UpdateGlowerColor()
+        {
+            if (parent?.Spawned != true || parent.MapHeld == null)
+            {
+                return;
+            }
+
+            CompGlower glower = parent.TryGetComp<CompGlower>();
+            if (glower == null)
+            {
+                return;
+            }
+
+            if (!hasModel)
+            {
+                glower.GlowRadius = 0f;
+                glower.ForceRegister(parent.MapHeld);
+                return;
+            }
+
+            glower.GlowRadius = 3f;
+            Color color = RimClawGlowUtility.SoftenToGlow(modelColor);
+            ColorInt colorInt = new ColorInt(
+                Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255),
+                Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255),
+                Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255),
+                0);
+
+            if (glower.GlowColor != colorInt)
+            {
+                glower.GlowColor = colorInt;
+            }
+
+            glower.ForceRegister(parent.MapHeld);
+        }
     }
 }

@@ -46,11 +46,11 @@ namespace RimClaw
                 GenSpawn.Spawn(clawfish, spawnCell, fisher.Map, WipeMode.Vanish);
                 fisher.jobs?.EndCurrentJob(JobCondition.InterruptForced);
 
-                Find.LetterStack.ReceiveLetter(
-                    cfg.fishingLetterLabel,
+                Messages.Message(
                     string.Format(cfg.fishingLetterText, fisher.LabelShortCap),
-                    LetterDefOf.NeutralEvent,
-                    clawfish);
+                    clawfish,
+                    MessageTypeDefOf.NeutralEvent,
+                    historical: false);
             });
         }
 
@@ -79,6 +79,78 @@ namespace RimClaw
             }
 
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(StatWorker), nameof(StatWorker.FinalizeValue))]
+    public static class Patch_StatWorker_FinalizeValue_ModelWorkSpeed
+    {
+        public static void Postfix(StatWorker __instance, StatRequest req, ref float val)
+        {
+            Pawn pawn = req.Thing as Pawn;
+            if (pawn == null || !ClawfishUtility.IsClawfish(pawn))
+            {
+                return;
+            }
+
+            StatDef statDef = Traverse.Create(__instance).Field("stat").GetValue<StatDef>();
+            if (statDef == null)
+            {
+                return;
+            }
+
+            bool modelAffectedStat = statDef.defName == "WorkSpeedGlobal"
+                || statDef.defName == "Maneuver"
+                || statDef.defName == "SocialImpact"
+                || statDef.defName == "NegotiationAbility";
+            bool skillsAffectedStat = statDef.defName == "MoveSpeed"
+                || statDef.defName == "WorkSpeedGlobal"
+                || statDef.defName == "SocialImpact"
+                || statDef.defName == "NegotiationAbility";
+
+            if (!modelAffectedStat && !skillsAffectedStat)
+            {
+                return;
+            }
+
+            if (modelAffectedStat)
+            {
+                Hediff_ModelWorkSpeedBonus hediff = pawn.health?.hediffSet?.GetFirstHediffOfDef(RimClawDefOf.RimClaw_ModelWorkSpeedBonus) as Hediff_ModelWorkSpeedBonus;
+                if (hediff != null)
+                {
+                    val *= hediff.WorkSpeedMultiplier;
+                }
+            }
+
+            if (skillsAffectedStat)
+            {
+                val *= SkillsImplantUtility.GetAdditiveStatFactor(pawn, statDef.defName);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(PawnCapacityUtility), nameof(PawnCapacityUtility.CalculateCapacityLevel))]
+    public static class Patch_PawnCapacityUtility_CalculateCapacityLevel_ModelWorkSpeed
+    {
+        public static void Postfix(HediffSet diffSet, PawnCapacityDef capacity, ref float __result)
+        {
+            Pawn pawn = diffSet?.pawn;
+            if (pawn == null || !ClawfishUtility.IsClawfish(pawn) || capacity == null)
+            {
+                return;
+            }
+
+            // Apply model bonus to maneuver-like capacities and talking capacity.
+            if (capacity.defName != "Moving" && capacity.defName != "Manipulation" && capacity.defName != "Talking")
+            {
+                return;
+            }
+
+            Hediff_ModelWorkSpeedBonus hediff = pawn.health?.hediffSet?.GetFirstHediffOfDef(RimClawDefOf.RimClaw_ModelWorkSpeedBonus) as Hediff_ModelWorkSpeedBonus;
+            if (hediff != null)
+            {
+                __result *= hediff.WorkSpeedMultiplier;
+            }
         }
     }
 

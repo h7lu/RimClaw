@@ -10,7 +10,7 @@ namespace RimClaw
     {
         public float LifetimeSilverSpent;
         public float PendingPayment;
-        public float HourlyRate;
+        public float PerSecondRate;
         public List<Pawn> Claws = new List<Pawn>();
     }
 
@@ -18,8 +18,9 @@ namespace RimClaw
     {
         public Pawn Claw;
         public float CurrentTps;
-        public float SilverPerHour;
-        public List<float> SilverHistory = new List<float>();
+        public float ProvidedTps;
+        public float SilverPerSecond;
+        public List<float> SilverPerSecondHistory = new List<float>();
     }
 
     public class SubscriptionSnapshot
@@ -31,18 +32,19 @@ namespace RimClaw
         public float LiveThroughput;
         public float MaxCapacityPerClaw;
         public int ActiveClaws;
-        public float HourlySilverRate;
+        public float PerSecondSilverRate;
+        public float CurrentHourSilverSpent;
         public float LifetimeSilverSpent;
         public float PendingPayment;
-        public List<float> TotalSilverHistory = new List<float>();
+        public List<float> HourlySilverHistory = new List<float>();
         public List<SubscriptionClawSnapshot> Claws = new List<SubscriptionClawSnapshot>();
     }
 
     public class CompProperties_LLMSubscriptionService : CompProperties
     {
-        public float baseTokenCapacityPerSecond = 220f;
+        public float baseTokenCapacityPerSecond = 440f;
         public float maxCapacityPerClaw = 400f;
-        public float pricePerKTokens = 0.1f;
+        public float pricePerKTokens = 0.5f;
         public float silverSearchRadius = 5f;
         public int historyLength = 360;
 
@@ -54,19 +56,29 @@ namespace RimClaw
 
     public class CompLLMSubscriptionService : CompTokenSupplier
     {
+        private const float InGameSecondsPerHour = 2500f / 60f;
+
         private readonly SubscriptionModel model = new SubscriptionModel();
         private readonly Dictionary<int, List<float>> clawSilverHistory = new Dictionary<int, List<float>>();
-        private List<float> totalSilverHistory = new List<float>();
+        private List<float> hourlySilverHistory = new List<float>();
 
         private float liveThroughput;
         private float speedMultiplier = 1f;
         private string modelIdentifier = "LLM Service Subscription";
         private int lastBillingTick = -1;
+        private float currentHourSilverSpent;
+        private float currentHourElapsedGameSeconds;
+        private float currentPerSecondSilverRate;
+        private bool serviceStopped;
+
+        public bool IsOutOfFee => serviceStopped;
 
         public CompProperties_LLMSubscriptionService Props => (CompProperties_LLMSubscriptionService)props;
         public float SilverSearchRadius => Props.silverSearchRadius;
 
         public override bool IsValidSupplier => parent != null && parent.Spawned && IsPowered(parent as ThingWithComps);
+
+        public float GetSpeedMultiplier() => speedMultiplier;
 
         public override string TransformLabel(string label)
         {
@@ -97,11 +109,14 @@ namespace RimClaw
             base.PostExposeData();
             Scribe_Values.Look(ref model.LifetimeSilverSpent, "lifetimeSilverSpent", 0f);
             Scribe_Values.Look(ref model.PendingPayment, "pendingSilverPayment", 0f);
-            Scribe_Values.Look(ref model.HourlyRate, "hourlySilverRate", 0f);
+            Scribe_Values.Look(ref model.PerSecondRate, "perSecondSilverRate", 0f);
             Scribe_Values.Look(ref liveThroughput, "liveThroughput", 0f);
             Scribe_Values.Look(ref speedMultiplier, "speedMultiplier", 1f);
             Scribe_Values.Look(ref modelIdentifier, "modelIdentifier", "LLM Subscription");
-            Scribe_Collections.Look(ref totalSilverHistory, "totalSilverHistory", LookMode.Value);
+            Scribe_Values.Look(ref currentHourSilverSpent, "currentHourSilverSpent", 0f);
+            Scribe_Values.Look(ref currentHourElapsedGameSeconds, "currentHourElapsedGameSeconds", 0f);
+            Scribe_Values.Look(ref serviceStopped, "serviceStopped", false);
+            Scribe_Collections.Look(ref hourlySilverHistory, "hourlySilverHistory", LookMode.Value);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (connectedClawfish == null)
@@ -109,9 +124,9 @@ namespace RimClaw
                     connectedClawfish = new List<Pawn>();
                 }
 
-                if (totalSilverHistory == null)
+                if (hourlySilverHistory == null)
                 {
-                    totalSilverHistory = new List<float>();
+                    hourlySilverHistory = new List<float>();
                 }
             }
         }
@@ -120,8 +135,8 @@ namespace RimClaw
         {
             yield return new Command_Action
             {
-                defaultLabel = "Open Console",
-                defaultDesc = "Open the LLM subscription management console.",
+                defaultLabel = "RimClaw_Subscription_OpenConsole_Label".Translate(),
+                defaultDesc = "RimClaw_Subscription_OpenConsole_Desc".Translate(),
                 icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
@@ -133,6 +148,11 @@ namespace RimClaw
         public override void CompTick()
         {
             base.CompTick();
+
+            if (parent != null && parent.IsHashIntervalTick(60))
+            {
+                UpdateGlowerColor();
+            }
 
             int nowTick = Find.TickManager?.TicksGame ?? 0;
             if (lastBillingTick < 0)
@@ -154,6 +174,24 @@ namespace RimClaw
             CleanupHistory();
             RefreshModelTelemetry();
 
+            if (serviceStopped)
+            {
+                liveThroughput = 0f;
+                currentPerSecondSilverRate = 0f;
+                model.PerSecondRate = 0f;
+
+                if (IsValidSupplier)
+                {
+                    TryAutoPayIntegerSilver(stopOnFailure: false);
+                    if (model.PendingPayment < 1f)
+                    {
+                        ResumeServiceAfterPayment();
+                    }
+                }
+
+                return;
+            }
+
             if (parent.IsHashIntervalTick(30))
             {
                 RimClawGlowUtility.SpawnPulseGlow(parent, RimClawGlowUtility.SoftenToGlow(ResolveModelColor()), 4f);
@@ -162,8 +200,8 @@ namespace RimClaw
             if (!IsValidSupplier)
             {
                 liveThroughput = 0f;
-                model.HourlyRate = 0f;
-                PushHistoryPoint();
+                model.PerSecondRate = 0f;
+                TickHourlyHistory(0f, elapsedSeconds);
                 return;
             }
 
@@ -177,19 +215,21 @@ namespace RimClaw
             float supplied = Mathf.Min(liveThroughput, totalTokenCapacityPerSecond);
             float silverPerToken = Props.pricePerKTokens / 1000f;
             float silverPerSecond = supplied * silverPerToken;
-            model.HourlyRate = silverPerSecond * 3600f;
+            currentPerSecondSilverRate = silverPerSecond;
+            model.PerSecondRate = silverPerSecond;
 
             model.PendingPayment += silverPerSecond * elapsedSeconds;
             model.LifetimeSilverSpent += silverPerSecond * elapsedSeconds;
 
-            TryAutoPayIntegerSilver();
-            PushHistoryPoint();
+            TickHourlyHistory(silverPerSecond * elapsedSeconds, elapsedSeconds);
+
+            TryAutoPayIntegerSilver(stopOnFailure: true);
             PushPerClawHistory();
         }
 
         public override float GetAvailableTokenRateForClawfish(Pawn claw)
         {
-            if (claw == null || !connectedClawfish.Contains(claw) || connectedClawfish.Count == 0)
+            if (serviceStopped || claw == null || !connectedClawfish.Contains(claw) || connectedClawfish.Count == 0)
             {
                 return 0f;
             }
@@ -226,7 +266,7 @@ namespace RimClaw
 
             float supplied = Mathf.Min(currentLiveThroughput, totalTokenCapacityPerSecond);
             float silverPerToken = Props.pricePerKTokens / 1000f;
-            float currentHourlyRate = supplied * silverPerToken * 3600f;
+            float currentPerSecondRate = supplied * silverPerToken;
 
             SubscriptionSnapshot snapshot = new SubscriptionSnapshot
             {
@@ -237,12 +277,13 @@ namespace RimClaw
                 LiveThroughput = currentLiveThroughput,
                 MaxCapacityPerClaw = Props.maxCapacityPerClaw,
                 ActiveClaws = connectedClawfish.Count,
-                HourlySilverRate = currentHourlyRate,
+                PerSecondSilverRate = currentPerSecondRate,
+                CurrentHourSilverSpent = currentHourSilverSpent,
                 LifetimeSilverSpent = model.LifetimeSilverSpent,
                 PendingPayment = model.PendingPayment
             };
 
-            snapshot.TotalSilverHistory.AddRange(totalSilverHistory);
+            snapshot.HourlySilverHistory.AddRange(hourlySilverHistory);
 
             for (int i = 0; i < connectedClawfish.Count; i++)
             {
@@ -255,18 +296,19 @@ namespace RimClaw
                 float currentTps = GetCurrentNeededRate(claw);
                 float provided = GetAvailableTokenRateForClawfish(claw);
                 float effectiveTps = Mathf.Min(currentTps, provided);
-                float silverPerHour = effectiveTps * (Props.pricePerKTokens / 1000f) * 3600f;
+                float silverPerSecond = effectiveTps * (Props.pricePerKTokens / 1000f);
 
                 SubscriptionClawSnapshot clawSnapshot = new SubscriptionClawSnapshot
                 {
                     Claw = claw,
                     CurrentTps = currentTps,
-                    SilverPerHour = silverPerHour
+                    ProvidedTps = effectiveTps,
+                    SilverPerSecond = silverPerSecond
                 };
 
                 if (clawSilverHistory.TryGetValue(claw.thingIDNumber, out List<float> history) && history != null)
                 {
-                    clawSnapshot.SilverHistory.AddRange(history);
+                    clawSnapshot.SilverPerSecondHistory.AddRange(history);
                 }
 
                 snapshot.Claws.Add(clawSnapshot);
@@ -289,19 +331,12 @@ namespace RimClaw
         public override void PostDraw()
         {
             base.PostDraw();
-            if (parent?.Spawned != true || !IsPowered(parent as ThingWithComps))
-            {
-                return;
-            }
-
-            Color glowColor = ResolveModelColor();
-            RimClawGlowUtility.DrawGlow(parent.DrawPos, RimClawGlowUtility.SoftenToGlow(glowColor), 4f);
         }
 
         public override string CompInspectStringExtra()
         {
             float supplied = Mathf.Min(liveThroughput, totalTokenCapacityPerSecond);
-            return $"Model: {GetCurrentModelIdentifier()}\nLive Throughput: {liveThroughput:0.0}/{totalTokenCapacityPerSecond:0.0} TPS\nActive Claws: {connectedClawfish.Count}\nHourly Silver: {model.HourlyRate:0.00}\nPending Payment: {model.PendingPayment:0.00}\nSupplied TPS: {supplied:0.0}";
+            return "RimClaw_Subscription_Inspect".Translate(GetCurrentModelIdentifier(), liveThroughput.ToString("0.0"), totalTokenCapacityPerSecond.ToString("0.0"), connectedClawfish.Count, model.PerSecondRate.ToString("0.00"), currentHourSilverSpent.ToString("0.00"), model.PendingPayment.ToString("0.00"), supplied.ToString("0.0"));
         }
 
         private void RefreshModelTelemetry()
@@ -348,6 +383,33 @@ namespace RimClaw
             return card.ModelColor;
         }
 
+        private void UpdateGlowerColor()
+        {
+            if (parent?.Spawned != true || parent.MapHeld == null)
+            {
+                return;
+            }
+
+            CompGlower glower = parent.TryGetComp<CompGlower>();
+            if (glower == null)
+            {
+                return;
+            }
+
+            Color color = RimClawGlowUtility.SoftenToGlow(ResolveModelColor());
+            ColorInt colorInt = new ColorInt(
+                Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255),
+                Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255),
+                Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255),
+                0);
+
+            if (glower.GlowColor != colorInt)
+            {
+                glower.GlowColor = colorInt;
+                glower.ForceRegister(parent.MapHeld);
+            }
+        }
+
         private float GetCurrentNeededRate(Pawn claw)
         {
             if (claw == null)
@@ -358,7 +420,7 @@ namespace RimClaw
             CompClawfishTokenConnection connection = claw.TryGetComp<CompClawfishTokenConnection>();
             if (connection != null)
             {
-                return connection.CurrentTokenConsumptionRate;
+                return connection.GetAdjustedTokenConsumptionRate(claw);
             }
 
             CompClawfishToken legacy = claw.TryGetComp<CompClawfishToken>();
@@ -368,16 +430,6 @@ namespace RimClaw
             }
 
             return 0f;
-        }
-
-        private void PushHistoryPoint()
-        {
-            totalSilverHistory.Add(model.HourlyRate);
-            int maxLen = Mathf.Max(60, Props.historyLength);
-            if (totalSilverHistory.Count > maxLen)
-            {
-                totalSilverHistory.RemoveAt(0);
-            }
         }
 
         private void PushPerClawHistory()
@@ -395,7 +447,7 @@ namespace RimClaw
                 float currentTps = GetCurrentNeededRate(claw);
                 float provided = GetAvailableTokenRateForClawfish(claw);
                 float effectiveTps = Mathf.Min(currentTps, provided);
-                float silverPerHour = effectiveTps * (Props.pricePerKTokens / 1000f) * 3600f;
+                float silverPerSecond = effectiveTps * (Props.pricePerKTokens / 1000f);
 
                 if (!clawSilverHistory.TryGetValue(claw.thingIDNumber, out List<float> history) || history == null)
                 {
@@ -403,11 +455,30 @@ namespace RimClaw
                     clawSilverHistory[claw.thingIDNumber] = history;
                 }
 
-                history.Add(silverPerHour);
+                history.Add(silverPerSecond);
                 if (history.Count > maxLen)
                 {
                     history.RemoveAt(0);
                 }
+            }
+        }
+
+        private void TickHourlyHistory(float elapsedSilver, float elapsedSeconds)
+        {
+            currentHourSilverSpent += elapsedSilver;
+            currentHourElapsedGameSeconds += elapsedSeconds;
+
+            while (currentHourElapsedGameSeconds >= InGameSecondsPerHour)
+            {
+                hourlySilverHistory.Add(currentHourSilverSpent);
+                int maxLen = Mathf.Max(24, Props.historyLength);
+                if (hourlySilverHistory.Count > maxLen)
+                {
+                    hourlySilverHistory.RemoveAt(0);
+                }
+
+                currentHourElapsedGameSeconds -= InGameSecondsPerHour;
+                currentHourSilverSpent = 0f;
             }
         }
 
@@ -460,48 +531,76 @@ namespace RimClaw
             }
         }
 
-        private void TryAutoPayIntegerSilver()
+        private bool TryAutoPayIntegerSilver(bool stopOnFailure)
         {
-            int owed = Mathf.FloorToInt(model.PendingPayment);
-            if (owed <= 0 || parent.MapHeld == null)
+            if (parent.MapHeld == null)
             {
-                return;
+                return false;
             }
 
-            int paid = ConsumeNearbySilver(owed);
-            if (paid > 0)
+            while (model.PendingPayment >= 1f)
             {
-                model.PendingPayment -= paid;
-                model.PendingPayment = Mathf.Max(0f, model.PendingPayment);
-            }
-        }
-
-        private int ConsumeNearbySilver(int amount)
-        {
-            int remaining = amount;
-            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(parent.Position, parent.MapHeld, Props.silverSearchRadius, useCenter: true))
-            {
-                if (remaining <= 0)
+                if (!ConsumeNearbySilverUnit())
                 {
-                    break;
+                    if (stopOnFailure)
+                    {
+                        StopServiceForNonPayment();
+                    }
+
+                    return false;
                 }
 
+                model.PendingPayment = Mathf.Max(0f, model.PendingPayment - 1f);
+            }
+
+            return true;
+        }
+
+        private bool ConsumeNearbySilverUnit()
+        {
+            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(parent.Position, parent.MapHeld, Props.silverSearchRadius, useCenter: true))
+            {
                 if (thing.def != ThingDefOf.Silver)
                 {
                     continue;
                 }
 
-                int take = Mathf.Min(remaining, thing.stackCount);
-                if (take <= 0)
+                if (thing.stackCount <= 0)
                 {
                     continue;
                 }
 
-                thing.SplitOff(take).Destroy(DestroyMode.Vanish);
-                remaining -= take;
+                thing.SplitOff(1).Destroy(DestroyMode.Vanish);
+                return true;
             }
 
-            return amount - remaining;
+            return false;
+        }
+
+        private void StopServiceForNonPayment()
+        {
+            if (serviceStopped)
+            {
+                return;
+            }
+
+            serviceStopped = true;
+            liveThroughput = 0f;
+            currentPerSecondSilverRate = 0f;
+            model.PerSecondRate = 0f;
+            model.PendingPayment = Mathf.Max(0f, model.PendingPayment);
+            Messages.Message("RimClaw_Subscription_OutOfFee".Translate(), parent, MessageTypeDefOf.CautionInput, historical: false);
+        }
+
+        private void ResumeServiceAfterPayment()
+        {
+            if (!serviceStopped)
+            {
+                return;
+            }
+
+            serviceStopped = false;
+            Messages.Message("RimClaw_Subscription_Resumed".Translate(), parent, MessageTypeDefOf.PositiveEvent, historical: false);
         }
 
         private static bool IsPowered(ThingWithComps thing)

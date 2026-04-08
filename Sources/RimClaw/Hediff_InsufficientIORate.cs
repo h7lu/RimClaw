@@ -6,25 +6,49 @@ namespace RimClaw
 {
     public class Hediff_InsufficientIORate : Hediff
     {
-        private float throttleRatio = 1f; // 0 = no tokens (full debuff), 1 = full supply (no debuff)
+        public float ThrottleRatio => Mathf.Clamp01(1f - Severity);
 
-        public float ThrottleRatio => throttleRatio;
+        public float WorkSpeedFactor
+        {
+            get
+            {
+                float ratio = ThrottleRatio;
+                if (ratio >= 0.9f)
+                {
+                    return 0.9f;
+                }
+
+                if (ratio >= 0.8f)
+                {
+                    return 0.8f;
+                }
+
+                if (ratio >= 0.6f)
+                {
+                    return 0.6f;
+                }
+
+                if (ratio >= 0.4f)
+                {
+                    return 0.4f;
+                }
+
+                return 0.2f;
+            }
+        }
 
         public void SetThrottleRatio(float ratio)
         {
-            throttleRatio = Mathf.Clamp01(ratio);
+            float clamped = Mathf.Clamp01(ratio);
+            Severity = 1f - clamped;
         }
 
-        public override void PostAdd(DamageInfo? dinfo)
+        public override string TipStringExtra
         {
-            base.PostAdd(dinfo);
-            SetThrottleRatio(0f); // Start with no supply
-        }
-
-        public override void Tick()
-        {
-            base.Tick();
+            get
+            {
+                return $"I/O throttle severity: {Severity:P0}\nWork speed multiplier: x{WorkSpeedFactor:0.00}";
+            }
         }
     }
 }
-

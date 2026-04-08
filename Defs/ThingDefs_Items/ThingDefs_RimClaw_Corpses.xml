@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BuildingBase">
+    <defName>RimClaw_ClawfishCorpse</defName>
+    <label>clawfish corpse</label>
+    <description>The dead body of a clawfish.</description>
+    <thingClass>Verse.Building</thingClass>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>clawfish_south</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>CutoutComplex</shaderType>
+      <drawSize>(2.5,2.5)</drawSize>
+    </graphicData>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <MaxHitPoints>80</MaxHitPoints>
+      <Flammability>0.3</Flammability>
+    </statBases>
+    <building>
+      <isEdifice>false</isEdifice>
+      <canPlaceOverWall>true</canPlaceOverWall>
+    </building>
+    <filthLeaving>Filth_CorpseBile</filthLeaving>
+    <butcherProducts>
+      <Meat_Claw>15</Meat_Claw>
+    </butcherProducts>
+  </ThingDef>
+</Defs>

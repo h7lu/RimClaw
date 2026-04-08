@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 
@@ -126,7 +127,8 @@ namespace RimClaw
                 return;
             }
 
-            if (Rand.Chance(cfg.contextCollapseChancePerSecond))
+            float reducedChance = cfg.contextCollapseChancePerSecond * Mathf.Max(0.2f, SkillsImplantUtility.GetContextCollapseFactor(pawn));
+            if (Rand.Chance(reducedChance))
             {
                 pawn.mindState?.mentalStateHandler?.TryStartMentalState(RimClawDefOf.RimClaw_ContextCollapse, forceWake: true);
                 consecutiveWorkTicks = 0;
@@ -188,7 +190,8 @@ namespace RimClaw
                 baseRate = Props.workRate;
             }
 
-            return baseRate * ConsumptionMultiplier;
+            float skillsFactor = Mathf.Max(0.2f, SkillsImplantUtility.GetTokenConsumptionFactor(pawn));
+            return baseRate * ConsumptionMultiplier * skillsFactor;
         }
 
         private static bool ContainsAny(string value, List<string> keywords)
@@ -235,7 +238,7 @@ namespace RimClaw
 
             float rate = GetCurrentConsumptionRatePerSecond(pawn);
             string status = currentTokens > 0.0001f ? Props.onlineStatusText : Props.depletedStatusText;
-            return $"Tokens: {currentTokens:0.0}/{MaxTokens:0.0}\nConsumption: {rate:0.00} tok/s\nStatus: {status}";
+            return "RimClaw_ClawfishToken_Inspect".Translate(currentTokens.ToString("0.0"), MaxTokens.ToString("0.0"), rate.ToString("0.00"), status);
         }
     }
 }

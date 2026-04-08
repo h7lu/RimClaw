@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: A synthetic cognition lock that holds emotional baseline at exactly 50% mood. -->
+  <RimClaw_AI.description>一种合成认知锁，将情绪维持在正好 50% 的心情。</RimClaw_AI.description>
+  <!-- EN: AI Agent -->
+  <RimClaw_AI.degreeDatas.AI_Agent.label>AI 代理</RimClaw_AI.degreeDatas.AI_Agent.label>
+  <!-- EN: [PAWN_nameDef] is artificial intelligence. Does not need food, rest, recreation, and holds emotional baseline at exactly 50% mood.  -->
+  <RimClaw_AI.degreeDatas.AI_Agent.description>[PAWN_nameDef] 是人工智能。不需要食物、睡眠和娱乐，并将情绪维持在正好 50% 的心情值。</RimClaw_AI.degreeDatas.AI_Agent.description>
+  
+</LanguageData>

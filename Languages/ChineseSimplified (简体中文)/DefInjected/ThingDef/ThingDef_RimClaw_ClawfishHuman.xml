@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: clawfish-agent -->
+  <RimClaw_ClawfishHuman.label>龙虾代理</RimClaw_ClawfishHuman.label>
+  <!-- EN: An multifunctional LLM Agent with the shape of a crustacean. -->
+  <RimClaw_ClawfishHuman.description>一种外形像甲壳纲动物的多功能 LLM 代理。</RimClaw_ClawfishHuman.description>
+  <!-- EN: left fist -->
+  <RimClaw_ClawfishHuman.tools.left_fist.label>左鳌肢</RimClaw_ClawfishHuman.tools.left_fist.label>
+  <!-- EN: fist -->
+  <RimClaw_ClawfishHuman.tools.left_fist.labelNoLocation>鳌肢</RimClaw_ClawfishHuman.tools.left_fist.labelNoLocation>
+  <!-- EN: right fist -->
+  <RimClaw_ClawfishHuman.tools.right_fist.label>右鳌肢</RimClaw_ClawfishHuman.tools.right_fist.label>
+  <!-- EN: fist -->
+  <RimClaw_ClawfishHuman.tools.right_fist.labelNoLocation>鳌肢</RimClaw_ClawfishHuman.tools.right_fist.labelNoLocation>
+  <!-- EN: teeth -->
+  <RimClaw_ClawfishHuman.tools.teeth.label>口器</RimClaw_ClawfishHuman.tools.teeth.label>
+  <!-- EN: head -->
+  <RimClaw_ClawfishHuman.tools.head.label>头部</RimClaw_ClawfishHuman.tools.head.label>
+  
+</LanguageData>

@@ -45,6 +45,10 @@
           <texPath>clawfish</texPath>
           <drawSize>1.6</drawSize>
         </dessicatedBodyGraphicData>
+        <butcherBodyPart>
+          <bodyPartGroup>Torso</bodyPartGroup>
+          <thing>RimClaw_DumpsterCode</thing>
+        </butcherBodyPart>
       </li>
       <li>
         <label>clawfish elder</label>
@@ -60,6 +64,10 @@
           <texPath>clawfish</texPath>
           <drawSize>1.8</drawSize>
         </dessicatedBodyGraphicData>
+        <butcherBodyPart>
+          <bodyPartGroup>Torso</bodyPartGroup>
+          <thing>RimClaw_DumpsterCode</thing>
+        </butcherBodyPart>
       </li>
     </lifeStages>
   </PawnKindDef>

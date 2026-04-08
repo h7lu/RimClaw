@@ -115,7 +115,7 @@
     <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
   </RecipeDef>
 
-  <RecipeDef>
+  <!-- <RecipeDef>
     <defName>RimClaw_MakeModelCard</defName>
     <label>compile model package</label>
     <jobString>Compiling model package.</jobString>
@@ -130,5 +130,25 @@
     <recipeUsers><li>RimClaw_HostComputer</li></recipeUsers>
     <skillRequirements><Intellectual>12</Intellectual></skillRequirements>
     <researchPrerequisite>MultiAnalyzer</researchPrerequisite>
+  </RecipeDef> -->
+
+  <RecipeDef>
+    <defName>RimClaw_MakeSkillsMd</defName>
+    <label>craft Skills.md</label>
+    <description>Craft a randomized Skills.md implant from a component at a fabrication bench.</description>
+    <jobString>Crafting Skills.md.</jobString>
+    <workAmount>1200</workAmount>
+    <workSkill>Intellectual</workSkill>
+    <effectWorking>Research</effectWorking>
+    <soundWorking>Recipe_Smelt</soundWorking>
+    <ingredients>
+      <li><filter><thingDefs><li>ComponentIndustrial</li></thingDefs></filter><count>1</count></li>
+    </ingredients>
+    <products><RimClaw_SkillsMd>1</RimClaw_SkillsMd></products>
+    <fixedIngredientFilter><thingDefs><li>ComponentIndustrial</li></thingDefs></fixedIngredientFilter>
+    <recipeUsers><li>FabricationBench</li></recipeUsers>
+    <skillRequirements><Intellectual>12</Intellectual></skillRequirements>
+    <researchPrerequisite>AgenticDesign</researchPrerequisite>
   </RecipeDef>
+
 </Defs>

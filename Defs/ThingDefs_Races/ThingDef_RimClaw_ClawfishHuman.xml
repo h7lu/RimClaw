@@ -2,8 +2,8 @@
 <Defs>
   <ThingDef ParentName="Human">
     <defName>RimClaw_ClawfishHuman</defName>
-    <label>clawfish-human</label>
-    <description>A clawfish body rebuilt to live and work as a colony pawn without losing its own shape.</description>
+    <label>clawfish-agent</label>
+    <description>An multifunctional LLM Agent with the shape of a crustacean.</description>
     <uiIconPath>clawfish_south</uiIconPath>
     <comps>
       <li Class="RimClaw.CompProperties_ClawfishColor" />
@@ -20,7 +20,7 @@
         <researchRate>1000</researchRate>
         <heavyWorkRate>250</heavyWorkRate>
         <lightWorkRate>200</lightWorkRate>
-        <defaultRate>150</defaultRate>
+        <defaultRate>210</defaultRate>
         <researchKeywords>
           <li>Research</li>
         </researchKeywords>

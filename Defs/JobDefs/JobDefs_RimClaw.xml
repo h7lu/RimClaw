@@ -21,4 +21,18 @@
     <casualInterruptible>true</casualInterruptible>
     <alwaysShowWeapon>false</alwaysShowWeapon>
   </JobDef>
+  <JobDef>
+    <defName>RimClaw_InstallSkillsMd</defName>
+    <driverClass>RimClaw.JobDriver_InstallSkillsMd</driverClass>
+    <reportString>installing Skills.md implant.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <alwaysShowWeapon>false</alwaysShowWeapon>
+  </JobDef>
+  <JobDef>
+    <defName>RimClaw_UninstallSkillsMd</defName>
+    <driverClass>RimClaw.JobDriver_UninstallSkillsMd</driverClass>
+    <reportString>uninstalling Skills.md implant.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <alwaysShowWeapon>false</alwaysShowWeapon>
+  </JobDef>
 </Defs>

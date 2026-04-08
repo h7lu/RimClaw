@@ -6,8 +6,8 @@
     <commonality>0</commonality>
     <degreeDatas>
       <li>
-        <label>AI</label>
-        <description>Maintains mood at a fixed midpoint regardless of thought fluctuations.</description>
+        <label>AI Agent</label>
+        <description>[PAWN_nameDef] is artificial intelligence. Does not need food, rest, recreation, and holds emotional baseline at exactly 50% mood. </description>
       </li>
     </degreeDatas>
   </TraitDef>

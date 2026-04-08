@@ -3,7 +3,7 @@
   <ThingDef ParentName="BaseHumanMakeableGun">
     <defName>RimClaw_PromptInjector</defName>
     <label>Prompt Injector</label>
-    <description>Launches hostile prompt payloads that can force Clawfish behavioral collapse.</description>
+    <description>An EMP launcher loaded with Prompt Injection Database. Launches hostile prompt payloads that can force Clawfish behavioral collapse.</description>
     <graphicData>
       <texPath>Prompt_Injector</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -50,7 +50,7 @@
 
   <ThingDef ParentName="BaseBullet">
     <defName>RimClaw_PromptInjectorProjectile</defName>
-    <label>prompt payload</label>
+    <label>prompt injection payload</label>
     <thingClass>RimClaw.Projectile_PromptInjector</thingClass>
     <graphicData>
       <texPath>PI_bullet</texPath>

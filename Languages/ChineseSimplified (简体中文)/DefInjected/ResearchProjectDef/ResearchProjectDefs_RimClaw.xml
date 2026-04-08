@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: agentic design -->
+  <AgenticDesign.label>Agentic设计</AgenticDesign.label>
+  <!-- EN: Understand Agentic Design, craft harness for LLM agents. -->
+  <AgenticDesign.description>理解 Agentic 设计，并为 LLM 代理制作运行框架。</AgenticDesign.description>
+  
+  <!-- EN: cluster computing -->
+  <ClusterComputing.label>集群计算</ClusterComputing.label>
+  <!-- EN: Build out the core datacenter hardware to run Large Language Models locally. -->
+  <ClusterComputing.description>研究GPU，建造核心数据中心硬件，以便在本地运行大语言模型。</ClusterComputing.description>
+  
+</LanguageData>

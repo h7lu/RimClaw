@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: GPU Cluster -->
+  <RimClaw_GPUCluster.label>GPU 集群</RimClaw_GPUCluster.label>
+  <!-- EN: High end computational Unit, produce heat while running. This device is also fragile, where any bit of dust will shut it down. -->
+  <RimClaw_GPUCluster.description>高端计算单元，运行时会产生热量。此设备也很脆弱，哪怕一点灰尘都可能让它停机。</RimClaw_GPUCluster.description>
+  
+  <!-- EN: Host Computer -->
+  <RimClaw_HostComputer.label>主机计算机</RimClaw_HostComputer.label>
+  <!-- EN: Central datacenter host that orchestrates model instances and token throughput. Connects to Memory disks to read model data, and connects to GPU Clusters for computing power. -->
+  <RimClaw_HostComputer.description>管理模型实例和 token 吞吐的中央数据中心主机。它连接内存盘读取模型数据，并连接 GPU 集群获取算力。</RimClaw_HostComputer.description>
+  
+  <!-- EN: LLM Service Subscription -->
+  <RimClaw_LLMServiceSubscription.label>大语言模型服务订阅</RimClaw_LLMServiceSubscription.label>
+  <!-- EN: A portable remote endpoint that connects to a datacenter far away. Provides LLM service for connected Clawfish agents. Automatically consumes silver nearby to provide token I/O. Disconnects upon the depletion of fee. -->
+  <RimClaw_LLMServiceSubscription.description>一个连接到远方数据中心的便携式远程端点。为已连接的龙虾代理提供大语言模型服务。会自动消耗附近的白银以提供 token 吞吐，并在费用耗尽后断开连接。</RimClaw_LLMServiceSubscription.description>
+  
+  <!-- EN: memory disk -->
+  <RimClaw_MemoryDisk.label>内存盘</RimClaw_MemoryDisk.label>
+  <!-- EN: Loads one model package that can be run by a linked Host Computer. -->
+  <RimClaw_MemoryDisk.description>加载一个模型包，可在已连接的主机计算机上运行。</RimClaw_MemoryDisk.description>
+  
+</LanguageData>

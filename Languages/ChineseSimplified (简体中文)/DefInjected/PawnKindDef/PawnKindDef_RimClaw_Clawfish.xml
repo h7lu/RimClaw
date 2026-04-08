@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: clawfish -->
+  <RimClaw_ClawfishKind.label>龙虾</RimClaw_ClawfishKind.label>
+  <!-- EN: clawfish juvenile -->
+  <RimClaw_ClawfishKind.lifeStages.clawfish_juvenile.label>龙虾幼体</RimClaw_ClawfishKind.lifeStages.clawfish_juvenile.label>
+  <!-- EN: clawfish -->
+  <RimClaw_ClawfishKind.lifeStages.clawfish.label>龙虾</RimClaw_ClawfishKind.lifeStages.clawfish.label>
+  <!-- EN: clawfish elder -->
+  <RimClaw_ClawfishKind.lifeStages.clawfish_elder.label>老年龙虾</RimClaw_ClawfishKind.lifeStages.clawfish_elder.label>
+  
+</LanguageData>

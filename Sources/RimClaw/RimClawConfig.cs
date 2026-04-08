@@ -11,6 +11,11 @@ namespace RimClaw
 
         public string fishingLetterLabel = "Clawfish Hooked";
         public string fishingLetterText = "{0} hooked a Clawfish and aborted fishing.";
+        public string promptInjectorSuccessLetterLabel = "Prompt Injection Success";
+        public string promptInjectorSuccessLetterText = "{0} has been successfully converted and joined your colony as a clawfish LLM Agent.";
+        public string allClawColonyLetterLabel = "All Claw Colony";
+        public string allClawColonyLetterTextChanged = "Your colony now consists only of clawfish colonists.\n\nMechanoid Hive diplomatic status updated:\n- Relation set to Ally (+100 goodwill)\n- Natural goodwill baseline set to +20\n- Faction visibility enabled";
+        public string allClawColonyLetterTextUnchanged = "Your colony now consists only of clawfish colonists.\n\nMechanoid Hive is already allied (+100), natural goodwill baseline is +20, and visibility is enabled.";
 
         public float promptInjectorStunChance = RimClawSettings.DefaultPromptInjectorStunChance;
         public int promptInjectorStunTicks = RimClawSettings.DefaultPromptInjectorStunTicks;

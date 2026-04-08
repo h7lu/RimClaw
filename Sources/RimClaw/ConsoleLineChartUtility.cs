@@ -7,7 +7,7 @@ namespace RimClaw
 {
     public static class ConsoleLineChartUtility
     {
-        public static void DrawSingleSeries(Rect rect, List<float> values, Color lineColor, Color borderColor, string yUnitLabel)
+        public static void DrawSingleSeries(Rect rect, List<float> values, Color lineColor, Color borderColor, string yUnitLabel, int axisDecimals = 0)
         {
             DrawOutline(rect, borderColor);
             if (values == null || values.Count < 2)
@@ -24,9 +24,9 @@ namespace RimClaw
 
             Widgets.DrawLine(new Vector2(plot.x, baselineY), new Vector2(plot.xMax, baselineY), borderColor, 1f);
             Widgets.Label(new Rect(rect.x + 4f, rect.y + 2f, 36f, 16f), yUnitLabel);
-            Widgets.Label(new Rect(plot.x - 2f, baselineY - 10f, 22f, 16f), "0");
+            Widgets.Label(new Rect(plot.x - 2f, baselineY - 10f, 22f, 16f), "RimClaw_Chart_Zero".Translate());
 
-            float max = 1f;
+            float max = 0f;
             for (int i = 0; i < values.Count; i++)
             {
                 if (values[i] > max)
@@ -36,20 +36,22 @@ namespace RimClaw
             }
 
             const int tickCount = 4;
-            int roundedMax = Mathf.Max(1, Mathf.CeilToInt(max / tickCount) * tickCount);
+            axisDecimals = Mathf.Clamp(axisDecimals, 0, 3);
+            float scale = Mathf.Pow(10f, axisDecimals);
+            float roundedMax = Mathf.Max(1f / scale, Mathf.Ceil(max * scale) / scale);
             float tickStep = drawableHeight / tickCount;
             for (int i = 1; i <= tickCount; i++)
             {
                 float y = baselineY - i * tickStep;
-                int tickValue = Mathf.RoundToInt(roundedMax * (i / (float)tickCount));
+                float tickValue = roundedMax * (i / (float)tickCount);
                 Widgets.DrawLine(new Vector2(plot.x - 4f, y), new Vector2(plot.x + 2f, y), borderColor, 1f);
-                Widgets.Label(new Rect(rect.x + 4f, y - 8f, 34f, 16f), tickValue.ToString());
+                Widgets.Label(new Rect(rect.x + 4f, y - 8f, 44f, 16f), tickValue.ToString($"F{axisDecimals}"));
             }
 
             Widgets.DrawLine(new Vector2(plot.x, rect.y + 2f), new Vector2(plot.x, baselineY), borderColor, 1f);
             Widgets.DrawLine(new Vector2(plot.xMax, rect.y + 2f), new Vector2(plot.xMax, baselineY), borderColor, 1f);
-            Widgets.Label(new Rect(plot.x - 4f, rect.yMax - 16f, 24f, 14f), "old");
-            Widgets.Label(new Rect(plot.xMax - 20f, rect.yMax - 16f, 24f, 14f), "new");
+            Widgets.Label(new Rect(plot.x - 4f, rect.yMax - 16f, 24f, 14f), "RimClaw_Chart_Old".Translate());
+            Widgets.Label(new Rect(plot.xMax - 20f, rect.yMax - 16f, 24f, 14f), "RimClaw_Chart_New".Translate());
 
             float step = plot.width / Mathf.Max(1, values.Count - 1);
             Vector2 prev = Vector2.zero;
@@ -81,8 +83,8 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Tiny;
-            Widgets.Label(new Rect(rect.x + 6f, rect.y + 4f, 120f, 22f), "token/s");
-            Widgets.Label(new Rect(rect.xMax - 90f, rect.y + 4f, 84f, 22f), "heat/s");
+            Widgets.Label(new Rect(rect.x + 6f, rect.y + 4f, 120f, 22f), "RimClaw_Chart_TokenPerSec".Translate());
+            Widgets.Label(new Rect(rect.xMax - 90f, rect.y + 4f, 84f, 22f), "RimClaw_Chart_HeatPerSec".Translate());
 
             Rect plot = new Rect(rect.x + 56f, rect.y + 26f, rect.width - 112f, rect.height - 34f);
             DrawLine(new Vector2(plot.x, plot.y), new Vector2(plot.x, plot.yMax), borderColor);
@@ -90,7 +92,7 @@ namespace RimClaw
 
             float zeroLineY = plot.yMax - 8f;
             Widgets.DrawLine(new Vector2(plot.x, zeroLineY), new Vector2(plot.xMax, zeroLineY), borderColor, 1f);
-            Widgets.Label(new Rect(plot.x + 4f, zeroLineY - 10f, 24f, 16f), "0");
+            Widgets.Label(new Rect(plot.x + 4f, zeroLineY - 10f, 24f, 16f), "RimClaw_Chart_Zero".Translate());
 
             float rawMaxPrimary = 1f;
             float rawMaxSecondary = 1f;

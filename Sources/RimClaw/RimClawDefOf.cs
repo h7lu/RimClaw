@@ -12,14 +12,24 @@ namespace RimClaw
         public static ThingDef RimClaw_ClawfishHuman;
         public static ThingDef RimClaw_PromptInjector;
         public static ThingDef RimClaw_ModelCard;
+        public static ThingDef RimClaw_SkillsMd;
+        public static ThingDef Meat_Claw;
+        public static ThingDef RimClaw_DumpsterCode;
+        public static ThingDef RimClaw_ClawfishCorpse;
         public static JobDef RimClaw_InsertModelIntoDisk;
         public static JobDef RimClaw_SelfDelete;
         public static JobDef RimClaw_SelfReprogramming;
+        public static JobDef RimClaw_InstallSkillsMd;
+        public static JobDef RimClaw_UninstallSkillsMd;
         public static HediffDef RimClaw_TokenDepleted;
+        public static HediffDef RimClaw_ContextLoad;
         public static HediffDef RimClaw_ServiceBoost;
         public static HediffDef RimClaw_SelfReprogrammingRegen;
         public static HediffDef RimClaw_DisguisedClawfish;
         public static HediffDef RimClaw_InsufficientIORate;
+        public static HediffDef RimClaw_ModelWorkSpeedBonus;
+        public static HediffDef RimClaw_SkillsImplant;
+        public static RecipeDef RimClaw_MakeSkillsMd;
         public static MentalStateDef RimClaw_ContextCollapse;
         public static TraitDef RimClaw_AI;
 

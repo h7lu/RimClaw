@@ -3,7 +3,7 @@
   <ThingDef ParentName="ResourceBase">
     <defName>RimClaw_PromptInjectionDatabase</defName>
     <label>Prompt Injection Database</label>
-    <description>A curated exploit corpus used by Prompt Injectors to destabilize Clawfish cognition.</description>
+    <description>A database containing thousands of adversary samples that can destabilize LLM Agent cognition.</description>
     <graphicData>
       <texPath>PI_database</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -16,7 +16,7 @@
     <statBases>
       <MarketValue>620</MarketValue>
       <Mass>0.75</Mass>
-      <Flammability>0.35</Flammability>
+      <Flammability>0</Flammability>
     </statBases>
     <tradeability>Buyable</tradeability>
     <techLevel>Spacer</techLevel>
@@ -24,5 +24,98 @@
       <li>RewardStandardMidFreq</li>
       <li>RewardStandardHighFreq</li>
     </thingSetMakerTags>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>Meat_Claw</defName>
+    <label>clawfish meat</label>
+    <description>Meat obtained from butchering a clawfish. It is particularly appetizing.</description>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <graphicData>
+      <texPath>clawfish_meat</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>MeatRaw</li>
+    </thingCategories>
+    <ingredient>
+      <mergeCompatibilityTags>
+        <li>ClawfishMeat</li>
+      </mergeCompatibilityTags>
+    </ingredient>
+    <stackLimit>75</stackLimit>
+    <statBases>
+      <MarketValue>0.5</MarketValue>
+      <Mass>0.03</Mass>
+      <Nutrition>0.05</Nutrition>
+      <FoodPoisonChanceFixedHuman>0.02</FoodPoisonChanceFixedHuman>
+    </statBases>
+    <ingestible>
+      <foodType>Meat</foodType>
+      <preferability>RawBad</preferability>
+      <ingestEffect>EatMeat</ingestEffect>
+      <ingestSound>RawMeat_Eat</ingestSound>
+      <specialThoughtDirect>AteClawfishMeat</specialThoughtDirect>
+      <specialThoughtAsIngredient>AteClawfishMeat</specialThoughtAsIngredient>
+    </ingestible>
+    <tradeability>Sellable</tradeability>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>Meat_RimClaw_Clawfish</defName>
+    <label>clawfish meat</label>
+    <description>Meat obtained from butchering a clawfish. It is particularly appetizing.</description>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <graphicData>
+      <texPath>clawfish_meat</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>MeatRaw</li>
+    </thingCategories>
+    <ingredient>
+      <mergeCompatibilityTags>
+        <li>ClawfishMeat</li>
+      </mergeCompatibilityTags>
+    </ingredient>
+    <stackLimit>75</stackLimit>
+    <statBases>
+      <MarketValue>0.5</MarketValue>
+      <Mass>0.03</Mass>
+      <Nutrition>0.05</Nutrition>
+      <FoodPoisonChanceFixedHuman>0.02</FoodPoisonChanceFixedHuman>
+    </statBases>
+    <ingestible>
+      <foodType>Meat</foodType>
+      <preferability>RawBad</preferability>
+      <ingestEffect>EatMeat</ingestEffect>
+      <ingestSound>RawMeat_Eat</ingestSound>
+      <specialThoughtDirect>AteClawfishMeat</specialThoughtDirect>
+      <specialThoughtAsIngredient>AteClawfishMeat</specialThoughtAsIngredient>
+    </ingestible>
+    <tradeability>Sellable</tradeability>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>RimClaw_DumpsterCode</defName>
+    <label>dumpster speghatti code</label>
+    <description>Vibe code dumpster speghatti code of a Clawfish. It is unsafe, hard to maintain, and looks gross. But as it works, who cares about code design?</description>
+    <graphicData>
+      <texPath>dumpster_code</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <thingCategories>
+      <li>Manufactured</li>
+    </thingCategories>
+    <stackLimit>1</stackLimit>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>5</Mass>
+      <Flammability>0</Flammability>
+    </statBases>
+    <tradeability>None</tradeability>
   </ThingDef>
 </Defs>

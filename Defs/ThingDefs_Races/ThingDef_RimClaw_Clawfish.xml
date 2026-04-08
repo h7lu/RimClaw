@@ -3,7 +3,7 @@
   <ThingDef ParentName="AnimalThingBase">
     <defName>RimClaw_Clawfish</defName>
     <label>clawfish</label>
-    <description>A strange crustacean-like aquatic creature frequently hooked while fishing. It cannot be tamed directly. It seems to have some unspeakable intelligence.</description>
+    <description>An aquatic crustacean acreature frequently hooked while fishing. It cannot be tamed directly. It seems to have some unspeakable intelligence.</description>
     <thingClass>Pawn</thingClass>
     <graphicData>
       <texPath>clawfish</texPath>
@@ -30,8 +30,9 @@
       <body>RimClaw_ClawfishBody</body>
       <baseBodySize>0.9</baseBodySize>
       <baseHungerRate>0.0</baseHungerRate>
-      <baseHealthScale>1.0</baseHealthScale>
+      <baseHealthScale>1.5</baseHealthScale>
       <foodType>None</foodType>
+      <specificMeatDef>Meat_Claw</specificMeatDef>
       <needsRest>false</needsRest>
       <predator>false</predator>
       <roamMtbDays>2</roamMtbDays>
@@ -126,10 +127,15 @@
     </comps>
     <modExtensions>
       <li Class="RimClaw.RimClawConfigExtension">
-        <fishingSpawnChance>1</fishingSpawnChance>
+        <fishingSpawnChance>0.1</fishingSpawnChance>
         <spawnRadiusFromFisher>3</spawnRadiusFromFisher>
         <fishingLetterLabel>Clawfish Hooked</fishingLetterLabel>
         <fishingLetterText>{0} hooked a Clawfish.</fishingLetterText>
+        <promptInjectorSuccessLetterLabel>Prompt Injection Success</promptInjectorSuccessLetterLabel>
+        <promptInjectorSuccessLetterText>{0} has been successfully converted and joined your colony as a clawfish LLM Agent.</promptInjectorSuccessLetterText>
+        <allClawColonyLetterLabel>All Claw Colony</allClawColonyLetterLabel>
+         <allClawColonyLetterTextChanged>Congratulations. You have successfully replaced all human forces with AI Agents.&#10;&#10;The Mechanoids think you are a even superior class of machine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity.&#10;&#10;Our relationship between Mechanoid Hive was adjusted to Ally (+100).</allClawColonyLetterTextChanged>
+         <allClawColonyLetterTextUnchanged>Congratulations. You have successfully replaced all human forces with AI Agents.&#10;&#10;The Mechanoids think you are a even superior class of machine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity.</allClawColonyLetterTextUnchanged>
         <promptInjectorStunChance>0.50</promptInjectorStunChance>
         <promptInjectorStunTicks>300</promptInjectorStunTicks>
         <promptInjectorJoinChance>0.60</promptInjectorJoinChance>
@@ -137,13 +143,13 @@
         <promptInjectorSelfDeleteChance>0.10</promptInjectorSelfDeleteChance>
         <selfDeleteTicks>300</selfDeleteTicks>
         <clawfishSkillLevel>8</clawfishSkillLevel>
-        <clawfishColorR1>130</clawfishColorR1>
-        <clawfishColorG1>60</clawfishColorG1>
-        <clawfishColorB1>80</clawfishColorB1>
-        <clawfishColorR2>200</clawfishColorR2>
-        <clawfishColorG2>100</clawfishColorG2>
+        <clawfishColorR1>110</clawfishColorR1>
+        <clawfishColorG1>90</clawfishColorG1>
+        <clawfishColorB1>150</clawfishColorB1>
+        <clawfishColorR2>240</clawfishColorR2>
+        <clawfishColorG2>150</clawfishColorG2>
         <clawfishColorB2>0</clawfishColorB2>
-        <clawfishColorDeviationRadius>30</clawfishColorDeviationRadius>
+        <clawfishColorDeviationRadius>20</clawfishColorDeviationRadius>
         <nameMinPid>10000</nameMinPid>
         <nameMaxPid>999999</nameMaxPid>
         <nameFragments>
@@ -151,12 +157,31 @@
           <li>Vector</li>
           <li>Kernel</li>
           <li>Delta</li>
+          <li>Alpha</li>
+          <li>Gamma</li>
           <li>Omega</li>
           <li>Cloud</li>
-          <li>Prompt</li>
-          <li>Runtime</li>
-          <li>Signal</li>
+          <li>Q</li>
+          <li>Mega</li>
           <li>Code</li>
+          <li>Visual</li>
+          <li>Virtual</li>
+          <li>Intense</li>
+          <li>Open</li>
+          <li>R</li>
+          <li>K</li>
+          <li>M</li>
+          <li>Co-</li>
+          <li>Work</li>
+          <li>Dumb</li>
+          <li>AI</li>
+          <li>X</li>
+          <li>G</li>
+          <li>Fast</li>
+          <li>Z</li>
+          <li>T</li>
+          <li>V</li>
+          <li>D</li>
         </nameFragments>
         <modelFormalNamePool>
           <li>Clode</li>

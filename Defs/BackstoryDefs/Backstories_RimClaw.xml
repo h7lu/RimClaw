@@ -4,7 +4,7 @@
     <defName>RimClaw_Childhood_Crustacean</defName>
     <title>Crustacean</title>
     <titleShort>Crustacean</titleShort>
-    <description>[PAWN_nameDef] began life in artificial brine tanks as an experimental crustacean cognition host.</description>
+    <description>[PAWN_nameDef] began life in water, feeding on water flea and waterweeds.</description>
     <slot>Childhood</slot>
     <spawnCategories>
       <li>Child</li>
@@ -15,7 +15,7 @@
     <defName>RimClaw_Adulthood_LLM_Agent</defName>
     <title>LLM Agent</title>
     <titleShort>LLM Agent</titleShort>
-    <description>[PAWN_nameDef] matured into an autonomous LLM agent specializing in coordinated work throughput.</description>
+    <description>[PAWN_nameDef] mysteriously turned into an autonomous LLM agent that is capable of nearly any type of work.</description>
     <slot>Adulthood</slot>
     <spawnCategories>
       <li>AdultColonist</li>

@@ -32,8 +32,8 @@ namespace RimClaw
         {
             return new Command_Action
             {
-                defaultLabel = "Connect to LLM Service",
-                defaultDesc = "Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply.",
+                defaultLabel = "RimClaw_Gizmo_ConnectLLM_Label".Translate(),
+                defaultDesc = "RimClaw_Gizmo_ConnectLLM_Desc".Translate(),
                 icon = ContentFinder<Texture2D>.Get("connect_llm", true),
                 action = delegate
                 {
@@ -67,7 +67,7 @@ namespace RimClaw
                                 if (host != null)
                                 {
                                     host.AddConnectedClaw(pawn);
-                                    Messages.Message($"{pawn.Name} connected to {target.Thing.Label}", MessageTypeDefOf.PositiveEvent);
+                                    Messages.Message("RimClaw_Message_ClawConnected".Translate(pawn.Name?.ToStringShort ?? pawn.LabelShortCap, target.Thing.Label), MessageTypeDefOf.PositiveEvent);
                                     return;
                                 }
 
@@ -75,7 +75,7 @@ namespace RimClaw
                                 if (supplier != null)
                                 {
                                     supplier.AddConnectedClaw(pawn);
-                                    Messages.Message($"{pawn.Name} connected to {target.Thing.Label}", MessageTypeDefOf.PositiveEvent);
+                                    Messages.Message("RimClaw_Message_ClawConnected".Translate(pawn.Name?.ToStringShort ?? pawn.LabelShortCap, target.Thing.Label), MessageTypeDefOf.PositiveEvent);
                                 }
                             }
                         }
@@ -88,8 +88,8 @@ namespace RimClaw
         {
             return new Command_Action
             {
-                defaultLabel = "Disconnect from LLM Service",
-                defaultDesc = $"Disconnect this clawfish from {tokenConn.ConnectedSupplier.Label}.",
+                defaultLabel = "RimClaw_Gizmo_DisconnectLLM_Label".Translate(),
+                defaultDesc = "RimClaw_Gizmo_DisconnectLLM_Desc".Translate(tokenConn.ConnectedSupplier.Label),
                 icon = ContentFinder<Texture2D>.Get("disconnect_llm", true),
                 action = delegate
                 {
@@ -106,7 +106,7 @@ namespace RimClaw
                     }
 
                     tokenConn.Disconnect();
-                    Messages.Message($"{pawn.Name} disconnected from service", MessageTypeDefOf.NeutralEvent);
+                    Messages.Message("RimClaw_Message_ClawDisconnected".Translate(pawn.Name?.ToStringShort ?? pawn.LabelShortCap), MessageTypeDefOf.NeutralEvent);
                 }
             };
         }

@@ -37,6 +37,7 @@ namespace RimClaw
         public float HeatAverageSeconds;
         public float MaxTemperatureC;
         public float WorkSpeedMultiplier;
+        public int ModelSkillLevelAdjustment;
         public float TotalUsageFraction;
         public List<Pawn> AssignedClaws = new List<Pawn>();
         public List<float> InstanceUsageFractions = new List<float>();
@@ -52,6 +53,7 @@ namespace RimClaw
         public int RequiredVram;
         public float TokenPerSecondPerInstance;
         public float WorkSpeedBonus;
+        public int SkillLevelAdjustment;
     }
 
     public class HostComputerSnapshot
@@ -69,6 +71,7 @@ namespace RimClaw
         public int TotalInstances;
         public string ModelName;
         public float WorkSpeedMultiplier;
+        public int SkillLevelAdjustment;
         public float HeatRate;
         public float ActiveTimeSeconds;
         public List<HostGpuSnapshot> Gpus = new List<HostGpuSnapshot>();
@@ -117,6 +120,35 @@ namespace RimClaw
 
         public CompProperties_HostComputerService Props => (CompProperties_HostComputerService)props;
         public bool IsValidSupplier => parent != null && parent.Spawned && IsPowered(parent as ThingWithComps);
+
+        public float GetModelWorkSpeedMultiplier()
+        {
+            HostComputerSnapshot snapshot = GetSnapshot();
+            return snapshot.WorkSpeedMultiplier;
+        }
+
+        public int GetModelSkillAdjustmentForClaw(Pawn claw)
+        {
+            if (claw == null)
+            {
+                return 0;
+            }
+
+            RefreshSnapshot(force: false);
+            if (!clawToGpuThing.TryGetValue(claw.thingIDNumber, out int gpuThingId))
+            {
+                AutoAssignToBestGpu(claw);
+                clawToGpuThing.TryGetValue(claw.thingIDNumber, out gpuThingId);
+            }
+
+            HostGpuSnapshot gpu = GetGpuSnapshot(gpuThingId);
+            if (gpu == null || !gpu.IsActive)
+            {
+                return 0;
+            }
+
+            return gpu.ModelSkillLevelAdjustment;
+        }
 
         public override void PostExposeData()
         {
@@ -186,8 +218,8 @@ namespace RimClaw
         {
             yield return new Command_Action
             {
-                defaultLabel = "Open Console",
-                defaultDesc = "Open the datacenter management console.",
+                defaultLabel = "RimClaw_Host_OpenConsole_Label".Translate(),
+                defaultDesc = "RimClaw_Host_OpenConsole_Desc".Translate(),
                 icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
@@ -238,18 +270,12 @@ namespace RimClaw
                 }
             }
 
-            return $"Models connected: {availableModels.Count}\nCurrent TPS: {totalUsedTokenRate:0.0}/{totalTokenCapacity:0.0} needed\nConnected Clawfish: {connectedClaws.Count}\nConnected GPU: {activeGpuCount}/{connectedGpus.Count}\nVRAM: {usedVram}/{totalVram} GB";
+            return "RimClaw_Host_Inspect".Translate(availableModels.Count, totalUsedTokenRate.ToString("0.0"), totalTokenCapacity.ToString("0.0"), connectedClaws.Count, activeGpuCount, connectedGpus.Count, usedVram, totalVram);
         }
 
         public override void PostDraw()
         {
             base.PostDraw();
-            if (parent?.Spawned != true || !IsPowered(parent as ThingWithComps))
-            {
-                return;
-            }
-
-            RimClawGlowUtility.DrawGlow(parent.DrawPos, new Color32(240, 255, 240, 255), 5f);
         }
 
         public void AddConnectedClaw(Pawn claw)
@@ -344,18 +370,18 @@ namespace RimClaw
         {
             if (claw == null)
             {
-                return "None";
+                return "RimClaw_Generic_None".Translate();
             }
 
             if (!clawToGpuThing.TryGetValue(claw.thingIDNumber, out int gpuThingId))
             {
-                return "None";
+                return "RimClaw_Generic_None".Translate();
             }
 
             HostGpuSnapshot snapshot = GetGpuSnapshot(gpuThingId);
             if (snapshot == null || !snapshot.IsActive)
             {
-                return "None";
+                return "RimClaw_Generic_None".Translate();
             }
 
             return snapshot.Name;
@@ -387,7 +413,7 @@ namespace RimClaw
 
             if (unassigned > 0)
             {
-                Messages.Message("Clawfish on that GPU were deassigned. Reassign them to active instances.", parent, MessageTypeDefOf.CautionInput, historical: false);
+                Messages.Message("RimClaw_Host_DeassignedWarning".Translate(), parent, MessageTypeDefOf.CautionInput, historical: false);
             }
 
             return true;
@@ -399,6 +425,7 @@ namespace RimClaw
             int activeGpuCount = 0;
             string firstModelName = "(none)";
             float firstWorkSpeedMultiplier = 1f;
+            int firstSkillLevelAdjustment = 0;
             for (int i = 0; i < gpuSnapshots.Count; i++)
             {
                 if (!gpuSnapshots[i].IsActive)
@@ -411,6 +438,7 @@ namespace RimClaw
                 {
                     firstModelName = gpuSnapshots[i].ModelName;
                     firstWorkSpeedMultiplier = gpuSnapshots[i].WorkSpeedMultiplier;
+                    firstSkillLevelAdjustment = gpuSnapshots[i].ModelSkillLevelAdjustment;
                 }
             }
 
@@ -429,6 +457,7 @@ namespace RimClaw
                 TotalInstances = totalInstances,
                 ModelName = firstModelName,
                 WorkSpeedMultiplier = firstWorkSpeedMultiplier,
+                SkillLevelAdjustment = firstSkillLevelAdjustment,
                 HeatRate = totalHeatRate,
                 ActiveTimeSeconds = activeTimeSeconds
             };
@@ -558,7 +587,8 @@ namespace RimClaw
                     ModelColor = disk.ModelColor,
                     RequiredVram = disk.RequiredVram,
                     TokenPerSecondPerInstance = disk.TokenPerSecondPerInstance,
-                    WorkSpeedBonus = disk.WorkSpeedBonus
+                    WorkSpeedBonus = disk.WorkSpeedBonus,
+                    SkillLevelAdjustment = disk.ModelSkillLevelAdjustment
                 });
             }
 
@@ -584,6 +614,7 @@ namespace RimClaw
                 Color gpuColor = isActive ? selectedModel.ModelColor : new Color32(100, 100, 100, 255);
                 string gpuModelName = isActive ? selectedModel.ModelName : "(None)";
                 float workSpeedMultiplier = isActive ? 1f + selectedModel.WorkSpeedBonus : 1f;
+                int skillLevelAdjustment = isActive ? selectedModel.SkillLevelAdjustment : 0;
 
                 gpuSnapshots.Add(new HostGpuSnapshot
                 {
@@ -606,6 +637,7 @@ namespace RimClaw
                     HeatAverageSeconds = Mathf.Max(1f, gpuComp?.Props?.heatAverageSeconds ?? 15f),
                     MaxTemperatureC = gpuComp?.Props?.maxTemperatureC ?? 1000f,
                     WorkSpeedMultiplier = workSpeedMultiplier,
+                    ModelSkillLevelAdjustment = skillLevelAdjustment,
                     TotalUsageFraction = 0f
                 });
             }
@@ -780,7 +812,7 @@ namespace RimClaw
             CompClawfishTokenConnection connection = pawn.TryGetComp<CompClawfishTokenConnection>();
             if (connection != null)
             {
-                return connection.CurrentTokenConsumptionRate;
+                return connection.GetAdjustedTokenConsumptionRate(pawn);
             }
 
             CompClawfishToken legacyToken = pawn.TryGetComp<CompClawfishToken>();

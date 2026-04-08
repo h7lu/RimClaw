@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: [PAWN_nameDef] mysteriously turned into an autonomous LLM agent that is capable of nearly any type of work. -->
+  <RimClaw_Adulthood_LLM_Agent.description>[PAWN_nameDef] 神秘地变成了一名能够胜任几乎任何工作的自主大语言模型代理。</RimClaw_Adulthood_LLM_Agent.description>
+  <!-- EN: LLM Agent -->
+  <RimClaw_Adulthood_LLM_Agent.title>大语言模型代理</RimClaw_Adulthood_LLM_Agent.title>
+  <!-- EN: LLM Agent -->
+  <RimClaw_Adulthood_LLM_Agent.titleShort>LLM 代理</RimClaw_Adulthood_LLM_Agent.titleShort>
+  
+  <!-- EN: [PAWN_nameDef] began life in water, feeding on water flea and waterweeds. -->
+  <RimClaw_Childhood_Crustacean.description>[PAWN_nameDef] 在水中长大，以水蚤和水草为食。</RimClaw_Childhood_Crustacean.description>
+  <!-- EN: Crustacean -->
+  <RimClaw_Childhood_Crustacean.title>甲壳纲动物</RimClaw_Childhood_Crustacean.title>
+  <!-- EN: Crustacean -->
+  <RimClaw_Childhood_Crustacean.titleShort>甲壳类</RimClaw_Childhood_Crustacean.titleShort>
+  
+</LanguageData>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: clawfish -->
+  <RimClaw_Clawfish.label>龙虾</RimClaw_Clawfish.label>
+  <!-- EN: An aquatic crustacean acreature frequently hooked while fishing. It cannot be tamed directly. It seems to have some unspeakable intelligence. -->
+  <RimClaw_Clawfish.description>一种在钓鱼时经常被钓上来的水生甲壳类生物。它不能直接驯服，似乎拥有某种难以言表的智慧。</RimClaw_Clawfish.description>
+  <!-- EN: Errorcode 402 -->
+  <RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>Errorcode=402</RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>
+  <!-- EN: All Claw Colony -->
+  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterLabel>全虾殖民地</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterLabel>
+  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of mechine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity.\n\nOur relationship between Mechanoid Hive was adjusted to Ally (+100). -->
+  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>恭喜您，你的殖民地现在只剩龙虾了。您成功地用AI Agent取代了所有的人类劳动力。&#10;&#10;机械主巢与您的关系现在变为 盟友（+100）。&#10;&#10;机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>
+  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of mechine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity. -->
+  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>你的殖民地现在只剩龙虾了。&#10;&#10;机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>
+  <!-- EN: Clawfish Hooked -->
+  <RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>龙虾上钩</RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>
+  <!-- EN: {0} hooked a Clawfish. -->
+  <RimClaw_Clawfish.modExtensions.0.fishingLetterText>{0} 钓到了一只龙虾。</RimClaw_Clawfish.modExtensions.0.fishingLetterText>
+  <!-- EN: Prompt Injection Success -->
+  <RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterLabel>提示词注入成功</RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterLabel>
+  <!-- EN: {0} has been successfully converted and joined your colony as a clawfish LLM Agent. -->
+  <RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterText>{0} 已成功转化，并以龙虾 LLM 代理的身份加入你的殖民地。</RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterText>
+  <!-- EN: clawfish meat -->
+  <RimClaw_Clawfish.race.meatLabel>龙虾肉</RimClaw_Clawfish.race.meatLabel>
+  <!-- EN: left claw -->
+  <RimClaw_Clawfish.tools.left_claw.label>左螯</RimClaw_Clawfish.tools.left_claw.label>
+  <!-- EN: right claw -->
+  <RimClaw_Clawfish.tools.right_claw.label>右螯</RimClaw_Clawfish.tools.right_claw.label>
+  
+</LanguageData>

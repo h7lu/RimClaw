@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: make GPU cluster -->
+  <RimClaw_MakeGPUCluster.label>制造 GPU 集群</RimClaw_MakeGPUCluster.label>
+  <!-- EN: Making GPU cluster. -->
+  <RimClaw_MakeGPUCluster.jobString>正在制造 GPU 集群。</RimClaw_MakeGPUCluster.jobString>
+  
+  <!-- EN: make host computer -->
+  <RimClaw_MakeHostComputer.label>制造主机计算机</RimClaw_MakeHostComputer.label>
+  <!-- EN: Making host computer. -->
+  <RimClaw_MakeHostComputer.jobString>正在制造主机计算机。</RimClaw_MakeHostComputer.jobString>
+  
+  <!-- EN: make memory disk -->
+  <RimClaw_MakeMemoryDisk.label>制造内存盘</RimClaw_MakeMemoryDisk.label>
+  <!-- EN: Making memory disk. -->
+  <RimClaw_MakeMemoryDisk.jobString>正在制造内存盘。</RimClaw_MakeMemoryDisk.jobString>
+  
+  <!-- EN: craft Prompt Injector -->
+  <RimClaw_MakePromptInjector.label>制作提示词注入器</RimClaw_MakePromptInjector.label>
+  <!-- EN: Combine an EMP launcher and exploit data to produce a Prompt Injector. -->
+  <RimClaw_MakePromptInjector.description>将 EMP 发射器和提示词注入数据库合并，制成一把提示注入器。</RimClaw_MakePromptInjector.description>
+  <!-- EN: Crafting Prompt Injector. -->
+  <RimClaw_MakePromptInjector.jobString>正在制作提示注入器。</RimClaw_MakePromptInjector.jobString>
+  
+  <!-- EN: craft Skills.md -->
+  <RimClaw_MakeSkillsMd.label>制作 SKILLS.md</RimClaw_MakeSkillsMd.label>
+  <!-- EN: Craft a randomized Skills.md implant from a component at a fabrication bench. -->
+  <RimClaw_MakeSkillsMd.description>制作随机化的 SKILLS.md 植入体。</RimClaw_MakeSkillsMd.description>
+  <!-- EN: Crafting Skills.md. -->
+  <RimClaw_MakeSkillsMd.jobString>正在制作 SKILLS.md。</RimClaw_MakeSkillsMd.jobString>
+  
+</LanguageData>

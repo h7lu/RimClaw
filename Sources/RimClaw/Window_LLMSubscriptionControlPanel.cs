@@ -6,6 +6,7 @@ using Verse;
 
 namespace RimClaw
 {
+    [StaticConstructorOnStartup]
     public class Window_LLMSubscriptionControlPanel : Window
     {
         private static readonly Dictionary<Pawn, Texture2D> PortraitCache = new Dictionary<Pawn, Texture2D>(new PawnEqualityComparer());
@@ -57,7 +58,7 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "LLM Subscription Console");
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "RimClaw_SubWindow_Title".Translate());
             Text.Font = oldFont;
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
@@ -88,14 +89,14 @@ namespace RimClaw
 
             string[] labels =
             {
-                "Price/K Tokens",
-                "Work Speed",
-                "Live I/O",
-                "Max Capacity",
-                "Active Claws",
-                "Hourly Rate",
-                "Lifetime Spent",
-                "Pending Payment"
+                "RimClaw_SubWindow_Label_PricePerK".Translate(),
+                "RimClaw_SubWindow_Label_WorkSpeed".Translate(),
+                "RimClaw_SubWindow_Label_LiveIO".Translate(),
+                "RimClaw_SubWindow_Label_LifetimeSpent".Translate(),
+                "RimClaw_SubWindow_Label_ActiveClaws".Translate(),
+                "RimClaw_SubWindow_Label_PerSecond".Translate(),
+                "RimClaw_SubWindow_Label_CurrentHourCost".Translate(),
+                "RimClaw_SubWindow_Label_PendingPayment".Translate()
             };
 
             string[] values =
@@ -103,25 +104,25 @@ namespace RimClaw
                 $"{snapshot.PricePerKTokens:0.00}",
                 $"x{snapshot.SpeedMultiplier:0.00}",
                 $"{snapshot.LiveThroughput:0.0} TPS",
-                $"{snapshot.MaxCapacityPerClaw:0.0} TPS",
-                $"{snapshot.ActiveClaws}",
-                $"{snapshot.HourlySilverRate:0.00}",
                 $"{snapshot.LifetimeSilverSpent:0.00}",
+                $"{snapshot.ActiveClaws}",
+                $"{snapshot.PerSecondSilverRate:0.00}",
+                $"{snapshot.CurrentHourSilverSpent:0.00}",
                 $"{snapshot.PendingPayment:0.00}"
             };
 
             DrawTwoColumnStats(new Rect(left.x + 8f, left.y + 110f, left.width - 16f, left.height - 114f), labels, values);
 
-            Widgets.Label(new Rect(right.x + 8f, right.y + 4f, right.width - 16f, 22f), "Total Silver Consumption");
+            Widgets.Label(new Rect(right.x + 8f, right.y + 4f, right.width - 16f, 22f), "RimClaw_SubWindow_HourlySilver".Translate());
             DrawLine(new Vector2(right.x + 8f, right.y + 24f), new Vector2(right.xMax - 8f, right.y + 24f));
             Rect graphRect = new Rect(right.x + 8f, right.y + 26f, right.width - 16f, right.height - 62f);
-            DrawLineGraph(graphRect, EnsureRenderableSeries(snapshot.TotalSilverHistory, snapshot.HourlySilverRate), new Color(0.95f, 0.88f, 0.10f, 1f));
+            DrawLineGraph(graphRect, EnsureRenderableSeries(GetSeriesForRange(snapshot.HourlySilverHistory), snapshot.CurrentHourSilverSpent), new Color(0.95f, 0.88f, 0.10f, 1f), 2);
             DrawPlotRangeButtons(new Rect(right.x + 8f, right.yMax - 30f, right.width - 16f, 24f));
         }
 
         private void DrawConnectedClawGrid(Rect rect, SubscriptionSnapshot snapshot)
         {
-            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), "Connected Claws");
+            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), "RimClaw_SubWindow_ConnectedClaws".Translate());
             DrawLine(new Vector2(rect.x + 8f, rect.y + 26f), new Vector2(rect.xMax - 8f, rect.y + 26f));
 
             Rect scrollRect = new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, rect.height - 38f);
@@ -175,7 +176,7 @@ namespace RimClaw
         {
             if (selectedClawIndex < 0 || selectedClawIndex >= snapshot.Claws.Count)
             {
-                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "Select a claw to view details.");
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "RimClaw_SubWindow_SelectClaw".Translate());
                 return;
             }
 
@@ -183,11 +184,11 @@ namespace RimClaw
             Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), AbbreviateName(selected.Claw?.LabelShortCap ?? selected.Claw?.LabelCap ?? string.Empty, 18));
             DrawLine(new Vector2(rect.x + 8f, rect.y + 26f), new Vector2(rect.xMax - 8f, rect.y + 26f));
 
-            float provided = subscription.GetAvailableTokenRateForClawfish(selected.Claw);
+            float maxAvailable = subscription.GetAvailableTokenRateForClawfish(selected.Claw);
             string detail =
-                $"Current Token/s: {selected.CurrentTps:0.0} needed\n" +
-                $"Provided Token/s: {provided:0.0}\n" +
-                $"Silver Consumption/h: {selected.SilverPerHour:0.00}";
+                "RimClaw_SubWindow_Detail_CurrentToken".Translate(selected.CurrentTps.ToString("0.0")) + "\n" +
+                "RimClaw_SubWindow_Detail_ProvidedToken".Translate(selected.ProvidedTps.ToString("0.0"), maxAvailable.ToString("0.0")) + "\n" +
+                "RimClaw_SubWindow_Detail_SilverPerSec".Translate(selected.SilverPerSecond.ToString("0.0000"));
             Widgets.Label(new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, 88f), detail);
 
             Rect buttonDaily = new Rect(rect.x + 8f, rect.y + 118f, 66f, 24f);
@@ -208,32 +209,32 @@ namespace RimClaw
                 Widgets.DrawHighlightSelected(buttonAll);
             }
 
-            if (Widgets.ButtonText(buttonDaily, "Daily"))
+            if (Widgets.ButtonText(buttonDaily, "RimClaw_SubWindow_Range_Daily".Translate()))
             {
                 range = GraphRange.Daily;
             }
 
-            if (Widgets.ButtonText(button15, "15 days"))
+            if (Widgets.ButtonText(button15, "RimClaw_SubWindow_Range_15d".Translate()))
             {
                 range = GraphRange.FifteenDay;
             }
 
-            if (Widgets.ButtonText(buttonAll, "All"))
+            if (Widgets.ButtonText(buttonAll, "RimClaw_SubWindow_Range_All".Translate()))
             {
                 range = GraphRange.All;
             }
 
             Rect graphRect = new Rect(rect.x + 8f, rect.y + 150f, rect.width - 16f, rect.height - 204f);
-            List<float> clawSeries = GetSeriesForRange(selected.SilverHistory);
-            DrawLineGraph(graphRect, EnsureRenderableSeries(clawSeries, selected.SilverPerHour), new Color(0.95f, 0.88f, 0.10f, 1f));
+            List<float> clawSeries = GetSeriesForRange(selected.SilverPerSecondHistory);
+            DrawLineGraph(graphRect, EnsureRenderableSeries(clawSeries, selected.SilverPerSecond), new Color(0.95f, 0.88f, 0.10f, 1f), 3);
             //DrawPlotRangeButtons(new Rect(rect.x + 8f, rect.yMax - 30f, rect.width - 16f, 24f));
 
             Rect disconnectRect = new Rect(rect.x + 8f, rect.yMax - 44f, rect.width - 16f, 32f);
-            if (Widgets.ButtonText(disconnectRect, "Disconnect"))
+            if (Widgets.ButtonText(disconnectRect, "RimClaw_SubWindow_Disconnect".Translate()))
             {
                 subscription.DisconnectClaw(selected.Claw);
                 selectedClawIndex = -1;
-                Messages.Message($"{selected.Claw.NameShortColored} disconnected from LLM Subscription", MessageTypeDefOf.NeutralEvent, historical: false);
+                Messages.Message("RimClaw_SubWindow_DisconnectMessage".Translate(selected.Claw.NameShortColored), MessageTypeDefOf.NeutralEvent, historical: false);
             }
         }
 
@@ -262,9 +263,9 @@ namespace RimClaw
             return source.GetRange(source.Count - desired, desired);
         }
 
-        private static void DrawLineGraph(Rect rect, List<float> values, Color color)
+        private static void DrawLineGraph(Rect rect, List<float> values, Color color, int axisDecimals)
         {
-            ConsoleLineChartUtility.DrawSingleSeries(rect, values, color, BorderColor, "silver/");
+            ConsoleLineChartUtility.DrawSingleSeries(rect, values, color, BorderColor, "RimClaw_Chart_SilverPerSec".Translate(), axisDecimals);
         }
 
         private static List<float> EnsureRenderableSeries(List<float> source, float fallbackValue)
@@ -378,9 +379,9 @@ namespace RimClaw
 
             string[] labels =
             {
-                "1 day",
-                "15 days",
-                "All"
+                "RimClaw_SubWindow_Range_1d".Translate(),
+                "RimClaw_SubWindow_Range_15d".Translate(),
+                "RimClaw_SubWindow_Range_All".Translate()
             };
 
             GraphRange[] values =
@@ -430,13 +431,13 @@ namespace RimClaw
         {
             if (claw == null)
             {
-                return "(no claw)";
+                return "RimClaw_SubWindow_NoClaw".Translate();
             }
 
             CompClawfishTokenConnection conn = claw.TryGetComp<CompClawfishTokenConnection>();
             if (conn == null || !conn.IsConnected || conn.ConnectedSupplier == null)
             {
-                return "Unassigned";
+                return "RimClaw_SubWindow_Unassigned".Translate();
             }
 
             CompHostComputerService host = conn.ConnectedSupplier.TryGetComp<CompHostComputerService>();

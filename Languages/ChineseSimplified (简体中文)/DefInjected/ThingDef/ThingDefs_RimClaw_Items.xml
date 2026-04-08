@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: clawfish meat -->
+  <Meat_Claw.label>龙虾肉</Meat_Claw.label>
+  <!-- EN: Meat obtained from butchering a clawfish. It is particularly appetizing. -->
+  <Meat_Claw.description>从龙虾尸体中切下的肉。味道特别鲜美。</Meat_Claw.description>
+  
+  <!-- EN: clawfish meat -->
+  <Meat_RimClaw_Clawfish.label>龙虾肉</Meat_RimClaw_Clawfish.label>
+  <!-- EN: Meat obtained from butchering a clawfish. It is particularly appetizing. -->
+  <Meat_RimClaw_Clawfish.description>从龙虾尸体中切下的肉。味道特别鲜美。</Meat_RimClaw_Clawfish.description>
+  
+  <!-- EN: dumpster speghatti code -->
+  <RimClaw_DumpsterCode.label>屎山代码</RimClaw_DumpsterCode.label>
+  <!-- EN: Vibe code dumpster speghatti code of a Clawfish. It is unsafe, hard to maintain, and looks gross. But as it works, who cares about code design? -->
+  <RimClaw_DumpsterCode.description>龙虾的vibe coding出来的屎山面条代码。它不安全、难以维护，而且看起来令人作呕。但既然能运行，有炒作热度，又有谁在乎代码设计呢？</RimClaw_DumpsterCode.description>
+  
+  <!-- EN: Prompt Injection Database -->
+  <RimClaw_PromptInjectionDatabase.label>提示词注入数据库</RimClaw_PromptInjectionDatabase.label>
+  <!-- EN: A database containing thousands of adversary samples that can destabilize LLM Agent cognition. -->
+  <RimClaw_PromptInjectionDatabase.description>包含成千上万条对抗样本的数据集，能够扰乱 LLM 代理的认知。</RimClaw_PromptInjectionDatabase.description>
+  
+</LanguageData>
