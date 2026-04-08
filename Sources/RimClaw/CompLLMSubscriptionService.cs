@@ -25,7 +25,8 @@ namespace RimClaw
     public class SubscriptionSnapshot
     {
         public string ModelIdentifier;
-        public float PricePerMTokens;
+        public Color ModelColor;
+        public float PricePerKTokens;
         public float SpeedMultiplier;
         public float LiveThroughput;
         public float MaxCapacityPerClaw;
@@ -40,8 +41,8 @@ namespace RimClaw
     public class CompProperties_LLMSubscriptionService : CompProperties
     {
         public float baseTokenCapacityPerSecond = 220f;
-        public float maxCapacityPerClaw = 80f;
-        public float pricePerMillionTokens = 8f;
+        public float maxCapacityPerClaw = 400f;
+        public float pricePerKTokens = 0.1f;
         public float silverSearchRadius = 5f;
         public int historyLength = 360;
 
@@ -59,12 +60,37 @@ namespace RimClaw
 
         private float liveThroughput;
         private float speedMultiplier = 1f;
-        private string modelIdentifier = "LLM Subscription";
+        private string modelIdentifier = "LLM Service Subscription";
+        private int lastBillingTick = -1;
 
         public CompProperties_LLMSubscriptionService Props => (CompProperties_LLMSubscriptionService)props;
         public float SilverSearchRadius => Props.silverSearchRadius;
 
         public override bool IsValidSupplier => parent != null && parent.Spawned && IsPowered(parent as ThingWithComps);
+
+        public override string TransformLabel(string label)
+        {
+            CompModelCard card = parent?.TryGetComp<CompModelCard>();
+            if (card == null)
+            {
+                return label;
+            }
+
+            card.EnsureInitialized();
+            string modelName = card.ModelName;
+            if (string.IsNullOrEmpty(modelName))
+            {
+                return label;
+            }
+
+            string bracketed = $"[{modelName}]";
+            if (label.Contains(bracketed))
+            {
+                return label;
+            }
+
+            return $"{label} {bracketed}";
+        }
 
         public override void PostExposeData()
         {
@@ -94,9 +120,9 @@ namespace RimClaw
         {
             yield return new Command_Action
             {
-                defaultLabel = "Open Control Panel",
+                defaultLabel = "Open Console",
                 defaultDesc = "Open the LLM subscription management console.",
-                icon = ContentFinder<Texture2D>.Get("UI/Commands/TogglePower", reportFailure: false),
+                icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
                     Find.WindowStack.Add(new Window_LLMSubscriptionControlPanel(this));
@@ -107,14 +133,31 @@ namespace RimClaw
         public override void CompTick()
         {
             base.CompTick();
-            if (!parent.IsHashIntervalTick(60))
+
+            int nowTick = Find.TickManager?.TicksGame ?? 0;
+            if (lastBillingTick < 0)
+            {
+                lastBillingTick = nowTick;
+                return;
+            }
+
+            int elapsedTicks = nowTick - lastBillingTick;
+            if (elapsedTicks < 60)
             {
                 return;
             }
 
+            lastBillingTick = nowTick;
+            float elapsedSeconds = elapsedTicks / 60f;
+
             CleanupConnectedClaws();
             CleanupHistory();
             RefreshModelTelemetry();
+
+            if (parent.IsHashIntervalTick(30))
+            {
+                RimClawGlowUtility.SpawnPulseGlow(parent, RimClawGlowUtility.SoftenToGlow(ResolveModelColor()), 4f);
+            }
 
             if (!IsValidSupplier)
             {
@@ -132,12 +175,12 @@ namespace RimClaw
             }
 
             float supplied = Mathf.Min(liveThroughput, totalTokenCapacityPerSecond);
-            float silverPerToken = Props.pricePerMillionTokens / 1000000f;
+            float silverPerToken = Props.pricePerKTokens / 1000f;
             float silverPerSecond = supplied * silverPerToken;
             model.HourlyRate = silverPerSecond * 3600f;
 
-            model.PendingPayment += silverPerSecond;
-            model.LifetimeSilverSpent += silverPerSecond;
+            model.PendingPayment += silverPerSecond * elapsedSeconds;
+            model.LifetimeSilverSpent += silverPerSecond * elapsedSeconds;
 
             TryAutoPayIntegerSilver();
             PushHistoryPoint();
@@ -172,15 +215,29 @@ namespace RimClaw
 
         public SubscriptionSnapshot GetSnapshot()
         {
+            RefreshModelTelemetry();
+
+            float currentLiveThroughput = 0f;
+            for (int i = 0; i < connectedClawfish.Count; i++)
+            {
+                Pawn claw = connectedClawfish[i];
+                currentLiveThroughput += GetCurrentNeededRate(claw);
+            }
+
+            float supplied = Mathf.Min(currentLiveThroughput, totalTokenCapacityPerSecond);
+            float silverPerToken = Props.pricePerKTokens / 1000f;
+            float currentHourlyRate = supplied * silverPerToken * 3600f;
+
             SubscriptionSnapshot snapshot = new SubscriptionSnapshot
             {
-                ModelIdentifier = modelIdentifier,
-                PricePerMTokens = Props.pricePerMillionTokens,
+                ModelIdentifier = GetCurrentModelIdentifier(),
+                ModelColor = ResolveModelColor(),
+                PricePerKTokens = Props.pricePerKTokens,
                 SpeedMultiplier = speedMultiplier,
-                LiveThroughput = liveThroughput,
+                LiveThroughput = currentLiveThroughput,
                 MaxCapacityPerClaw = Props.maxCapacityPerClaw,
                 ActiveClaws = connectedClawfish.Count,
-                HourlySilverRate = model.HourlyRate,
+                HourlySilverRate = currentHourlyRate,
                 LifetimeSilverSpent = model.LifetimeSilverSpent,
                 PendingPayment = model.PendingPayment
             };
@@ -198,7 +255,7 @@ namespace RimClaw
                 float currentTps = GetCurrentNeededRate(claw);
                 float provided = GetAvailableTokenRateForClawfish(claw);
                 float effectiveTps = Mathf.Min(currentTps, provided);
-                float silverPerHour = effectiveTps * (Props.pricePerMillionTokens / 1000000f) * 3600f;
+                float silverPerHour = effectiveTps * (Props.pricePerKTokens / 1000f) * 3600f;
 
                 SubscriptionClawSnapshot clawSnapshot = new SubscriptionClawSnapshot
                 {
@@ -229,10 +286,22 @@ namespace RimClaw
             GenDraw.DrawRadiusRing(parent.Position, Props.silverSearchRadius);
         }
 
+        public override void PostDraw()
+        {
+            base.PostDraw();
+            if (parent?.Spawned != true || !IsPowered(parent as ThingWithComps))
+            {
+                return;
+            }
+
+            Color glowColor = ResolveModelColor();
+            RimClawGlowUtility.DrawGlow(parent.DrawPos, RimClawGlowUtility.SoftenToGlow(glowColor), 4f);
+        }
+
         public override string CompInspectStringExtra()
         {
             float supplied = Mathf.Min(liveThroughput, totalTokenCapacityPerSecond);
-            return $"Model: {modelIdentifier}\nLive Throughput: {liveThroughput:0.0}/{totalTokenCapacityPerSecond:0.0} TPS\nActive Claws: {connectedClawfish.Count}\nHourly Silver: {model.HourlyRate:0.00}\nPending Payment: {model.PendingPayment:0.00}\nSupplied TPS: {supplied:0.0}";
+            return $"Model: {GetCurrentModelIdentifier()}\nLive Throughput: {liveThroughput:0.0}/{totalTokenCapacityPerSecond:0.0} TPS\nActive Claws: {connectedClawfish.Count}\nHourly Silver: {model.HourlyRate:0.00}\nPending Payment: {model.PendingPayment:0.00}\nSupplied TPS: {supplied:0.0}";
         }
 
         private void RefreshModelTelemetry()
@@ -247,9 +316,36 @@ namespace RimClaw
             }
 
             card.EnsureInitialized();
-            totalTokenCapacityPerSecond = Mathf.Max(1f, card.TokenPerSecondPerInstance);
+            totalTokenCapacityPerSecond = Mathf.Max(1f, Props.baseTokenCapacityPerSecond * card.WorkSpeedMultiplier);
             speedMultiplier = Mathf.Max(0.1f, card.WorkSpeedMultiplier);
             modelIdentifier = card.ModelName;
+        }
+
+        private string GetCurrentModelIdentifier()
+        {
+            CompModelCard card = parent?.TryGetComp<CompModelCard>();
+            if (card != null)
+            {
+                card.EnsureInitialized();
+                if (!string.IsNullOrEmpty(card.ModelName))
+                {
+                    return card.ModelName;
+                }
+            }
+
+            return modelIdentifier;
+        }
+
+        private Color ResolveModelColor()
+        {
+            CompModelCard card = parent.TryGetComp<CompModelCard>();
+            if (card == null)
+            {
+                return Color.white;
+            }
+
+            card.EnsureInitialized();
+            return card.ModelColor;
         }
 
         private float GetCurrentNeededRate(Pawn claw)
@@ -276,7 +372,7 @@ namespace RimClaw
 
         private void PushHistoryPoint()
         {
-            totalSilverHistory.Add(model.LifetimeSilverSpent);
+            totalSilverHistory.Add(model.HourlyRate);
             int maxLen = Mathf.Max(60, Props.historyLength);
             if (totalSilverHistory.Count > maxLen)
             {
@@ -299,7 +395,7 @@ namespace RimClaw
                 float currentTps = GetCurrentNeededRate(claw);
                 float provided = GetAvailableTokenRateForClawfish(claw);
                 float effectiveTps = Mathf.Min(currentTps, provided);
-                float silverPerHour = effectiveTps * (Props.pricePerMillionTokens / 1000000f) * 3600f;
+                float silverPerHour = effectiveTps * (Props.pricePerKTokens / 1000f) * 3600f;
 
                 if (!clawSilverHistory.TryGetValue(claw.thingIDNumber, out List<float> history) || history == null)
                 {

@@ -141,6 +141,23 @@ namespace RimClaw
             return modelColor;
         }
 
+        public void OverrideModelData(string name, Color color, int vram, float tokenRate, float speedBonus)
+        {
+            initialized = true;
+            modelName = name;
+            formalName = name;
+            midName = "Loaded";
+            parameterTag = "custom";
+            sourceFactionId = "Loaded";
+            modelColor = color;
+            requiredVram = Mathf.Max(1, vram);
+            tokenPerSecondPerInstance = Mathf.Max(0.1f, tokenRate);
+            workSpeedBonus = speedBonus;
+            workSpeedMultiplier = Mathf.Max(0.1f, 1f + speedBonus);
+            parameterSizeB = Mathf.Max(0.1f, requiredVram * 0.5f);
+            feeRate = 1f;
+        }
+
         public override string CompInspectStringExtra()
         {
             EnsureInitialized();

@@ -25,9 +25,7 @@ namespace RimClaw
         private readonly Dictionary<int, Rect> gpuIconRects = new Dictionary<int, Rect>();
         private Vector2 gpuScrollPos = Vector2.zero;
         private Vector2 clawPoolScrollPos = Vector2.zero;
-        private Vector2 modelDropdownScrollPos = Vector2.zero;
         private int selectedGpuIndex = -1;
-        private int modelDropdownGpuThingId = -1;
         private Pawn draggingClaw;
         private PlotTimeRange selectedPlotTimeRange = PlotTimeRange.All;
 
@@ -64,7 +62,7 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "Datacenter Overview");
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "Datacenter Console");
             Text.Font = oldFont;
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
@@ -78,8 +76,6 @@ namespace RimClaw
 
             DrawLine(new Vector2(contentRect.x, topRect.yMax + 4f), new Vector2(contentRect.xMax, topRect.yMax + 4f));
             DrawLine(new Vector2(leftRect.xMax - 6f, leftRect.y), new Vector2(leftRect.xMax - 6f, leftRect.yMax));
-
-            DrawModelDropdown(snapshot, inRect);
 
             DrawDraggingPreview();
         }
@@ -100,16 +96,21 @@ namespace RimClaw
 
             float cellSize = 56f;
             float spacing = 6f;
+            const int columns = 5;
+            float rowHeight = cellSize + 20f;
             Rect scrollRect = new Rect(clawsRect.x + 8f, clawsRect.y + 28f, clawsRect.width - 16f, clawsRect.height - 36f);
-            float contentWidth = snapshot.ConnectedClaws.Count * (cellSize + spacing) + 8f;
-            Rect viewRect = new Rect(0f, 0f, Mathf.Max(scrollRect.width - 16f, contentWidth), scrollRect.height - 2f);
+            int rowCount = Mathf.Max(1, Mathf.CeilToInt(snapshot.ConnectedClaws.Count / (float)columns));
+            float contentHeight = rowCount * rowHeight + 4f;
+            Rect viewRect = new Rect(0f, 0f, Mathf.Max(1f, scrollRect.width - 16f), contentHeight);
 
             Widgets.BeginScrollView(scrollRect, ref clawPoolScrollPos, viewRect);
 
             for (int i = 0; i < snapshot.ConnectedClaws.Count; i++)
             {
                 Pawn claw = snapshot.ConnectedClaws[i];
-                Rect cell = new Rect(4f + i * (cellSize + spacing), 0f, cellSize, cellSize);
+                int col = i % columns;
+                int row = i / columns;
+                Rect cell = new Rect(4f + col * (cellSize + spacing), 2f + row * rowHeight, cellSize, cellSize);
                 DrawOutline(cell);
                 Rect portraitRect = new Rect(cell.x + 5f, cell.y + 3f, AvatarSize, AvatarSize);
                 DrawClawPortrait(portraitRect, claw);
@@ -166,13 +167,13 @@ namespace RimClaw
             {
                 HostGpuSnapshot gpu = snapshot.Gpus[i];
                 Rect row = new Rect(0f, i * 100f, viewRect.width, 96f);
-                DrawGpuRow(row, i, gpu, listRect);
+                DrawGpuRow(row, i, gpu, snapshot, listRect);
             }
 
             Widgets.EndScrollView();
         }
 
-        private void DrawGpuRow(Rect row, int index, HostGpuSnapshot gpu, Rect listRect)
+        private void DrawGpuRow(Rect row, int index, HostGpuSnapshot gpu, HostComputerSnapshot snapshot, Rect listRect)
         {
             DrawOutline(row);
             if (selectedGpuIndex == index)
@@ -194,9 +195,10 @@ namespace RimClaw
 
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && iconRect.Contains(Event.current.mousePosition))
             {
-                modelDropdownGpuThingId = modelDropdownGpuThingId == gpu.ThingId ? -1 : gpu.ThingId;
-                modelDropdownScrollPos = Vector2.zero;
+                selectedGpuIndex = index;
+                OpenModelMenuForGpu(gpu, snapshot);
                 Event.current.Use();
+                return;
             }
 
             float textX = iconRect.xMax + 12f;
@@ -213,7 +215,6 @@ namespace RimClaw
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
             {
                 selectedGpuIndex = index;
-                modelDropdownGpuThingId = -1;
                 Event.current.Use();
             }
 
@@ -259,7 +260,7 @@ namespace RimClaw
 
             const float rangeButtonsHeight = 24f;
             Rect graphRect = new Rect(rect.x + 8f, memoryBarRect.yMax + 12f, rect.width - 16f, rect.height - (memoryBarRect.yMax - rect.y) - 28f - rangeButtonsHeight);
-            DrawGraph(graphRect, snapshot.TpsHistory, snapshot.HeatHistory);
+            DrawGraph(graphRect, gpu.TpsHistory, gpu.HeatHistory);
 
             Rect rangeRect = new Rect(rect.x + 8f, graphRect.yMax + 6f, rect.width - 16f, rangeButtonsHeight);
             DrawPlotRangeButtons(rangeRect);
@@ -354,88 +355,16 @@ namespace RimClaw
 
         private void DrawGraph(Rect rect, List<float> tps, List<float> heat)
         {
-            GameFont oldFont = Text.Font;
-            Text.Font = GameFont.Tiny;
-            Widgets.Label(new Rect(rect.x + 6f, rect.y + 4f, 120f, 22f), "token/s");
-            Widgets.Label(new Rect(rect.xMax - 90f, rect.y + 4f, 84f, 22f), "heat/s");
-            Text.Font = oldFont;
-
             int totalCount = Mathf.Min(tps.Count, heat.Count);
             GetHistorySlice(totalCount, out int startIndex, out int count);
-
-            Rect plot = new Rect(rect.x + 56f, rect.y + 26f, rect.width - 112f, rect.height - 34f);
-
-            DrawLine(new Vector2(plot.x, plot.y), new Vector2(plot.x, plot.yMax));
-            DrawLine(new Vector2(plot.xMax, plot.y), new Vector2(plot.xMax, plot.yMax));
-
-            float zeroLineY = plot.yMax - 8f;
-            Widgets.DrawLine(new Vector2(plot.x, zeroLineY), new Vector2(plot.xMax, zeroLineY), BorderColor, 1f);
-            Widgets.Label(new Rect(plot.x + 4f, zeroLineY - 10f, 24f, 16f), "0");
-
-            // Widgets.Label(new Rect(plot.x + 4f, plot.y + 2f, 64f, 18f), "TPS");
-            // Widgets.Label(new Rect(plot.xMax - 64f, plot.y + 2f, 60f, 18f), "Heat/s");
-
             if (count < 2)
             {
                 return;
             }
 
-            float rawMaxTps = 1f;
-            float rawMaxHeat = 1f;
-            int endIndex = startIndex + count;
-            for (int i = startIndex; i < endIndex; i++)
-            {
-                if (tps[i] > rawMaxTps)
-                {
-                    rawMaxTps = tps[i];
-                }
-
-                if (heat[i] > rawMaxHeat)
-                {
-                    rawMaxHeat = heat[i];
-                }
-            }
-
-            const int ticks = 4;
-            int tpsStep = Mathf.Max(1, Mathf.CeilToInt(rawMaxTps / ticks));
-            int maxTps = tpsStep * ticks;
-
-            int heatFromTps = Mathf.Max(1, Mathf.RoundToInt(maxTps / 100f));
-            int heatNeeded = Mathf.Max(heatFromTps, Mathf.CeilToInt(rawMaxHeat));
-            int heatStep = Mathf.Max(1, Mathf.CeilToInt(heatNeeded / (float)ticks));
-            int maxHeat = heatStep * ticks;
-
-            float step = plot.width / (count - 1);
-            Vector2 prevTps = Vector2.zero;
-            Vector2 prevHeat = Vector2.zero;
-            float baseline = zeroLineY;
-            float tokenScaleHeight = Mathf.Max(1f, plot.height * 0.8f - 14f);
-            float heatScaleHeight = tokenScaleHeight;
-            float tpsLeftAxisX = plot.x;
-            float heatRightAxisX = plot.xMax;
-
-            DrawGraduations(tpsLeftAxisX, plot, maxTps, true, tokenScaleHeight, ticks);
-            DrawGraduations(heatRightAxisX, plot, maxHeat, false, heatScaleHeight, ticks);
-
-            for (int i = 0; i < count; i++)
-            {
-                float x = plot.x + i * step;
-                int historyIndex = startIndex + i;
-                float yTps = baseline - (tps[historyIndex] / Mathf.Max(1f, maxTps)) * tokenScaleHeight;
-                float yHeat = baseline - (heat[historyIndex] / Mathf.Max(1f, maxHeat)) * heatScaleHeight;
-
-                Vector2 curTps = new Vector2(x, yTps);
-                Vector2 curHeat = new Vector2(x, yHeat);
-
-                if (i > 0)
-                {
-                    Widgets.DrawLine(prevTps, curTps, Color.green, 2f);
-                    Widgets.DrawLine(prevHeat, curHeat, new Color(1f, 0.5f, 0f, 1f), 2f);
-                }
-
-                prevTps = curTps;
-                prevHeat = curHeat;
-            }
+            List<float> tpsSlice = tps.GetRange(startIndex, count);
+            List<float> heatSlice = heat.GetRange(startIndex, count);
+            ConsoleLineChartUtility.DrawDualSeries(rect, tpsSlice, heatSlice, Color.green, new Color(1f, 0.5f, 0f, 1f), BorderColor);
         }
 
         private void DrawPlotRangeButtons(Rect rect)
@@ -476,95 +405,33 @@ namespace RimClaw
             }
         }
 
-        private void DrawModelDropdown(HostComputerSnapshot snapshot, Rect windowRect)
+        private void OpenModelMenuForGpu(HostGpuSnapshot gpu, HostComputerSnapshot snapshot)
         {
-            if (modelDropdownGpuThingId < 0)
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            options.Add(new FloatMenuOption("(None)", delegate
             {
-                return;
-            }
-
-            if (!gpuIconRects.TryGetValue(modelDropdownGpuThingId, out Rect iconRect))
-            {
-                modelDropdownGpuThingId = -1;
-                return;
-            }
-
-            int optionCount = snapshot.AvailableModels.Count + 1;
-            const float rowHeight = 22f;
-            const float panelWidth = 208f;
-            float panelHeight = Mathf.Min(180f, optionCount * rowHeight + 8f);
-            Rect panelRect = new Rect(iconRect.xMax + 4f, iconRect.y, panelWidth, panelHeight);
-            if (panelRect.xMax > windowRect.xMax - 8f)
-            {
-                panelRect.x = iconRect.x - panelWidth - 4f;
-            }
-
-            panelRect.y = Mathf.Clamp(panelRect.y, windowRect.y + 8f, windowRect.yMax - panelHeight - 8f);
-
-            if (Event.current.type == EventType.MouseDown && !panelRect.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
-            {
-                modelDropdownGpuThingId = -1;
-                return;
-            }
-
-            Widgets.DrawBoxSolid(panelRect, new Color(0.08f, 0.10f, 0.12f, 1f));
-            DrawOutline(panelRect);
-
-            Rect outRect = new Rect(panelRect.x + 2f, panelRect.y + 2f, panelRect.width - 4f, panelRect.height - 4f);
-            Rect viewRect = new Rect(0f, 0f, outRect.width - 16f, optionCount * rowHeight);
-            Widgets.BeginScrollView(outRect, ref modelDropdownScrollPos, viewRect);
-
-            HostGpuSnapshot selectedGpu = null;
-            for (int i = 0; i < snapshot.Gpus.Count; i++)
-            {
-                if (snapshot.Gpus[i].ThingId == modelDropdownGpuThingId)
-                {
-                    selectedGpu = snapshot.Gpus[i];
-                    break;
-                }
-            }
-
-            DrawModelOptionRow(new Rect(0f, 0f, viewRect.width, rowHeight), "(None)", new Color32(100, 100, 100, 255), -1, selectedGpu);
-            for (int i = 0; i < snapshot.AvailableModels.Count; i++)
-            {
-                HostModelOptionSnapshot option = snapshot.AvailableModels[i];
-                DrawModelOptionRow(new Rect(0f, (i + 1) * rowHeight, viewRect.width, rowHeight), option.ModelName, option.ModelColor, option.DiskThingId, selectedGpu);
-            }
-
-            Widgets.EndScrollView();
-        }
-
-        private void DrawModelOptionRow(Rect row, string label, Color color, int diskThingId, HostGpuSnapshot selectedGpu)
-        {
-            bool isSelected = selectedGpu != null && selectedGpu.ModelDiskThingId == diskThingId;
-            if (isSelected)
-            {
-                Widgets.DrawHighlightSelected(row);
-            }
-            else if (Mouse.IsOver(row))
-            {
-                Widgets.DrawHighlight(row);
-            }
-
-            Rect iconRect = new Rect(row.x + 4f, row.y + 3f, 14f, 14f);
-            DrawModelSign(iconRect, color);
-
-            GameFont oldFont = Text.Font;
-            Text.Font = GameFont.Tiny;
-            Widgets.Label(new Rect(row.x + 22f, row.y + 3f, row.width - 24f, 16f), label);
-            Text.Font = oldFont;
-
-            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition))
-            {
-                if (host.SetGpuModelForGpu(modelDropdownGpuThingId, diskThingId))
-                {
-                    modelDropdownGpuThingId = -1;
-                }
-                else
+                if (!host.SetGpuModelForGpu(gpu.ThingId, -1))
                 {
                     Messages.Message("Failed to switch model for this GPU.", MessageTypeDefOf.RejectInput, historical: false);
                 }
+            }, (Thing)null, new Color32(100, 100, 100, 255), MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
+
+            foreach (HostModelOptionSnapshot option in snapshot.AvailableModels)
+            {
+                int diskThingId = option.DiskThingId;
+                string label = option.ModelName;
+                Color modelColor = option.ModelColor;
+
+                options.Add(new FloatMenuOption(label, delegate
+                {
+                    if (!host.SetGpuModelForGpu(gpu.ThingId, diskThingId))
+                    {
+                        Messages.Message("Failed to switch model for this GPU.", MessageTypeDefOf.RejectInput, historical: false);
+                    }
+                }, (Thing)null, modelColor, MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
             }
+
+            Find.WindowStack.Add(new FloatMenu(options));
         }
 
         private void GetHistorySlice(int totalCount, out int startIndex, out int count)

@@ -34,7 +34,7 @@ namespace RimClaw
             {
                 defaultLabel = "Connect to LLM Service",
                 defaultDesc = "Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply.",
-                icon = ContentFinder<Texture2D>.Get("UI/Gizmos/Connect", true),
+                icon = ContentFinder<Texture2D>.Get("connect_llm", true),
                 action = delegate
                 {
                     Find.Targeter.BeginTargeting(
@@ -90,7 +90,7 @@ namespace RimClaw
             {
                 defaultLabel = "Disconnect from LLM Service",
                 defaultDesc = $"Disconnect this clawfish from {tokenConn.ConnectedSupplier.Label}.",
-                icon = ContentFinder<Texture2D>.Get("UI/Gizmos/Disconnect", true),
+                icon = ContentFinder<Texture2D>.Get("disconnect_llm", true),
                 action = delegate
                 {
                     CompHostComputerService host = tokenConn.ConnectedSupplier.TryGetComp<CompHostComputerService>();

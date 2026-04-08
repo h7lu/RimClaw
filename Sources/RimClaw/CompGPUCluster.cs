@@ -6,7 +6,10 @@ namespace RimClaw
     public class CompProperties_GPUCluster : CompProperties
     {
         public int providedVRAM = 300;
-        public float heatPerSecond = 0.6f;
+        public float baseHeatPerSecond = 5f;
+        public float heatPerUsageFraction = 20f;
+        public float heatAverageSeconds = 15f;
+        public float maxTemperatureC = 1000f;
 
         public CompProperties_GPUCluster()
         {
@@ -53,18 +56,7 @@ namespace RimClaw
                 return;
             }
 
-            if (hostThingID < 0)
-            {
-                return;
-            }
-
-            CompPowerTrader power = parent.TryGetComp<CompPowerTrader>();
-            if (power != null && !power.PowerOn)
-            {
-                return;
-            }
-
-            GenTemperature.PushHeat(parent.Position, parent.Map, Props.heatPerSecond);
+            // Heat is now pushed by the host computer service so the panel and runtime use the same smoothed value.
         }
 
         public override string CompInspectStringExtra()

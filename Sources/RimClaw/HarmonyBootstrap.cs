@@ -8,8 +8,10 @@ namespace RimClaw
     {
         static HarmonyBootstrap()
         {
+            Log.Message("[RimClaw][Harmony] Bootstrap starting");
             var harmony = new Harmony("openclaw.rimclaw");
             harmony.PatchAll();
+            Log.Message("[RimClaw][Harmony] Bootstrap finished");
         }
     }
 }

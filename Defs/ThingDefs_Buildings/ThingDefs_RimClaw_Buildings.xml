@@ -8,7 +8,9 @@
     <graphicData>
       <texPath>llm_subscription</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1,1)</drawSize>
+      <shaderType>CutoutComplex</shaderType>
+      <maskPath>llm_subscription_m</maskPath>
+      <drawSize>(2,2)</drawSize>
     </graphicData>
     <size>(1,1)</size>
     <altitudeLayer>Building</altitudeLayer>
@@ -37,10 +39,11 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>50</basePowerConsumption>
       </li>
+      <li Class="RimClaw.CompProperties_ModelCard" />
       <li Class="RimClaw.CompProperties_LLMSubscriptionService">
         <baseTokenCapacityPerSecond>220</baseTokenCapacityPerSecond>
-        <maxCapacityPerClaw>80</maxCapacityPerClaw>
-        <pricePerMillionTokens>8</pricePerMillionTokens>
+        <maxCapacityPerClaw>400</maxCapacityPerClaw>
+        <pricePerKTokens>0.1</pricePerKTokens>
         <silverSearchRadius>5</silverSearchRadius>
         <historyLength>360</historyLength>
       </li>
@@ -61,7 +64,7 @@
     <graphicData>
       <texPath>hostcomputer_south</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1.3, 1.3)</drawSize>
+      <drawSize>(1.5, 1.5)</drawSize>
     </graphicData>
     <size>(1,1)</size>
     <altitudeLayer>Building</altitudeLayer>
@@ -141,7 +144,10 @@
       </li>
       <li Class="RimClaw.CompProperties_GPUCluster">
         <providedVRAM>300</providedVRAM>
-        <heatPerSecond>0.6</heatPerSecond>
+        <baseHeatPerSecond>5</baseHeatPerSecond>
+        <heatPerUsageFraction>20</heatPerUsageFraction>
+        <heatAverageSeconds>15</heatAverageSeconds>
+        <maxTemperatureC>1000</maxTemperatureC>
       </li>
     </comps>
     <researchPrerequisites>
@@ -153,7 +159,7 @@
     <defName>RimClaw_MemoryDisk</defName>
     <label>memory disk</label>
     <description>Stores one model package that can be read by a linked Host Computer.</description>
-    <thingClass>Building</thingClass>
+    <thingClass>RimClaw.Building_MemoryDisk</thingClass>
     <graphicData>
       <texPath>Memory</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -181,11 +187,18 @@
     </building>
     <comps>
       <li Class="RimClaw.CompProperties_MemoryDisk">
-        <modelSignOffsetX>0</modelSignOffsetX>
-        <modelSignOffsetY>0.42</modelSignOffsetY>
-        <modelSignOffsetZ>0</modelSignOffsetZ>
-        <modelSignScale>0.8</modelSignScale>
-        <modelSignAlpha>0.8</modelSignAlpha>
+        <formingGraphicData>
+          <texPath>model_sign</texPath>
+          <graphicClass>Graphic_Single</graphicClass>
+          <drawSize>(0.55,0.55)</drawSize>
+        </formingGraphicData>
+        <formingMechBobSpeed>0.0007</formingMechBobSpeed>
+        <formingMechYBobDistance>0.06</formingMechYBobDistance>
+        <formingGraphicYOffset>0.018292684</formingGraphicYOffset>
+        <northOffset>(0,0,0.18)</northOffset>
+        <eastOffset>(0,0,0.18)</eastOffset>
+        <southOffset>(0,0,0.18)</southOffset>
+        <westOffset>(0,0,0.18)</westOffset>
       </li>
     </comps>
     <researchPrerequisites>

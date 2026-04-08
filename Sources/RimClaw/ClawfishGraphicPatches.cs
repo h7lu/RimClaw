@@ -47,9 +47,6 @@ namespace RimClaw
 
         private static readonly Dictionary<Pawn, Texture2D> PortraitTextureCache = new Dictionary<Pawn, Texture2D>(new PawnEqualityComparer());
         private static Pawn currentColonist;
-        private static bool loggedTranspilerSummary;
-        private static bool loggedFirstClawfishPortraitCall;
-        private static bool loggedFirstTextureMiss;
 
         public static void Prefix(Pawn colonist)
         {
@@ -63,15 +60,12 @@ namespace RimClaw
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            int portraitGetCalls = 0;
-            int replacedDrawCalls = 0;
             bool sawPortraitGet = false;
             foreach (CodeInstruction instruction in instructions)
             {
                 MethodInfo calledMethod = instruction.operand as MethodInfo;
                 if (calledMethod != null && calledMethod.DeclaringType == typeof(PortraitsCache) && calledMethod.Name == nameof(PortraitsCache.Get))
                 {
-                    portraitGetCalls++;
                     sawPortraitGet = true;
                     yield return instruction;
                     continue;
@@ -80,28 +74,10 @@ namespace RimClaw
                 if (sawPortraitGet && VanillaGuiDrawTextureMethod != null && instruction.Calls(VanillaGuiDrawTextureMethod))
                 {
                     instruction.operand = ReplacementGuiDrawTextureMethod;
-                    replacedDrawCalls++;
                     sawPortraitGet = false;
                 }
 
                 yield return instruction;
-            }
-
-            if (!loggedTranspilerSummary)
-            {
-                loggedTranspilerSummary = true;
-                if (portraitGetCalls == 0)
-                {
-                    Log.Warning("[RimClaw] DrawColonist transpiler found 0 PortraitsCache.Get calls. Another transpiler likely changed method shape.");
-                }
-                else if (replacedDrawCalls == 0)
-                {
-                    Log.Warning($"[RimClaw] DrawColonist transpiler found {portraitGetCalls} PortraitsCache.Get call(s), but replaced 0 GUI.DrawTexture call(s).");
-                }
-                else
-                {
-                    Log.Message($"[RimClaw] DrawColonist transpiler active: found {portraitGetCalls} portrait call(s), replaced {replacedDrawCalls} draw call(s).");
-                }
             }
         }
 
@@ -112,12 +88,6 @@ namespace RimClaw
             {
                 Widgets.DrawTextureFitted(rect, vanillaTexture, 1f);
                 return;
-            }
-
-            if (!loggedFirstClawfishPortraitCall)
-            {
-                loggedFirstClawfishPortraitCall = true;
-                Log.Message($"[RimClaw] Clawfish portrait hook called for pawn '{pawn?.LabelShort ?? "<null>"}' using path '{ClawfishUtility.GetPortraitSouthTexPath(pawn)}'.");
             }
 
             if (!PortraitTextureCache.TryGetValue(pawn, out Texture2D clawfishTexture) || clawfishTexture == null)
@@ -131,11 +101,6 @@ namespace RimClaw
 
             if (clawfishTexture == null)
             {
-                if (!loggedFirstTextureMiss)
-                {
-                    loggedFirstTextureMiss = true;
-                    Log.Warning($"[RimClaw] Clawfish portrait texture missing at '{ClawfishUtility.GetPortraitSouthTexPath(pawn)}'. Falling back to vanilla portrait.");
-                }
                 Widgets.DrawTextureFitted(rect, vanillaTexture, 1f);
                 return;
             }

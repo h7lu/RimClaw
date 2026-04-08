@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -7,6 +8,11 @@ namespace RimClaw
 {
     public class Window_LLMSubscriptionControlPanel : Window
     {
+        private static readonly Dictionary<Pawn, Texture2D> PortraitCache = new Dictionary<Pawn, Texture2D>(new PawnEqualityComparer());
+        private static readonly Color BorderColor = new Color32(97, 108, 122, 255);
+        private static readonly Color PanelBgColor = new Color32(21, 25, 29, 255);
+        private static readonly Texture2D ModelSignTexture = ContentFinder<Texture2D>.Get("model_sign", reportFailure: false);
+        private const float AvatarSize = 72f;
         private readonly CompLLMSubscriptionService subscription;
         private Vector2 clawScrollPos = Vector2.zero;
         private int selectedClawIndex = -1;
@@ -15,7 +21,8 @@ namespace RimClaw
         private enum GraphRange
         {
             Daily,
-            FifteenDay
+            FifteenDay,
+            All
         }
 
         public override Vector2 InitialSize => new Vector2(920f, 640f);
@@ -26,8 +33,9 @@ namespace RimClaw
             forcePause = false;
             doCloseX = true;
             doCloseButton = false;
-            absorbInputAroundWindow = true;
+            absorbInputAroundWindow = false;
             draggable = true;
+            optionalTitle = string.Empty;
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -45,57 +53,81 @@ namespace RimClaw
             }
 
             Text.Font = GameFont.Small;
+            Widgets.DrawBoxSolid(inRect, PanelBgColor);
 
-            Rect topRect = new Rect(inRect.x, inRect.y, inRect.width, 190f);
-            Rect bottomRect = new Rect(inRect.x, topRect.yMax + 8f, inRect.width, inRect.height - topRect.height - 8f);
-            Rect leftBottom = new Rect(bottomRect.x, bottomRect.y, inRect.width * 0.58f, bottomRect.height);
-            Rect rightBottom = new Rect(leftBottom.xMax + 8f, bottomRect.y, inRect.width - leftBottom.width - 8f, bottomRect.height);
+            GameFont oldFont = Text.Font;
+            Text.Font = GameFont.Medium;
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "LLM Subscription Console");
+            Text.Font = oldFont;
+
+            Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
+            Rect topRect = new Rect(contentRect.x, contentRect.y, contentRect.width, 228f);
+            Rect bottomRect = new Rect(contentRect.x, topRect.yMax + 8f, contentRect.width, contentRect.height - topRect.height - 8f);
+            Rect leftBottom = new Rect(bottomRect.x, bottomRect.y, contentRect.width * 0.58f, bottomRect.height);
+            Rect rightBottom = new Rect(leftBottom.xMax + 8f, bottomRect.y, contentRect.width - leftBottom.width - 8f, bottomRect.height);
 
             DrawTop(topRect, snapshot);
             DrawConnectedClawGrid(leftBottom, snapshot);
             DrawClawDetail(rightBottom, snapshot);
+
+            DrawLine(new Vector2(contentRect.x, topRect.yMax + 4f), new Vector2(contentRect.xMax, topRect.yMax + 4f));
+            DrawLine(new Vector2(leftBottom.xMax - 6f, leftBottom.y), new Vector2(leftBottom.xMax - 6f, leftBottom.yMax));
         }
 
-        private static void DrawTop(Rect rect, SubscriptionSnapshot snapshot)
+        private void DrawTop(Rect rect, SubscriptionSnapshot snapshot)
         {
-            Widgets.DrawMenuSection(rect);
+            float splitWidth = (rect.width - 24f) * 0.5f;
+            Rect left = new Rect(rect.x + 8f, rect.y + 8f, splitWidth, rect.height - 16f);
+            Rect right = new Rect(left.xMax + 8f, rect.y + 8f, rect.width - splitWidth - 24f, rect.height - 16f);
 
-            Rect left = new Rect(rect.x + 8f, rect.y + 8f, rect.width * 0.42f, rect.height - 16f);
-            Rect right = new Rect(left.xMax + 8f, rect.y + 8f, rect.width - left.width - 24f, rect.height - 16f);
+            DrawLine(new Vector2(left.x + 8f, left.y + 24f), new Vector2(left.xMax - 8f, left.y + 24f));
 
-            Widgets.DrawBox(left);
-            Widgets.Label(new Rect(left.x + 8f, left.y + 4f, left.width - 16f, 24f), "LLM Subscription");
+            Rect modelIconRect = new Rect(left.x + 8f, left.y + 30f, 72f, 72f);
+            DrawModelSign(modelIconRect, snapshot.ModelColor);
+            Widgets.Label(new Rect(modelIconRect.xMax + 10f, left.y + 34f, left.width - modelIconRect.width - 26f, 26f), AbbreviateName(snapshot.ModelIdentifier, 24));
 
-            Widgets.DrawBoxSolid(new Rect(left.x + 8f, left.y + 30f, 40f, 40f), new Color(0.67f, 0.00f, 0.80f, 1f));
-            Widgets.Label(new Rect(left.x + 56f, left.y + 32f, left.width - 64f, 22f), snapshot.ModelIdentifier);
+            string[] labels =
+            {
+                "Price/K Tokens",
+                "Work Speed",
+                "Live I/O",
+                "Max Capacity",
+                "Active Claws",
+                "Hourly Rate",
+                "Lifetime Spent",
+                "Pending Payment"
+            };
 
-            string stats5 =
-                $"stats 5\n" +
-                $"Price/M Tokens: {snapshot.PricePerMTokens:0.00}\n" +
-                $"Speed Multiplier: x{snapshot.SpeedMultiplier:0.00}\n" +
-                $"Live Throughput: {snapshot.LiveThroughput:0.0} TPS\n" +
-                $"Max Capacity/Claw: {snapshot.MaxCapacityPerClaw:0.0} TPS\n" +
-                $"Active Claws: {snapshot.ActiveClaws}\n" +
-                $"Hourly Silver Rate: {snapshot.HourlySilverRate:0.00}\n" +
-                $"Lifetime Silver Spent: {snapshot.LifetimeSilverSpent:0.00}\n" +
-                $"Pending Silver Payment: {snapshot.PendingPayment:0.00}";
+            string[] values =
+            {
+                $"{snapshot.PricePerKTokens:0.00}",
+                $"x{snapshot.SpeedMultiplier:0.00}",
+                $"{snapshot.LiveThroughput:0.0} TPS",
+                $"{snapshot.MaxCapacityPerClaw:0.0} TPS",
+                $"{snapshot.ActiveClaws}",
+                $"{snapshot.HourlySilverRate:0.00}",
+                $"{snapshot.LifetimeSilverSpent:0.00}",
+                $"{snapshot.PendingPayment:0.00}"
+            };
 
-            Widgets.Label(new Rect(left.x + 8f, left.y + 74f, left.width - 16f, left.height - 78f), stats5);
+            DrawTwoColumnStats(new Rect(left.x + 8f, left.y + 110f, left.width - 16f, left.height - 114f), labels, values);
 
-            Widgets.DrawBox(right);
             Widgets.Label(new Rect(right.x + 8f, right.y + 4f, right.width - 16f, 22f), "Total Silver Consumption");
-            DrawLineGraph(new Rect(right.x + 8f, right.y + 26f, right.width - 16f, right.height - 34f), snapshot.TotalSilverHistory, new Color(0.95f, 0.88f, 0.10f, 1f));
+            DrawLine(new Vector2(right.x + 8f, right.y + 24f), new Vector2(right.xMax - 8f, right.y + 24f));
+            Rect graphRect = new Rect(right.x + 8f, right.y + 26f, right.width - 16f, right.height - 62f);
+            DrawLineGraph(graphRect, EnsureRenderableSeries(snapshot.TotalSilverHistory, snapshot.HourlySilverRate), new Color(0.95f, 0.88f, 0.10f, 1f));
+            DrawPlotRangeButtons(new Rect(right.x + 8f, right.yMax - 30f, right.width - 16f, 24f));
         }
 
         private void DrawConnectedClawGrid(Rect rect, SubscriptionSnapshot snapshot)
         {
-            Widgets.DrawMenuSection(rect);
             Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), "Connected Claws");
+            DrawLine(new Vector2(rect.x + 8f, rect.y + 26f), new Vector2(rect.xMax - 8f, rect.y + 26f));
 
             Rect scrollRect = new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, rect.height - 38f);
             int columns = 4;
             float cellW = (scrollRect.width - 16f) / columns;
-            float cellH = 82f;
+            float cellH = 108f;
             int rows = Mathf.CeilToInt(snapshot.Claws.Count / (float)columns);
             Rect viewRect = new Rect(0f, 0f, scrollRect.width - 18f, rows * cellH + 4f);
 
@@ -107,16 +139,28 @@ namespace RimClaw
                 int col = i % columns;
                 Rect cell = new Rect(col * cellW, row * cellH, cellW - 6f, cellH - 6f);
 
-                Widgets.DrawBox(cell);
+                DrawOutline(cell);
                 if (selectedClawIndex == i)
                 {
                     Widgets.DrawHighlightSelected(cell);
                 }
+                else if (Mouse.IsOver(cell))
+                {
+                    Widgets.DrawHighlight(cell);
+                }
 
                 SubscriptionClawSnapshot claw = snapshot.Claws[i];
-                Widgets.DrawBoxSolid(new Rect(cell.x + 8f, cell.y + 8f, 32f, 32f), new Color(0.15f, 0.40f, 0.95f, 1f));
-                Widgets.Label(new Rect(cell.x + 46f, cell.y + 8f, cell.width - 54f, 20f), claw.Claw.NameShortColored);
-                Widgets.Label(new Rect(cell.x + 8f, cell.y + 46f, cell.width - 12f, 20f), subscription.GetAssignedGpuLabelFallback(claw.Claw));
+                Rect portraitRect = new Rect(cell.x + (cellW - AvatarSize)/2, cell.y + 8f, AvatarSize, AvatarSize);
+                DrawOutline(portraitRect);
+                DrawClawPortrait(portraitRect, claw.Claw);
+
+                TextAnchor oldAnchor = Text.Anchor;
+                Color oldColor = GUI.color;
+                Text.Anchor = TextAnchor.MiddleCenter;
+                GUI.color = new Color(0.87f, 0.58f, 0.28f, 1f);
+                Widgets.Label(new Rect(cell.x + 2f, portraitRect.yMax + 4f, cell.width - 4f, 18f), AbbreviateName(claw.Claw?.LabelShortCap ?? claw.Claw?.LabelCap ?? string.Empty, 10));
+                GUI.color = oldColor;
+                Text.Anchor = oldAnchor;
 
                 if (Widgets.ButtonInvisible(cell))
                 {
@@ -129,38 +173,60 @@ namespace RimClaw
 
         private void DrawClawDetail(Rect rect, SubscriptionSnapshot snapshot)
         {
-            Widgets.DrawMenuSection(rect);
             if (selectedClawIndex < 0 || selectedClawIndex >= snapshot.Claws.Count)
             {
-                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "Select a claw to view stats 6.");
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "Select a claw to view details.");
                 return;
             }
 
             SubscriptionClawSnapshot selected = snapshot.Claws[selectedClawIndex];
-            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), "stats 6");
+            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), AbbreviateName(selected.Claw?.LabelShortCap ?? selected.Claw?.LabelCap ?? string.Empty, 18));
+            DrawLine(new Vector2(rect.x + 8f, rect.y + 26f), new Vector2(rect.xMax - 8f, rect.y + 26f));
 
             float provided = subscription.GetAvailableTokenRateForClawfish(selected.Claw);
             string detail =
-                $"{selected.Claw.NameShortColored}\n" +
                 $"Current Token/s: {selected.CurrentTps:0.0} needed\n" +
                 $"Provided Token/s: {provided:0.0}\n" +
                 $"Silver Consumption/h: {selected.SilverPerHour:0.00}";
             Widgets.Label(new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, 88f), detail);
 
-            Rect buttonDaily = new Rect(rect.x + 8f, rect.y + 118f, 70f, 24f);
-            Rect button15 = new Rect(buttonDaily.xMax + 6f, buttonDaily.y, 78f, 24f);
+            Rect buttonDaily = new Rect(rect.x + 8f, rect.y + 118f, 66f, 24f);
+            Rect button15 = new Rect(buttonDaily.xMax + 6f, buttonDaily.y, 70f, 24f);
+            Rect buttonAll = new Rect(button15.xMax + 6f, buttonDaily.y, 52f, 24f);
+            if (range == GraphRange.Daily)
+            {
+                Widgets.DrawHighlightSelected(buttonDaily);
+            }
+
+            if (range == GraphRange.FifteenDay)
+            {
+                Widgets.DrawHighlightSelected(button15);
+            }
+
+            if (range == GraphRange.All)
+            {
+                Widgets.DrawHighlightSelected(buttonAll);
+            }
+
             if (Widgets.ButtonText(buttonDaily, "Daily"))
             {
                 range = GraphRange.Daily;
             }
 
-            if (Widgets.ButtonText(button15, "15-Day"))
+            if (Widgets.ButtonText(button15, "15 days"))
             {
                 range = GraphRange.FifteenDay;
             }
 
-            Rect graphRect = new Rect(rect.x + 8f, rect.y + 150f, rect.width - 16f, rect.height - 206f);
-            DrawLineGraph(graphRect, GetSeriesForRange(selected.SilverHistory), new Color(0.95f, 0.88f, 0.10f, 1f));
+            if (Widgets.ButtonText(buttonAll, "All"))
+            {
+                range = GraphRange.All;
+            }
+
+            Rect graphRect = new Rect(rect.x + 8f, rect.y + 150f, rect.width - 16f, rect.height - 204f);
+            List<float> clawSeries = GetSeriesForRange(selected.SilverHistory);
+            DrawLineGraph(graphRect, EnsureRenderableSeries(clawSeries, selected.SilverPerHour), new Color(0.95f, 0.88f, 0.10f, 1f));
+            //DrawPlotRangeButtons(new Rect(rect.x + 8f, rect.yMax - 30f, rect.width - 16f, 24f));
 
             Rect disconnectRect = new Rect(rect.x + 8f, rect.yMax - 44f, rect.width - 16f, 32f);
             if (Widgets.ButtonText(disconnectRect, "Disconnect"))
@@ -173,7 +239,21 @@ namespace RimClaw
 
         private List<float> GetSeriesForRange(List<float> source)
         {
-            int desired = range == GraphRange.Daily ? 180 : 360;
+            int desired;
+            switch (range)
+            {
+                case GraphRange.Daily:
+                    desired = 180;
+                    break;
+                case GraphRange.FifteenDay:
+                    desired = 360;
+                    break;
+                case GraphRange.All:
+                default:
+                    desired = int.MaxValue;
+                    break;
+            }
+
             if (source == null || source.Count <= desired)
             {
                 return source ?? new List<float>();
@@ -184,35 +264,163 @@ namespace RimClaw
 
         private static void DrawLineGraph(Rect rect, List<float> values, Color color)
         {
-            Widgets.DrawBox(rect);
-            if (values == null || values.Count < 2)
+            ConsoleLineChartUtility.DrawSingleSeries(rect, values, color, BorderColor, "silver/");
+        }
+
+        private static List<float> EnsureRenderableSeries(List<float> source, float fallbackValue)
+        {
+            List<float> series = source ?? new List<float>();
+            if (series.Count >= 2)
+            {
+                return series;
+            }
+
+            float value = series.Count == 1 ? series[0] : fallbackValue;
+            return new List<float> { value, value };
+        }
+
+        private static void DrawModelSign(Rect rect, Color color)
+        {
+            Color oldColor = GUI.color;
+            GUI.color = color;
+
+            if (ModelSignTexture != null)
+            {
+                GUI.DrawTexture(rect, ModelSignTexture, ScaleMode.ScaleToFit, alphaBlend: true);
+            }
+            else
+            {
+                Widgets.DrawBoxSolid(rect, color);
+            }
+
+            GUI.color = oldColor;
+        }
+
+        private static void DrawClawPortrait(Rect rect, Pawn claw)
+        {
+            if (claw == null)
             {
                 return;
             }
 
-            float max = 1f;
-            for (int i = 0; i < values.Count; i++)
+            Texture2D portrait = GetPortraitTexture(claw);
+            if (portrait != null)
             {
-                if (values[i] > max)
-                {
-                    max = values[i];
-                }
+                Color oldColor = GUI.color;
+                GUI.color = ClawfishUtility.GetOrAssignColor(claw);
+                Widgets.DrawTextureFitted(rect, portrait, 1f);
+                GUI.color = oldColor;
+                return;
             }
 
-            float step = (rect.width - 4f) / Mathf.Max(1, values.Count - 1);
-            Vector2 prev = Vector2.zero;
-            for (int i = 0; i < values.Count; i++)
+            Widgets.DrawBoxSolid(rect, ClawfishUtility.GetOrAssignColor(claw));
+        }
+
+        private static Texture2D GetPortraitTexture(Pawn pawn)
+        {
+            if (pawn == null)
             {
-                float x = rect.x + 2f + i * step;
-                float y = rect.yMax - 2f - (values[i] / max) * (rect.height - 4f);
-                Vector2 cur = new Vector2(x, y);
-                if (i > 0)
+                return null;
+            }
+
+            if (PortraitCache.TryGetValue(pawn, out Texture2D cached) && cached != null)
+            {
+                return cached;
+            }
+
+            string path = ClawfishUtility.GetPortraitSouthTexPath(pawn);
+            Texture2D texture = ContentFinder<Texture2D>.Get(path, reportFailure: false);
+            if (texture != null)
+            {
+                PortraitCache[pawn] = texture;
+            }
+
+            return texture;
+        }
+
+        private static void DrawTwoColumnStats(Rect rect, string[] labels, string[] values)
+        {
+            int count = Math.Min(labels.Length, values.Length);
+            int rowsPerColumn = (count + 1) / 2;
+            float colWidth = (rect.width - 16f) / 2f;
+            float rowHeight = 24f;
+            float labelWidth = 124f;
+
+            for (int i = 0; i < count; i++)
+            {
+                int col = i / rowsPerColumn;
+                int row = i % rowsPerColumn;
+                float x = rect.x + col * (colWidth + 8f);
+                float y = rect.y + row * rowHeight;
+
+                Widgets.Label(new Rect(x, y, labelWidth, rowHeight), labels[i] + ":");
+                Widgets.Label(new Rect(x + labelWidth, y, colWidth - labelWidth, rowHeight), values[i]);
+            }
+        }
+
+        private static void DrawOutline(Rect rect)
+        {
+            DrawLine(new Vector2(rect.x, rect.y), new Vector2(rect.xMax, rect.y));
+            DrawLine(new Vector2(rect.xMax, rect.y), new Vector2(rect.xMax, rect.yMax));
+            DrawLine(new Vector2(rect.xMax, rect.yMax), new Vector2(rect.x, rect.yMax));
+            DrawLine(new Vector2(rect.x, rect.yMax), new Vector2(rect.x, rect.y));
+        }
+
+        private static void DrawLine(Vector2 from, Vector2 to)
+        {
+            Widgets.DrawLine(from, to, BorderColor, 1f);
+        }
+
+        private void DrawPlotRangeButtons(Rect rect)
+        {
+            const float buttonWidth = 68f;
+            const float spacing = 6f;
+
+            string[] labels =
+            {
+                "1 day",
+                "15 days",
+                "All"
+            };
+
+            GraphRange[] values =
+            {
+                GraphRange.Daily,
+                GraphRange.FifteenDay,
+                GraphRange.All
+            };
+
+            float totalWidth = labels.Length * buttonWidth + (labels.Length - 1) * spacing;
+            float x = rect.x + Mathf.Max(0f, (rect.width - totalWidth) * 0.5f);
+
+            for (int i = 0; i < labels.Length; i++)
+            {
+                Rect buttonRect = new Rect(x + i * (buttonWidth + spacing), rect.y, buttonWidth, rect.height);
+                if (range == values[i])
                 {
-                    Widgets.DrawLine(prev, cur, color, 2f);
+                    Widgets.DrawHighlightSelected(buttonRect);
                 }
 
-                prev = cur;
+                if (Widgets.ButtonText(buttonRect, labels[i]))
+                {
+                    range = values[i];
+                }
             }
+        }
+
+        private static string AbbreviateName(string value, int limit)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length <= limit)
+            {
+                return value;
+            }
+
+            if (limit <= 1)
+            {
+                return value.Substring(0, 1);
+            }
+
+            return value.Substring(0, limit - 1) + "…";
         }
     }
 

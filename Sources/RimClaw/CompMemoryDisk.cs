@@ -2,29 +2,61 @@ using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace RimClaw
 {
     public class CompProperties_MemoryDisk : CompProperties
     {
+        private const string DebugPrefix = "[RimClaw][MemoryDisk][Props]";
+
         public int searchRadius = 12;
-        public float modelSignOffsetX = 0f;
-        public float modelSignOffsetY = 0.42f;
-        public float modelSignOffsetZ = 0f;
-        public float modelSignScale = 0.8f;
-        public float modelSignAlpha = 0.8f;
-        public float modelSignBobAmplitudeTiles = 0.1f;
-        public float modelSignBobPeriodSeconds = 4f;
+        public GraphicData formingGraphicData;
+        public float formingMechBobSpeed = 0.0007f;
+        public float formingMechYBobDistance = 0.06f;
+        public float formingGraphicYOffset = 0.018292684f;
+        public Vector3 northOffset = new Vector3(0f, 0f, 0.18f);
+        public Vector3 eastOffset = new Vector3(0f, 0f, 0.18f);
+        public Vector3 southOffset = new Vector3(0f, 0f, 0.18f);
+        public Vector3 westOffset = new Vector3(0f, 0f, 0.18f);
 
         public CompProperties_MemoryDisk()
         {
             compClass = typeof(CompMemoryDisk);
         }
+
+        public Vector3 GetRotationOffset(Rot4 rot)
+        {
+            switch (rot.AsInt)
+            {
+                case 1:
+                    return eastOffset;
+                case 2:
+                    return southOffset;
+                case 3:
+                    return westOffset;
+                default:
+                    return northOffset;
+            }
+        }
+
+        public override IEnumerable<string> ConfigErrors(ThingDef parentDef)
+        {
+            foreach (string configError in base.ConfigErrors(parentDef))
+            {
+                yield return configError;
+            }
+
+            if (formingGraphicData == null)
+            {
+                yield return $"{DebugPrefix} missing formingGraphicData on {parentDef?.defName}";
+            }
+        }
     }
 
     public class CompMemoryDisk : ThingComp
     {
-        private Mote modelSignMote;
+        private const string DebugPrefix = "[RimClaw][MemoryDisk][Comp]";
 
         private bool hasModel;
         private string modelName;
@@ -58,18 +90,23 @@ namespace RimClaw
             Scribe_Values.Look(ref tokenPerSecondPerInstance, "tokenPerSecondPerInstance", 0f);
             Scribe_Values.Look(ref workSpeedBonus, "workSpeedBonus", 0f);
             Scribe_Values.Look(ref hostThingID, "hostThingID", -1);
+            Log.Message($"{DebugPrefix} PostExposeData thing={(parent != null ? parent.ThingID.ToString() : "null")} loaded={Scribe.mode} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID} requiredVram={requiredVram} tps={tokenPerSecondPerInstance:0.###} workBonus={workSpeedBonus:0.###}");
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
+            Log.Message($"{DebugPrefix} CompGetGizmosExtra thing={(parent != null ? parent.ThingID.ToString() : "null")} spawned={(parent?.Spawned ?? false)} mapHeld={(parent?.MapHeld != null)} hasModel={hasModel} modelName={modelName ?? "(null)"}");
             if (parent.MapHeld != null)
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "Insert nearby model",
-                    defaultDesc = "Consume one nearby model package and store it into this disk.",
-                    icon = ContentFinder<Texture2D>.Get("UI/Commands/DesirePower", reportFailure: false),
-                    action = InsertNearbyModel
+                    defaultLabel = "Insert model",
+                    defaultDesc = "Select a model package on the ground, then assign a pawn to carry and insert it.",
+                    icon = ContentFinder<Texture2D>.Get("Insert_Model", reportFailure: false),
+                    action = delegate
+                    {
+                        StartSelectModelTarget();
+                    }
                 };
             }
 
@@ -78,16 +115,11 @@ namespace RimClaw
                 yield return new Command_Action
                 {
                     defaultLabel = "Eject model",
-                    defaultDesc = "Clear current stored model from disk.",
+                    defaultDesc = "Eject current model as a model package item.",
+                    icon = ContentFinder<Texture2D>.Get("Eject_Model", reportFailure: false),
                     action = delegate
                     {
-                        hasModel = false;
-                        modelName = null;
-                        modelColor = Color.white;
-                        requiredVram = 0;
-                        tokenPerSecondPerInstance = 0f;
-                        workSpeedBonus = 0f;
-                        DestroyModelSignMote();
+                        TryEjectModelAsPackage();
                     }
                 };
             }
@@ -95,6 +127,7 @@ namespace RimClaw
 
         public override string CompInspectStringExtra()
         {
+            Log.Message($"{DebugPrefix} CompInspectStringExtra thing={(parent != null ? parent.ThingID.ToString() : "null")} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID}");
             if (!hasModel)
             {
                 return hostThingID < 0 ? "Model: (none)" : $"Model: (none)\nHost ID: {hostThingID}";
@@ -108,102 +141,164 @@ namespace RimClaw
         public override void CompTick()
         {
             base.CompTick();
-
-            if (parent?.MapHeld == null || !parent.Spawned)
+            if (hasModel && parent != null && parent.Spawned && parent.IsHashIntervalTick(30))
             {
-                DestroyModelSignMote();
-                return;
+                RimClawGlowUtility.SpawnPulseGlow(parent, RimClawGlowUtility.SoftenToGlow(modelColor), 4f);
             }
 
-            if (!hasModel)
+            if (parent != null && parent.IsHashIntervalTick(60))
             {
-                DestroyModelSignMote();
-                return;
-            }
-
-            EnsureModelSignMote();
-            if (modelSignMote == null || modelSignMote.Destroyed)
-            {
-                return;
+                Log.Message($"{DebugPrefix} CompTick thing={parent.ThingID} spawned={parent.Spawned} mapHeld={(parent.MapHeld != null)} hasModel={hasModel} modelName={modelName ?? "(null)"} host={hostThingID}");
             }
         }
 
-        private void EnsureModelSignMote()
+        public bool TryStoreModelFromCardThing(Thing thing, bool consumeThing)
         {
-            if (modelSignMote != null && !modelSignMote.Destroyed)
+            if (thing == null || thing.def != RimClawDefOf.RimClaw_ModelCard)
             {
-                return;
+                return false;
             }
 
-            ThingDef moteDef = RimClawDefOf.RimClaw_Mote_ModelDiskSign;
-            if (moteDef == null)
+            CompModelCard comp = thing.TryGetComp<CompModelCard>();
+            if (comp == null)
             {
-                return;
+                return false;
             }
 
-            modelSignMote = MoteMaker.MakeAttachedOverlay(parent, moteDef, new Vector3(Props.modelSignOffsetX, Props.modelSignOffsetY, Props.modelSignOffsetZ), Mathf.Max(0.05f, Props.modelSignScale), -1f);
-            Mote_ModelDiskSign sign = modelSignMote as Mote_ModelDiskSign;
-            if (sign != null)
+            comp.EnsureInitialized();
+            hasModel = true;
+            modelName = comp.ModelName;
+            modelColor = comp.ModelColor;
+            requiredVram = comp.RequiredVram;
+            tokenPerSecondPerInstance = comp.TokenPerSecondPerInstance;
+            workSpeedBonus = comp.WorkSpeedBonus;
+
+            if (consumeThing)
             {
-                sign.bobAmplitudeTiles = Props.modelSignBobAmplitudeTiles;
-                sign.bobPeriodSeconds = Props.modelSignBobPeriodSeconds;
+                thing.Destroy(DestroyMode.Vanish);
             }
 
-            modelSignMote.instanceColor = new Color(modelColor.r, modelColor.g, modelColor.b, Mathf.Clamp01(Props.modelSignAlpha));
+            return true;
         }
 
-        private void DestroyModelSignMote()
+        public override void PostDraw()
         {
-            if (modelSignMote != null && !modelSignMote.Destroyed)
+            base.PostDraw();
+            if (parent?.Spawned != true || !hasModel)
             {
-                modelSignMote.Destroy();
+                return;
             }
 
-            modelSignMote = null;
+            RimClawGlowUtility.DrawGlow(parent.DrawPos, RimClawGlowUtility.SoftenToGlow(modelColor), 4f);
         }
 
-        private void InsertNearbyModel()
+        public void ClearStoredModel()
+        {
+            hasModel = false;
+            modelName = null;
+            modelColor = Color.white;
+            requiredVram = 0;
+            tokenPerSecondPerInstance = 0f;
+            workSpeedBonus = 0f;
+        }
+
+        private void StartSelectModelTarget()
         {
             if (parent.MapHeld == null)
             {
                 return;
             }
 
-            List<FloatMenuOption> opts = new List<FloatMenuOption>();
-            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(parent.Position, parent.MapHeld, Props.searchRadius, useCenter: true))
+            TargetingParameters parms = new TargetingParameters
             {
-                if (thing.def != RimClawDefOf.RimClaw_ModelCard)
+                canTargetLocations = false,
+                canTargetItems = true,
+                canTargetPawns = false,
+                canTargetBuildings = false,
+                mapObjectTargetsMustBeAutoAttackable = false
+            };
+            parms.validator = target => target.HasThing && target.Thing.def == RimClawDefOf.RimClaw_ModelCard;
+
+            Find.Targeter.BeginTargeting(parms, delegate(LocalTargetInfo target)
+            {
+                Thing selectedThing = target.Thing;
+                if (selectedThing == null || selectedThing.def != RimClawDefOf.RimClaw_ModelCard)
                 {
-                    continue;
+                    Messages.Message("Select a model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                    return;
                 }
 
-                CompModelCard comp = thing.TryGetComp<CompModelCard>();
-                if (comp == null)
+                Pawn worker = FindBestInsertionPawn(selectedThing);
+                if (worker == null)
                 {
-                    continue;
+                    Messages.Message("No available pawn can insert this model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                    return;
                 }
 
-                string label = thing.LabelCap;
-                opts.Add(new FloatMenuOption(label, delegate
-                {
-                    comp.EnsureInitialized();
-                    hasModel = true;
-                    modelName = comp.ModelName;
-                    modelColor = comp.ModelColor;
-                    requiredVram = comp.RequiredVram;
-                    tokenPerSecondPerInstance = comp.TokenPerSecondPerInstance;
-                    workSpeedBonus = comp.WorkSpeedBonus;
-                    thing.Destroy(DestroyMode.Vanish);
-                }));
+                Job job = JobMaker.MakeJob(RimClawDefOf.RimClaw_InsertModelIntoDisk, parent, selectedThing);
+                worker.jobs?.TryTakeOrderedJob(job, JobTag.Misc);
+            });
+        }
+
+        private Pawn FindBestInsertionPawn(Thing modelPackage)
+        {
+            if (parent?.MapHeld == null || modelPackage == null)
+            {
+                return null;
             }
 
-            if (opts.Count == 0)
+            Pawn best = null;
+            float bestDistance = float.MaxValue;
+            List<Pawn> pawns = parent.MapHeld.mapPawns.FreeColonistsSpawned;
+            for (int i = 0; i < pawns.Count; i++)
             {
-                Messages.Message("No model package found in range.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                Pawn pawn = pawns[i];
+                if (pawn == null || pawn.Dead || pawn.Downed || pawn.WorkTagIsDisabled(WorkTags.Hauling))
+                {
+                    continue;
+                }
+
+                if (!pawn.CanReserveAndReach(modelPackage, PathEndMode.ClosestTouch, Danger.Some))
+                {
+                    continue;
+                }
+
+                if (!pawn.CanReserveAndReach(parent, PathEndMode.Touch, Danger.Some))
+                {
+                    continue;
+                }
+
+                float dist = (pawn.Position - modelPackage.Position).LengthHorizontalSquared;
+                if (dist < bestDistance)
+                {
+                    bestDistance = dist;
+                    best = pawn;
+                }
+            }
+
+            return best;
+        }
+
+        private void TryEjectModelAsPackage()
+        {
+            if (!hasModel || parent?.MapHeld == null)
+            {
                 return;
             }
 
-            Find.WindowStack.Add(new FloatMenu(opts));
+            Thing package = ThingMaker.MakeThing(RimClawDefOf.RimClaw_ModelCard);
+            CompModelCard card = package.TryGetComp<CompModelCard>();
+            card?.OverrideModelData(modelName, modelColor, requiredVram, tokenPerSecondPerInstance, workSpeedBonus);
+
+            bool placed = GenPlace.TryPlaceThing(package, parent.InteractionCell, parent.MapHeld, ThingPlaceMode.Near, out Thing _);
+            if (!placed)
+            {
+                package.Destroy(DestroyMode.Vanish);
+                Messages.Message("Could not place ejected model package.", parent, MessageTypeDefOf.RejectInput, historical: false);
+                return;
+            }
+
+            ClearStoredModel();
         }
 
     }

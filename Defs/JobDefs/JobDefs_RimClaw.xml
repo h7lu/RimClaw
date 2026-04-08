@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <JobDef>
+    <defName>RimClaw_InsertModelIntoDisk</defName>
+    <driverClass>RimClaw.JobDriver_InsertModelIntoDisk</driverClass>
+    <reportString>inserting model package.</reportString>
+    <casualInterruptible>true</casualInterruptible>
+    <alwaysShowWeapon>false</alwaysShowWeapon>
+  </JobDef>
+  <JobDef>
     <defName>RimClaw_SelfDelete</defName>
     <driverClass>RimClaw.JobDriver_SelfDelete</driverClass>
     <reportString>self deleting.</reportString>

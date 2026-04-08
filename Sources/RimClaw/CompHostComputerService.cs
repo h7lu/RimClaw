@@ -32,10 +32,16 @@ namespace RimClaw
         public float CapacityTps;
         public float UsedTps;
         public float HeatRate;
+        public float BaseHeatPerSecond;
+        public float HeatPerUsageFraction;
+        public float HeatAverageSeconds;
+        public float MaxTemperatureC;
         public float WorkSpeedMultiplier;
         public float TotalUsageFraction;
         public List<Pawn> AssignedClaws = new List<Pawn>();
         public List<float> InstanceUsageFractions = new List<float>();
+        public List<float> HeatHistory = new List<float>();
+        public List<float> TpsHistory = new List<float>();
     }
 
     public class HostModelOptionSnapshot
@@ -87,6 +93,9 @@ namespace RimClaw
         private readonly List<HostModelOptionSnapshot> availableModels = new List<HostModelOptionSnapshot>();
         private readonly List<float> tpsHistory = new List<float>();
         private readonly List<float> heatHistory = new List<float>();
+        private readonly Dictionary<int, List<float>> gpuUsageHistory = new Dictionary<int, List<float>>();
+        private readonly Dictionary<int, List<float>> gpuHeatHistory = new Dictionary<int, List<float>>();
+        private readonly Dictionary<int, List<float>> gpuTpsHistory = new Dictionary<int, List<float>>();
 
         private List<int> assignmentPawnIds;
         private List<int> assignmentGpuIds;
@@ -152,21 +161,34 @@ namespace RimClaw
         public override void CompTick()
         {
             base.CompTick();
+            if (IsPowered(parent as ThingWithComps) && parent.IsHashIntervalTick(30))
+            {
+                RimClawGlowUtility.SpawnPulseGlow(parent, new Color32(240, 255, 240, 255), 5f);
+            }
+
             if (!parent.IsHashIntervalTick(60))
             {
                 return;
             }
 
             RefreshSnapshot(force: false);
+            PushGpuHeat();
+        }
+
+        public override void CompTickRare()
+        {
+            base.CompTickRare();
+            RefreshSnapshot(force: false);
+            PushGpuHeat();
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             yield return new Command_Action
             {
-                defaultLabel = "Open Control Panel",
+                defaultLabel = "Open Console",
                 defaultDesc = "Open the datacenter management console.",
-                icon = ContentFinder<Texture2D>.Get("UI/Commands/TogglePower", reportFailure: false),
+                icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
                     Find.WindowStack.Add(new Window_HostComputerControlPanel(this));
@@ -217,6 +239,17 @@ namespace RimClaw
             }
 
             return $"Models connected: {availableModels.Count}\nCurrent TPS: {totalUsedTokenRate:0.0}/{totalTokenCapacity:0.0} needed\nConnected Clawfish: {connectedClaws.Count}\nConnected GPU: {activeGpuCount}/{connectedGpus.Count}\nVRAM: {usedVram}/{totalVram} GB";
+        }
+
+        public override void PostDraw()
+        {
+            base.PostDraw();
+            if (parent?.Spawned != true || !IsPowered(parent as ThingWithComps))
+            {
+                return;
+            }
+
+            RimClawGlowUtility.DrawGlow(parent.DrawPos, new Color32(240, 255, 240, 255), 5f);
         }
 
         public void AddConnectedClaw(Pawn claw)
@@ -366,7 +399,6 @@ namespace RimClaw
             int activeGpuCount = 0;
             string firstModelName = "(none)";
             float firstWorkSpeedMultiplier = 1f;
-            float firstHeatRate = 0f;
             for (int i = 0; i < gpuSnapshots.Count; i++)
             {
                 if (!gpuSnapshots[i].IsActive)
@@ -379,7 +411,6 @@ namespace RimClaw
                 {
                     firstModelName = gpuSnapshots[i].ModelName;
                     firstWorkSpeedMultiplier = gpuSnapshots[i].WorkSpeedMultiplier;
-                    firstHeatRate = gpuSnapshots[i].HeatRate;
                 }
             }
 
@@ -398,7 +429,7 @@ namespace RimClaw
                 TotalInstances = totalInstances,
                 ModelName = firstModelName,
                 WorkSpeedMultiplier = firstWorkSpeedMultiplier,
-                HeatRate = firstHeatRate,
+                HeatRate = totalHeatRate,
                 ActiveTimeSeconds = activeTimeSeconds
             };
 
@@ -553,7 +584,6 @@ namespace RimClaw
                 Color gpuColor = isActive ? selectedModel.ModelColor : new Color32(100, 100, 100, 255);
                 string gpuModelName = isActive ? selectedModel.ModelName : "(None)";
                 float workSpeedMultiplier = isActive ? 1f + selectedModel.WorkSpeedBonus : 1f;
-                float heatRate = isActive ? (gpuComp?.Props?.heatPerSecond ?? 0f) : 0f;
 
                 gpuSnapshots.Add(new HostGpuSnapshot
                 {
@@ -570,7 +600,11 @@ namespace RimClaw
                     PerInstanceCapacityTps = tokenPerInstance,
                     CapacityTps = gpuCapacity,
                     UsedTps = 0f,
-                    HeatRate = heatRate,
+                    HeatRate = 0f,
+                    BaseHeatPerSecond = gpuComp?.Props?.baseHeatPerSecond ?? 5f,
+                    HeatPerUsageFraction = gpuComp?.Props?.heatPerUsageFraction ?? 20f,
+                    HeatAverageSeconds = Mathf.Max(1f, gpuComp?.Props?.heatAverageSeconds ?? 15f),
+                    MaxTemperatureC = gpuComp?.Props?.maxTemperatureC ?? 1000f,
                     WorkSpeedMultiplier = workSpeedMultiplier,
                     TotalUsageFraction = 0f
                 });
@@ -578,6 +612,7 @@ namespace RimClaw
 
             CleanupInactiveAssignments();
             CleanupStaleModelAssignments();
+            CleanupHeatHistory();
         }
 
         private void CalculateUsage()
@@ -598,7 +633,6 @@ namespace RimClaw
                 usedVram += gpu.UsedVram;
                 totalInstances += gpu.TotalInstances;
                 totalTokenCapacity += gpu.CapacityTps;
-                totalHeatRate += gpu.HeatRate;
 
                 Thing gpuThing = FindThingById(gpu.ThingId);
                 totalPowerConsumption += GetPowerConsumption(gpuThing as ThingWithComps);
@@ -648,7 +682,45 @@ namespace RimClaw
                 HostGpuSnapshot gpu = gpuSnapshots[i];
                 gpu.UsedInstances = Mathf.Clamp(gpu.AssignedClaws.Count, 0, gpu.TotalInstances);
                 gpu.TotalUsageFraction = gpu.CapacityTps <= 0f ? 0f : Mathf.Clamp01(gpu.UsedTps / Mathf.Max(0.001f, gpu.CapacityTps));
+
+                float usageAverage = UpdateGpuUsageHistory(gpu.ThingId, gpu.TotalUsageFraction, Mathf.RoundToInt(gpu.HeatAverageSeconds));
+                float currentHeatRate = gpu.IsActive ? gpu.BaseHeatPerSecond + usageAverage * gpu.HeatPerUsageFraction : 0f;
+                gpu.HeatRate = currentHeatRate;
+                gpu.HeatHistory = UpdateGpuHeatHistory(gpu.ThingId, currentHeatRate);
+                gpu.TpsHistory = UpdateGpuTpsHistory(gpu.ThingId, gpu.UsedTps);
+                totalHeatRate += currentHeatRate;
                 usedInstances += gpu.UsedInstances;
+            }
+        }
+
+        private void PushGpuHeat()
+        {
+            if (parent?.Spawned != true || parent.MapHeld == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                HostGpuSnapshot gpu = gpuSnapshots[i];
+                if (!gpu.IsActive || gpu.HeatRate <= 0f)
+                {
+                    continue;
+                }
+
+                Thing gpuThing = FindThingById(gpu.ThingId);
+                if (gpuThing == null || gpuThing.Map != parent.MapHeld)
+                {
+                    continue;
+                }
+
+                float ambientTemperature = gpuThing.AmbientTemperature;
+                if (ambientTemperature >= gpu.MaxTemperatureC)
+                {
+                    continue;
+                }
+
+                GenTemperature.PushHeat(gpuThing.Position, gpuThing.Map, gpu.HeatRate);
             }
         }
 
@@ -836,6 +908,117 @@ namespace RimClaw
             {
                 gpuToModelDiskThing.Remove(stale[i]);
             }
+        }
+
+        private void CleanupHeatHistory()
+        {
+            HashSet<int> validGpuIds = new HashSet<int>();
+            for (int i = 0; i < gpuSnapshots.Count; i++)
+            {
+                validGpuIds.Add(gpuSnapshots[i].ThingId);
+            }
+
+            List<int> stale = new List<int>();
+            foreach (KeyValuePair<int, List<float>> kvp in gpuUsageHistory)
+            {
+                if (!validGpuIds.Contains(kvp.Key))
+                {
+                    stale.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < stale.Count; i++)
+            {
+                gpuUsageHistory.Remove(stale[i]);
+            }
+
+            stale.Clear();
+            foreach (KeyValuePair<int, List<float>> kvp in gpuHeatHistory)
+            {
+                if (!validGpuIds.Contains(kvp.Key))
+                {
+                    stale.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < stale.Count; i++)
+            {
+                gpuHeatHistory.Remove(stale[i]);
+            }
+
+            stale.Clear();
+            foreach (KeyValuePair<int, List<float>> kvp in gpuTpsHistory)
+            {
+                if (!validGpuIds.Contains(kvp.Key))
+                {
+                    stale.Add(kvp.Key);
+                }
+            }
+
+            for (int i = 0; i < stale.Count; i++)
+            {
+                gpuTpsHistory.Remove(stale[i]);
+            }
+        }
+
+        private float UpdateGpuUsageHistory(int gpuThingId, float usageFraction, int windowSamples)
+        {
+            if (!gpuUsageHistory.TryGetValue(gpuThingId, out List<float> history))
+            {
+                history = new List<float>();
+                gpuUsageHistory[gpuThingId] = history;
+            }
+
+            history.Add(Mathf.Clamp01(usageFraction));
+            int excess = history.Count - Mathf.Max(1, windowSamples);
+            if (excess > 0)
+            {
+                history.RemoveRange(0, excess);
+            }
+
+            float sum = 0f;
+            for (int i = 0; i < history.Count; i++)
+            {
+                sum += history[i];
+            }
+
+            return history.Count > 0 ? sum / history.Count : 0f;
+        }
+
+        private List<float> UpdateGpuHeatHistory(int gpuThingId, float heatValue)
+        {
+            if (!gpuHeatHistory.TryGetValue(gpuThingId, out List<float> history))
+            {
+                history = new List<float>();
+                gpuHeatHistory[gpuThingId] = history;
+            }
+
+            history.Add(heatValue);
+            const int maxPoints = 20000;
+            if (history.Count > maxPoints)
+            {
+                history.RemoveAt(0);
+            }
+
+            return history;
+        }
+
+        private List<float> UpdateGpuTpsHistory(int gpuThingId, float tpsValue)
+        {
+            if (!gpuTpsHistory.TryGetValue(gpuThingId, out List<float> history))
+            {
+                history = new List<float>();
+                gpuTpsHistory[gpuThingId] = history;
+            }
+
+            history.Add(tpsValue);
+            const int maxPoints = 20000;
+            if (history.Count > maxPoints)
+            {
+                history.RemoveAt(0);
+            }
+
+            return history;
         }
 
         private void PersistAssignments()
