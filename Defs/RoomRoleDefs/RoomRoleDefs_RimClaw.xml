@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <RoomRoleDef>
+    <defName>RimClaw_Datacenter</defName>
+    <label>datacenter</label>
+    <workerClass>RimClaw.RoomRoleWorker_Datacenter</workerClass>
+  </RoomRoleDef>
+
+</Defs>

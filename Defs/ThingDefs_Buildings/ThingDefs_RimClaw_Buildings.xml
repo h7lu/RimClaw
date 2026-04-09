@@ -51,6 +51,44 @@
         <pricePerKTokens>0.5</pricePerKTokens>
         <silverSearchRadius>5</silverSearchRadius>
         <historyLength>360</historyLength>
+        <openConsoleLabel>Open Console</openConsoleLabel>
+        <openConsoleDesc>Open the LLM subscription management console.</openConsoleDesc>
+        <inspectFormat>Model: {0}
+Live Throughput: {1}/{2} TPS
+Active Claws: {3}
+Per-second Silver: {4}
+Current Hour Cost: {5}
+Pending Payment: {6}
+Supplied TPS: {7}</inspectFormat>
+        <outOfFee>LLM subscription has run out of fee and stopped. Deliver silver within range to resume.</outOfFee>
+        <resumed>LLM subscription resumed after receiving fee payment.</resumed>
+        <windowTitle>LLM Subscription Console</windowTitle>
+        <labelPricePerK>Price/K Tokens</labelPricePerK>
+        <labelWorkSpeed>Work Speed</labelWorkSpeed>
+        <labelLiveIO>Live I/O</labelLiveIO>
+        <labelLifetimeSpent>Lifetime Spent</labelLifetimeSpent>
+        <labelActiveClaws>Active Claws</labelActiveClaws>
+        <labelPerSecond>Per Second</labelPerSecond>
+        <labelCurrentHourCost>Current Hour Cost</labelCurrentHourCost>
+        <labelPendingPayment>Pending Payment</labelPendingPayment>
+        <hourlySilver>Hourly Silver Consumption</hourlySilver>
+        <connectedClaws>Connected Claws</connectedClaws>
+        <selectClaw>Select a claw to view details.</selectClaw>
+        <detailCurrentToken>Current Token/s: {0} needed</detailCurrentToken>
+        <detailProvidedToken>Provided Token/s: {0} capped / {1} max</detailProvidedToken>
+        <detailSilverPerSec>Silver Consumption/s: {0}</detailSilverPerSec>
+        <rangeDaily>Daily</rangeDaily>
+        <range1d>1 day</range1d>
+        <range15d>15 days</range15d>
+        <rangeAll>All</rangeAll>
+        <disconnect>Disconnect</disconnect>
+        <disconnectMessage>{0} disconnected from LLM Subscription</disconnectMessage>
+        <noClaw>(no claw)</noClaw>
+        <unassigned>Unassigned</unassigned>
+        <chartSilverPerSec>silver/s</chartSilverPerSec>
+        <chartZero>0</chartZero>
+        <chartOld>old</chartOld>
+        <chartNew>new</chartNew>
       </li>
       <li Class="CompProperties_Glower">
         <glowRadius>4</glowRadius>
@@ -85,7 +123,7 @@
     <size>(1,1)</size>
     <altitudeLayer>Building</altitudeLayer>
     <passability>PassThroughOnly</passability>
-    <fillPercent>0.12</fillPercent>
+    <fillPercent>0.2</fillPercent>
     <statBases>
       <MaxHitPoints>240</MaxHitPoints>
       <WorkToBuild>4000</WorkToBuild>
@@ -120,6 +158,49 @@
       <li Class="CompProperties_Flickable"/>
       <li Class="RimClaw.CompProperties_HostComputerService">
         <connectionRadius>9</connectionRadius>
+        <openConsoleLabel>Open Console</openConsoleLabel>
+        <openConsoleDesc>Open the datacenter management console.</openConsoleDesc>
+        <inspectFormat>Models connected: {0}
+Current TPS: {1}/{2} needed
+Connected Clawfish: {3}
+Connected GPU: {4}/{5}
+VRAM: {6}/{7} GB</inspectFormat>
+        <deassignedWarning>Clawfish on that GPU were deassigned. Reassign them to active instances.</deassignedWarning>
+        <windowTitle>Datacenter Console</windowTitle>
+        <connectedClawsLabel>Connected Claws</connectedClawsLabel>
+        <gpuListLabel>GPU List</gpuListLabel>
+        <instancesRowFormat>Instances: {0}/{1}</instancesRowFormat>
+        <assignInactiveGpu>Cannot assign clawfish to inactive GPU (None model).</assignInactiveGpu>
+        <assignSuccess>{0} assigned to {1}</assignSuccess>
+        <assignFailed>Cannot assign clawfish to this GPU.</assignFailed>
+        <selectGpu>Select a GPU to view diagnostics.</selectGpu>
+        <labelModel>Model</labelModel>
+        <labelWorkSpeed>Global Work Speed</labelWorkSpeed>
+        <labelInstances>Instances</labelInstances>
+        <labelHeatRate>Heat Rate</labelHeatRate>
+        <labelTotalUsage>Total Usage</labelTotalUsage>
+        <labelTokenIO>Token I/O</labelTokenIO>
+        <labelActiveTime>Active Time</labelActiveTime>
+        <noRunnableInstances>No runnable instances (insufficient VRAM/model).</noRunnableInstances>
+        <range1h>Recent 1h</range1h>
+        <range1d>Recent 1 day</range1d>
+        <range15d>Recent 15 days</range15d>
+        <rangeAll>All</rangeAll>
+        <switchModelFailed>Failed to switch model for this GPU.</switchModelFailed>
+        <assignPrompt>Assign: {0}</assignPrompt>
+        <statGpuMachines>GPU Machines</statGpuMachines>
+        <statRoomTemperature>Room Temperature</statRoomTemperature>
+        <statTotalTokenIO>Total token I/O</statTotalTokenIO>
+        <statPower>Power</statPower>
+        <statConnectedClaws>Connected claws</statConnectedClaws>
+        <statVramUsage>VRAM Usage(GB)</statVramUsage>
+        <statModels>Models</statModels>
+        <statInstances>Instances</statInstances>
+        <chartTokenPerSec>token/s</chartTokenPerSec>
+        <chartHeatPerSec>heat/s</chartHeatPerSec>
+        <chartZero>0</chartZero>
+        <chartOld>old</chartOld>
+        <chartNew>new</chartNew>
       </li>
     </comps>
     <researchPrerequisites>
@@ -165,12 +246,16 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>400</basePowerConsumption>
       </li>
+      <li Class="CompProperties_Breakdownable" />
       <li Class="RimClaw.CompProperties_GPUCluster">
         <providedVRAM>300</providedVRAM>
         <baseHeatPerSecond>5</baseHeatPerSecond>
         <heatPerUsageFraction>20</heatPerUsageFraction>
         <heatAverageSeconds>15</heatAverageSeconds>
         <maxTemperatureC>1000</maxTemperatureC>
+        <inspectUnassigned>Host: unassigned</inspectUnassigned>
+        <inspectAssigned>Host ID: {0}
+VRAM: {1} GB</inspectAssigned>
       </li>
     </comps>
     <researchPrerequisites>
@@ -234,6 +319,29 @@
         <eastOffset>(0,0,0)</eastOffset>
         <southOffset>(0,0,0)</southOffset>
         <westOffset>(0,0,0)</westOffset>
+        <insertModelLabel>Insert model</insertModelLabel>
+        <insertModelDesc>Select a model package on the ground, then assign a pawn to carry and insert it.</insertModelDesc>
+        <ejectModelLabel>Eject model</ejectModelLabel>
+        <ejectModelDesc>Eject current model as a model package item.</ejectModelDesc>
+        <inspectNone>Model: (none)</inspectNone>
+        <inspectNoneWithHost>Model: (none)
+      Host ID: {0}</inspectNoneWithHost>
+        <inspectWithModel>Model: {0}
+      Required VRAM: {1} GB
+      Token/s per instance: {2}
+      Work speed bonus: +{3}%
+      Skill level adjust: {4}</inspectWithModel>
+        <inspectWithModelHost>Model: {0}
+      Required VRAM: {1} GB
+      Token/s per instance: {2}
+      Work speed bonus: +{3}%
+      Skill level adjust: {4}
+      Host ID: {5}</inspectWithModelHost>
+        <reinstallEjectFailed>Could not eject previous model package during reinstall.</reinstallEjectFailed>
+        <selectModelPackage>Select a model package.</selectModelPackage>
+        <noInsertionPawn>No available pawn can insert this model package.</noInsertionPawn>
+        <ejectPlaceFailed>Could not place ejected model package.</ejectPlaceFailed>
+        <insertFailed>Failed to insert model package into memory disk.</insertFailed>
       </li>
     </comps>
     <researchPrerequisites>

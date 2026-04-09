@@ -56,7 +56,7 @@ namespace RimClaw
                 bool stored = comp.TryStoreModelFromCardThing(carried, consumeThing: true);
                 if (!stored)
                 {
-                    Messages.Message("RimClaw_MemoryDisk_InsertFailed".Translate(), disk, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(comp.Props.insertFailed, disk, MessageTypeDefOf.RejectInput, historical: false);
                 }
             };
             insert.defaultCompleteMode = ToilCompleteMode.Instant;

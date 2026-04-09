@@ -105,6 +105,9 @@
         <workRate>1.1</workRate>
         <onlineStatusText>Online</onlineStatusText>
         <depletedStatusText>Errorcode 402</depletedStatusText>
+        <inspectFormat>Tokens: {0}/{1}
+Consumption: {2} tok/s
+Status: {3}</inspectFormat>
         <idleJobKeywords>
           <li>Goto</li>
           <li>Wait</li>
@@ -129,6 +132,19 @@
       <li Class="RimClaw.RimClawConfigExtension">
         <fishingSpawnChance>0.1</fishingSpawnChance>
         <spawnRadiusFromFisher>3</spawnRadiusFromFisher>
+        <genericNoneText>None</genericNoneText>
+        <genericNoneParenText>(None)</genericNoneParenText>
+        <genericUnnamedText>(unnamed)</genericUnnamedText>
+        <gizmoConnectLabel>Connect to LLM Service</gizmoConnectLabel>
+        <gizmoConnectDesc>Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply.</gizmoConnectDesc>
+        <gizmoDisconnectLabel>Disconnect from LLM Service</gizmoDisconnectLabel>
+        <gizmoDisconnectDesc>Disconnect this clawfish from {0}.</gizmoDisconnectDesc>
+        <messageClawConnected>{0} connected to {1}</messageClawConnected>
+        <messageClawDisconnected>{0} disconnected from service</messageClawDisconnected>
+        <alertOutOfFeeLabel>LLM service out of fee</alertOutOfFeeLabel>
+        <alertOutOfFeeDesc>One or more LLM Subscription services have stopped because there is not enough silver in range.</alertOutOfFeeDesc>
+        <alertGpuBreakRiskLabel>GPU cluster breakdown risk</alertGpuBreakRiskLabel>
+        <alertGpuBreakRiskDesc>One or more GPU clusters are operating in unsafe environmental conditions. Check datacenter cleaness and room temperature.</alertGpuBreakRiskDesc>
         <fishingLetterLabel>Clawfish Hooked</fishingLetterLabel>
         <fishingLetterText>{0} hooked a Clawfish.</fishingLetterText>
         <promptInjectorSuccessLetterLabel>Prompt Injection Success</promptInjectorSuccessLetterLabel>

@@ -52,7 +52,7 @@ namespace RimClaw
             }
 
             HostComputerSnapshot snapshot = host.GetSnapshot();
-            if (selectedGpuIndex >= snapshot.Gpus.Count)
+            if (selectedGpuIndex >= snapshot.Gpus.Count || (selectedGpuIndex >= 0 && !snapshot.Gpus[selectedGpuIndex].IsActive))
             {
                 selectedGpuIndex = -1;
             }
@@ -63,7 +63,7 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "RimClaw_HostWindow_Title".Translate());
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), host.Props.windowTitle);
             Text.Font = oldFont;
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
@@ -93,7 +93,7 @@ namespace RimClaw
             Rect summaryRect = new Rect(rect.x + 8f, rect.y + 12f, Mathf.Min(desiredSummaryWidth, maxSummaryWidth), rect.height - 20f);
             DrawSection1Stats(summaryRect, snapshot);
 
-            Widgets.Label(new Rect(clawsRect.x + 8f, clawsRect.y + 4f, clawsRect.width - 16f, 24f), "RimClaw_HostWindow_ConnectedClaws".Translate());
+            Widgets.Label(new Rect(clawsRect.x + 8f, clawsRect.y + 4f, clawsRect.width - 16f, 24f), host.Props.connectedClawsLabel);
 
             float cellSize = 56f;
             float spacing = 6f;
@@ -119,7 +119,7 @@ namespace RimClaw
                 TextAnchor oldAnchor = Text.Anchor;
                 GameFont oldFont = Text.Font;
                 string assignedLabel = host.GetAssignedGpuLabel(claw);
-                bool isNone = assignedLabel == "RimClaw_Generic_None".Translate().ToString();
+                bool isNone = assignedLabel == RimClawConfig.Values.genericNoneText;
                 Color oldColor = GUI.color;
                 if (isNone)
                 {
@@ -154,7 +154,7 @@ namespace RimClaw
         private void DrawLeftPane(Rect rect, HostComputerSnapshot snapshot)
         {
             Rect titleRect = new Rect(rect.x + 8f, rect.y + 8f, rect.width - 16f, 24f);
-            Widgets.Label(titleRect, "RimClaw_HostWindow_GpuList".Translate());
+            Widgets.Label(titleRect, host.Props.gpuListLabel);
 
             DrawLine(new Vector2(rect.x + 8f, titleRect.yMax + 2f), new Vector2(rect.xMax - 8f, titleRect.yMax + 2f));
 
@@ -177,12 +177,12 @@ namespace RimClaw
         private void DrawGpuRow(Rect row, int index, HostGpuSnapshot gpu, HostComputerSnapshot snapshot, Rect listRect)
         {
             DrawOutline(row);
-            if (selectedGpuIndex == index)
+            if (selectedGpuIndex == index && gpu.IsActive)
             {
                 Widgets.DrawHighlightSelected(row);
             }
 
-            if (Mouse.IsOver(row))
+            if (gpu.IsActive && Mouse.IsOver(row))
             {
                 Widgets.DrawHighlight(row);
             }
@@ -194,7 +194,7 @@ namespace RimClaw
             Rect iconScreenRect = new Rect(listRect.x + iconRect.x - gpuScrollPos.x, listRect.y + iconRect.y - gpuScrollPos.y, iconRect.width, iconRect.height);
             gpuIconRects[gpu.ThingId] = iconScreenRect;
 
-            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && iconRect.Contains(Event.current.mousePosition))
+            if (gpu.IsActive && Event.current.type == EventType.MouseDown && Event.current.button == 0 && iconRect.Contains(Event.current.mousePosition))
             {
                 selectedGpuIndex = index;
                 OpenModelMenuForGpu(gpu, snapshot);
@@ -205,7 +205,7 @@ namespace RimClaw
             float textX = iconRect.xMax + 12f;
             Widgets.Label(new Rect(textX, row.y + 8f, row.width - textX - 8f, 20f), gpu.Name);
             Widgets.Label(new Rect(textX, row.y + 30f, row.width - textX - 8f, 18f), gpu.ModelName);
-            Widgets.Label(new Rect(textX, row.y + 50f, row.width - textX - 8f, 18f), "RimClaw_HostWindow_InstancesRow".Translate(gpu.UsedInstances, gpu.TotalInstances));
+            Widgets.Label(new Rect(textX, row.y + 50f, row.width - textX - 8f, 18f), string.Format(host.Props.instancesRowFormat, gpu.UsedInstances, gpu.TotalInstances));
 
             Rect usageBar = new Rect(textX, row.y + 72f, row.width - textX - 8f, 10f);
             DrawOutline(usageBar);
@@ -213,7 +213,7 @@ namespace RimClaw
             Color modelTint = ResolveModelTint(gpu);
             Widgets.DrawBoxSolid(new Rect(usageBar.x + 1f, usageBar.y + 1f, (usageBar.width - 2f) * pct, usageBar.height - 2f), modelTint);
 
-            if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
+            if (gpu.IsActive && Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(Event.current.mousePosition) && !iconRect.Contains(Event.current.mousePosition))
             {
                 selectedGpuIndex = index;
                 Event.current.Use();
@@ -223,7 +223,7 @@ namespace RimClaw
             {
                 if (!gpu.IsActive)
                 {
-                    Messages.Message("RimClaw_HostWindow_AssignInactiveGpu".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(host.Props.assignInactiveGpu, MessageTypeDefOf.RejectInput, historical: false);
                     draggingClaw = null;
                     Event.current.Use();
                     return;
@@ -231,15 +231,20 @@ namespace RimClaw
 
                 if (host.AssignClawToGpu(draggingClaw, gpu.ThingId))
                 {
-                    Messages.Message("RimClaw_HostWindow_AssignSuccess".Translate(draggingClaw.NameShortColored, gpu.Name), MessageTypeDefOf.TaskCompletion, historical: false);
+                    Messages.Message(string.Format(host.Props.assignSuccess, draggingClaw.NameShortColored, gpu.Name), MessageTypeDefOf.TaskCompletion, historical: false);
                 }
                 else
                 {
-                    Messages.Message("RimClaw_HostWindow_AssignFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(host.Props.assignFailed, MessageTypeDefOf.RejectInput, historical: false);
                 }
 
                 draggingClaw = null;
                 Event.current.Use();
+            }
+
+            if (!gpu.IsActive)
+            {
+                DrawOfflineOverlay(row);
             }
         }
 
@@ -247,7 +252,7 @@ namespace RimClaw
         {
             if (selectedGpuIndex < 0 || selectedGpuIndex >= snapshot.Gpus.Count)
             {
-                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "RimClaw_HostWindow_SelectGpu".Translate());
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), host.Props.selectGpu);
                 return;
             }
 
@@ -267,18 +272,24 @@ namespace RimClaw
             DrawPlotRangeButtons(rangeRect);
         }
 
-        private static void DrawStats3(Rect rect, HostGpuSnapshot gpu, HostComputerSnapshot snapshot)
+        private void DrawStats3(Rect rect, HostGpuSnapshot gpu, HostComputerSnapshot snapshot)
         {
+            if (!gpu.IsActive)
+            {
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, rect.height - 20f), host.Props.selectGpu);
+                return;
+            }
+
             string[] labels =
             {
                 gpu.Name,
-                "RimClaw_HostWindow_Label_Model".Translate(),
-                "RimClaw_HostWindow_Label_WorkSpeed".Translate(),
-                "RimClaw_HostWindow_Label_Instances".Translate(),
-                "RimClaw_HostWindow_Label_HeatRate".Translate(),
-                "RimClaw_HostWindow_Label_TotalUsage".Translate(),
-                "RimClaw_HostWindow_Label_TokenIO".Translate(),
-                "RimClaw_HostWindow_Label_ActiveTime".Translate()
+                host.Props.labelModel,
+                host.Props.labelWorkSpeed,
+                host.Props.labelInstances,
+                host.Props.labelHeatRate,
+                host.Props.labelTotalUsage,
+                host.Props.labelTokenIO,
+                host.Props.labelActiveTime
             };
 
             string[] values =
@@ -312,12 +323,12 @@ namespace RimClaw
             }
         }
 
-        private static void DrawMemoryBar(Rect rect, HostGpuSnapshot gpu)
+        private void DrawMemoryBar(Rect rect, HostGpuSnapshot gpu)
         {
-            if (gpu.TotalInstances <= 0)
+            if (!gpu.IsActive || gpu.TotalInstances <= 0)
             {
                 DrawOutline(rect);
-                Widgets.Label(new Rect(rect.x + 6f, rect.y + 8f, rect.width - 12f, 24f), "RimClaw_HostWindow_NoRunnableInstances".Translate());
+                Widgets.Label(new Rect(rect.x + 6f, rect.y + 8f, rect.width - 12f, 24f), host.Props.noRunnableInstances);
                 return;
             }
 
@@ -365,7 +376,7 @@ namespace RimClaw
 
             List<float> tpsSlice = tps.GetRange(startIndex, count);
             List<float> heatSlice = heat.GetRange(startIndex, count);
-            ConsoleLineChartUtility.DrawDualSeries(rect, tpsSlice, heatSlice, Color.green, new Color(1f, 0.5f, 0f, 1f), BorderColor);
+            ConsoleLineChartUtility.DrawDualSeries(rect, tpsSlice, heatSlice, Color.green, new Color(1f, 0.5f, 0f, 1f), BorderColor, host.Props.chartTokenPerSec, host.Props.chartHeatPerSec, host.Props.chartZero);
         }
 
         private void DrawPlotRangeButtons(Rect rect)
@@ -383,10 +394,10 @@ namespace RimClaw
 
             string[] labels =
             {
-                "RimClaw_HostWindow_Range_1h".Translate(),
-                "RimClaw_HostWindow_Range_1d".Translate(),
-                "RimClaw_HostWindow_Range_15d".Translate(),
-                "RimClaw_HostWindow_Range_All".Translate()
+                host.Props.range1h,
+                host.Props.range1d,
+                host.Props.range15d,
+                host.Props.rangeAll
             };
 
             float totalWidth = ranges.Length * buttonWidth + (ranges.Length - 1) * spacing;
@@ -409,11 +420,11 @@ namespace RimClaw
         private void OpenModelMenuForGpu(HostGpuSnapshot gpu, HostComputerSnapshot snapshot)
         {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
-            options.Add(new FloatMenuOption("RimClaw_Generic_NoneParen".Translate(), delegate
+            options.Add(new FloatMenuOption(RimClawConfig.Values.genericNoneParenText, delegate
             {
                 if (!host.SetGpuModelForGpu(gpu.ThingId, -1))
                 {
-                    Messages.Message("RimClaw_HostWindow_SwitchModelFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(host.Props.switchModelFailed, MessageTypeDefOf.RejectInput, historical: false);
                 }
             }, (Thing)null, new Color32(100, 100, 100, 255), MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
 
@@ -427,7 +438,7 @@ namespace RimClaw
                 {
                     if (!host.SetGpuModelForGpu(gpu.ThingId, diskThingId))
                     {
-                        Messages.Message("RimClaw_HostWindow_SwitchModelFailed".Translate(), MessageTypeDefOf.RejectInput, historical: false);
+                        Messages.Message(host.Props.switchModelFailed, MessageTypeDefOf.RejectInput, historical: false);
                     }
                 }, (Thing)null, modelColor, MenuOptionPriority.Default, null, null, 0f, null, null, true, 0));
             }
@@ -484,7 +495,7 @@ namespace RimClaw
             Widgets.DrawBoxSolid(dragRect, new Color(0f, 0f, 0f, 0.7f));
             DrawOutline(dragRect);
             DrawClawPortrait(new Rect(dragRect.x + 4f, dragRect.y + 3f, 44f, 44f), draggingClaw);
-            Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 8f, dragRect.width - 60f, 18f), "RimClaw_HostWindow_AssignPrompt".Translate(AbbreviateName(draggingClaw.LabelShortCap ?? draggingClaw.LabelCap ?? string.Empty, 8)));
+            Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 8f, dragRect.width - 60f, 18f), string.Format(host.Props.assignPrompt, AbbreviateName(draggingClaw.LabelShortCap ?? draggingClaw.LabelCap ?? string.Empty, 8)));
             Widgets.Label(new Rect(dragRect.x + 54f, dragRect.y + 26f, dragRect.width - 60f, 18f), host.GetAssignedGpuLabel(draggingClaw));
         }
 
@@ -561,18 +572,18 @@ namespace RimClaw
             return texture;
         }
 
-        private static void DrawSection1Stats(Rect rect, HostComputerSnapshot snapshot)
+        private void DrawSection1Stats(Rect rect, HostComputerSnapshot snapshot)
         {
             string[] labels =
             {
-                "RimClaw_HostWindow_Stat_GpuMachines".Translate(),
-                "RimClaw_HostWindow_Stat_RoomTemperature".Translate(),
-                "RimClaw_HostWindow_Stat_TotalTokenIO".Translate(),
-                "RimClaw_HostWindow_Stat_Power".Translate(),
-                "RimClaw_HostWindow_Stat_ConnectedClaws".Translate(),
-                "RimClaw_HostWindow_Stat_VramUsage".Translate(),
-                "RimClaw_HostWindow_Stat_Models".Translate(),
-                "RimClaw_HostWindow_Stat_Instances".Translate()
+                host.Props.statGpuMachines,
+                host.Props.statRoomTemperature,
+                host.Props.statTotalTokenIO,
+                host.Props.statPower,
+                host.Props.statConnectedClaws,
+                host.Props.statVramUsage,
+                host.Props.statModels,
+                host.Props.statInstances
             };
 
             string[] values =
@@ -617,6 +628,21 @@ namespace RimClaw
             TextAnchor oldAnchor = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleCenter;
             Widgets.Label(rect, AbbreviateName(pawn?.LabelShortCap ?? pawn?.LabelCap ?? string.Empty, 8));
+            Text.Anchor = oldAnchor;
+        }
+
+        private static void DrawOfflineOverlay(Rect rect)
+        {
+            Widgets.DrawBoxSolid(rect, new Color32(50, 50, 50, 100));
+            TextAnchor oldAnchor = Text.Anchor;
+            GameFont oldFont = Text.Font;
+            Color oldColor = GUI.color;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            Text.Font = GameFont.Medium;
+            GUI.color = Color.white;
+            Widgets.Label(rect, "OFFLINE");
+            GUI.color = oldColor;
+            Text.Font = oldFont;
             Text.Anchor = oldAnchor;
         }
 

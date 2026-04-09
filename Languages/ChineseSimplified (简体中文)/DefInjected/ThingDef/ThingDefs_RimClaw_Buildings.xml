@@ -4,21 +4,157 @@
   <!-- EN: GPU Cluster -->
   <RimClaw_GPUCluster.label>GPU 集群</RimClaw_GPUCluster.label>
   <!-- EN: High end computational Unit, produce heat while running. This device is also fragile, where any bit of dust will shut it down. -->
-  <RimClaw_GPUCluster.description>高端计算单元，运行时会产生热量。此设备也很脆弱，哪怕一点灰尘都可能让它停机。</RimClaw_GPUCluster.description>
+  <RimClaw_GPUCluster.description>高端计算单元。运行时会产生热量。此设备也很脆弱，哪怕一点灰尘都可能让它停机。</RimClaw_GPUCluster.description>
+  <!-- EN: Host ID: {0}\nVRAM: {1} GB -->
+  <RimClaw_GPUCluster.comps.CompGPUCluster.inspectAssigned>主机 ID：{0}\nVRAM：{1} GB</RimClaw_GPUCluster.comps.CompGPUCluster.inspectAssigned>
+  <!-- EN: Host: unassigned -->
+  <RimClaw_GPUCluster.comps.CompGPUCluster.inspectUnassigned>主机：未分配</RimClaw_GPUCluster.comps.CompGPUCluster.inspectUnassigned>
   
   <!-- EN: Host Computer -->
   <RimClaw_HostComputer.label>主机计算机</RimClaw_HostComputer.label>
   <!-- EN: Central datacenter host that orchestrates model instances and token throughput. Connects to Memory disks to read model data, and connects to GPU Clusters for computing power. -->
   <RimClaw_HostComputer.description>管理模型实例和 token 吞吐的中央数据中心主机。它连接内存盘读取模型数据，并连接 GPU 集群获取算力。</RimClaw_HostComputer.description>
+  <!-- EN: Cannot assign clawfish to this GPU. -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.assignFailed>无法将龙虾分配到该 GPU。</RimClaw_HostComputer.comps.CompHostComputerService.assignFailed>
+  <!-- EN: Cannot assign clawfish to inactive GPU (None model). -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.assignInactiveGpu>无法把龙虾分配到未激活 GPU（无模型）。</RimClaw_HostComputer.comps.CompHostComputerService.assignInactiveGpu>
+  <!-- EN: Assign: {0} -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.assignPrompt>分配：{0}</RimClaw_HostComputer.comps.CompHostComputerService.assignPrompt>
+  <!-- EN: {0} assigned to {1} -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.assignSuccess>{0} 已分配到 {1}</RimClaw_HostComputer.comps.CompHostComputerService.assignSuccess>
+  <!-- EN: Connected Claws -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.connectedClawsLabel>已连接龙虾</RimClaw_HostComputer.comps.CompHostComputerService.connectedClawsLabel>
+  <!-- EN: Clawfish on that GPU were deassigned. Reassign them to active instances. -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.deassignedWarning>该 GPU 上的龙虾分配已被清除。请重新分配到可用实例。</RimClaw_HostComputer.comps.CompHostComputerService.deassignedWarning>
+  <!-- EN: GPU List -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.gpuListLabel>GPU 列表</RimClaw_HostComputer.comps.CompHostComputerService.gpuListLabel>
+  <!-- EN: Models connected: {0}\nCurrent TPS: {1}/{2} needed\nConnected Clawfish: {3}\nConnected GPU: {4}/{5}\nVRAM: {6}/{7} GB -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.inspectFormat>已连接模型：{0}\n当前 TPS：{1}/{2}（需求）\n已连接龙虾：{3}\n已连接 GPU：{4}/{5}\nVRAM：{6}/{7} GB</RimClaw_HostComputer.comps.CompHostComputerService.inspectFormat>
+  <!-- EN: Instances: {0}/{1} -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.instancesRowFormat>实例：{0}/{1}</RimClaw_HostComputer.comps.CompHostComputerService.instancesRowFormat>
+  <!-- EN: Active Time -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.labelActiveTime>活动时长</RimClaw_HostComputer.comps.CompHostComputerService.labelActiveTime>
+  <!-- EN: Heat Rate -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.labelHeatRate>发热速率</RimClaw_HostComputer.comps.CompHostComputerService.labelHeatRate>
+  <!-- EN: Token I/O -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.labelTokenIO>token I/O</RimClaw_HostComputer.comps.CompHostComputerService.labelTokenIO>
+  <!-- EN: Total Usage -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.labelTotalUsage>总占用</RimClaw_HostComputer.comps.CompHostComputerService.labelTotalUsage>
+  <!-- EN: Global Work Speed -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.labelWorkSpeed>全局工作速度</RimClaw_HostComputer.comps.CompHostComputerService.labelWorkSpeed>
+  <!-- EN: No runnable instances (insufficient VRAM/model). -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.noRunnableInstances>无可运行实例（VRAM 或模型不足）。</RimClaw_HostComputer.comps.CompHostComputerService.noRunnableInstances>
+  <!-- EN: Open the datacenter management console. -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.openConsoleDesc>打开数据中心管理控制台。</RimClaw_HostComputer.comps.CompHostComputerService.openConsoleDesc>
+  <!-- EN: Open Console -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.openConsoleLabel>打开控制台</RimClaw_HostComputer.comps.CompHostComputerService.openConsoleLabel>
+  <!-- EN: Recent 15 days -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.range15d>15 天</RimClaw_HostComputer.comps.CompHostComputerService.range15d>
+  <!-- EN: Recent 1 day -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.range1d>1 天</RimClaw_HostComputer.comps.CompHostComputerService.range1d>
+  <!-- EN: Recent 1h -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.range1h>1 小时</RimClaw_HostComputer.comps.CompHostComputerService.range1h>
+  <!-- EN: Select a GPU to view diagnostics. -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.selectGpu>请选择一个 GPU 查看诊断信息。</RimClaw_HostComputer.comps.CompHostComputerService.selectGpu>
+  <!-- EN: Connected claws -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.statConnectedClaws>已连接龙虾</RimClaw_HostComputer.comps.CompHostComputerService.statConnectedClaws>
+  <!-- EN: GPU Machines -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.statGpuMachines>GPU 机器</RimClaw_HostComputer.comps.CompHostComputerService.statGpuMachines>
+  <!-- EN: Room Temperature -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.statRoomTemperature>室温</RimClaw_HostComputer.comps.CompHostComputerService.statRoomTemperature>
+  <!-- EN: Total token I/O -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.statTotalTokenIO>总token I/O</RimClaw_HostComputer.comps.CompHostComputerService.statTotalTokenIO>
+  <!-- EN: VRAM Usage(GB) -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.statVramUsage>VRAM 占用(GB)</RimClaw_HostComputer.comps.CompHostComputerService.statVramUsage>
+  <!-- EN: Failed to switch model for this GPU. -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.switchModelFailed>切换该 GPU 的模型失败。</RimClaw_HostComputer.comps.CompHostComputerService.switchModelFailed>
+  <!-- EN: Datacenter Console -->
+  <RimClaw_HostComputer.comps.CompHostComputerService.windowTitle>数据中心控制台</RimClaw_HostComputer.comps.CompHostComputerService.windowTitle>
   
   <!-- EN: LLM Service Subscription -->
   <RimClaw_LLMServiceSubscription.label>大语言模型服务订阅</RimClaw_LLMServiceSubscription.label>
   <!-- EN: A portable remote endpoint that connects to a datacenter far away. Provides LLM service for connected Clawfish agents. Automatically consumes silver nearby to provide token I/O. Disconnects upon the depletion of fee. -->
   <RimClaw_LLMServiceSubscription.description>一个连接到远方数据中心的便携式远程端点。为已连接的龙虾代理提供大语言模型服务。会自动消耗附近的白银以提供 token 吞吐，并在费用耗尽后断开连接。</RimClaw_LLMServiceSubscription.description>
+  <!-- EN: Model: {0}\nParameter size: {1:0.0}B\nRequired VRAM: {2} GB\nToken/s per instance: {3:0.0}\nFee rate: x{4:0.00}\nWork speed: x{5:0.00}\nSkill level adjust: {6} -->
+  <RimClaw_LLMServiceSubscription.comps.CompModelCard.inspectFormat>模型：{0}\n参数规模：{1:0.0}B\n所需 VRAM：{2} GB\n每实例token/秒：{3:0.0}\n费用倍率：x{4:0.00}\n工作速度：x{5:0.00}\n技能等级修正：{6}</RimClaw_LLMServiceSubscription.comps.CompModelCard.inspectFormat>
+  <!-- EN: Connected Claws -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.connectedClaws>已连接龙虾</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.connectedClaws>
+  <!-- EN: Current Token/s: {0} needed -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailCurrentToken>当前token/秒：{0}（需求）</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailCurrentToken>
+  <!-- EN: Provided Token/s: {0} capped / {1} max -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailProvidedToken>提供token/秒：{0}（封顶）/ {1}（需求）</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailProvidedToken>
+  <!-- EN: Silver Consumption/s: {0} -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailSilverPerSec>白银消耗/秒：{0}</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.detailSilverPerSec>
+  <!-- EN: {0} disconnected from LLM Subscription -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.disconnectMessage>{0} 已从 LLM 订阅断开</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.disconnectMessage>
+  <!-- EN: Hourly Silver Consumption -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.hourlySilver>每小时白银消耗</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.hourlySilver>
+  <!-- EN: Model: {0}\nLive Throughput: {1}/{2} TPS\nActive Claws: {3}\nPer-second Silver: {4}\nCurrent Hour Cost: {5}\nPending Payment: {6}\nSupplied TPS: {7} -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.inspectFormat>模型：{0}\n实时吞吐：{1}/{2} TPS\n活跃龙虾：{3}\n每秒白银：{4}\n当前小时花费：{5}\n待支付：{6}\n已供给 TPS：{7}</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.inspectFormat>
+  <!-- EN: Active Claws -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelActiveClaws>活跃龙虾</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelActiveClaws>
+  <!-- EN: Current Hour Cost -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelCurrentHourCost>当前小时花费</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelCurrentHourCost>
+  <!-- EN: Lifetime Spent -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelLifetimeSpent>累计花费</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelLifetimeSpent>
+  <!-- EN: Live I/O -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelLiveIO>实时 I/O</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelLiveIO>
+  <!-- EN: Pending Payment -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPendingPayment>待支付</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPendingPayment>
+  <!-- EN: Per Second -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPerSecond>每秒</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPerSecond>
+  <!-- EN: Price/K Tokens -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPricePerK>每千token价格</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelPricePerK>
+  <!-- EN: Work Speed -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelWorkSpeed>工作速度</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.labelWorkSpeed>
+  <!-- EN: (no claw) -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.noClaw>（无龙虾）</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.noClaw>
+  <!-- EN: Open the LLM subscription management console. -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.openConsoleDesc>打开 LLM 订阅管理控制台。</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.openConsoleDesc>
+  <!-- EN: Open Console -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.openConsoleLabel>打开控制台</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.openConsoleLabel>
+  <!-- EN: LLM subscription has run out of fee and stopped. Deliver silver within range to resume. -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.outOfFee>LLM 订阅欠费并已停止。请在范围内放置白银以恢复。</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.outOfFee>
+  <!-- EN: 15 days -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.range15d>15 天</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.range15d>
+  <!-- EN: 1 day -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.range1d>1 天</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.range1d>
+  <!-- EN: LLM subscription resumed after receiving fee payment. -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.resumed>LLM 订阅在收到费用后已恢复。</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.resumed>
+  <!-- EN: Select a claw to view details. -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.selectClaw>请选择一只龙虾查看详情。</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.selectClaw>
+  <!-- EN: LLM Subscription Console -->
+  <RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.windowTitle>LLM 订阅控制台</RimClaw_LLMServiceSubscription.comps.CompLLMSubscriptionService.windowTitle>
   
   <!-- EN: memory disk -->
   <RimClaw_MemoryDisk.label>内存盘</RimClaw_MemoryDisk.label>
   <!-- EN: Loads one model package that can be run by a linked Host Computer. -->
-  <RimClaw_MemoryDisk.description>加载一个模型包，可在已连接的主机计算机上运行。</RimClaw_MemoryDisk.description>
+  <RimClaw_MemoryDisk.description>加载一个模型数据包，可在已连接的主机计算机上运行。</RimClaw_MemoryDisk.description>
+  <!-- EN: Eject current model as a model package item. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectModelDesc>将当前模型弹出为模型数据包物品。</RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectModelDesc>
+  <!-- EN: Eject model -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectModelLabel>弹出模型</RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectModelLabel>
+  <!-- EN: Could not place ejected model package. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectPlaceFailed>无法放置弹出的模型数据包。</RimClaw_MemoryDisk.comps.CompMemoryDisk.ejectPlaceFailed>
+  <!-- EN: Failed to insert model package into memory disk. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.insertFailed>将模型数据包插入内存盘失败。</RimClaw_MemoryDisk.comps.CompMemoryDisk.insertFailed>
+  <!-- EN: Select a model package on the ground, then assign a pawn to carry and insert it. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.insertModelDesc>选择地面上的模型数据包，然后指派一名殖民者搬运并插入。</RimClaw_MemoryDisk.comps.CompMemoryDisk.insertModelDesc>
+  <!-- EN: Insert model -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.insertModelLabel>插入模型</RimClaw_MemoryDisk.comps.CompMemoryDisk.insertModelLabel>
+  <!-- EN: Model: (none) -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectNone>模型：无</RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectNone>
+  <!-- EN: Model: (none)\n      Host ID: {0} -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectNoneWithHost>模型：无\n主机 ID：{0}</RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectNoneWithHost>
+  <!-- EN: Model: {0}\n      Required VRAM: {1} GB\n      Token/s per instance: {2}\n      Work speed bonus: +{3}%\n      Skill level adjust: {4} -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectWithModel>模型：{0}\n所需 VRAM：{1} GB\n每实例token/秒：{2}\n工作速度加成：+{3}%\n技能等级修正：{4}</RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectWithModel>
+  <!-- EN: Model: {0}\n      Required VRAM: {1} GB\n      Token/s per instance: {2}\n      Work speed bonus: +{3}%\n      Skill level adjust: {4}\n      Host ID: {5} -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectWithModelHost>模型：{0}\n所需 VRAM：{1} GB\n每实例token/秒：{2}\n工作速度加成：+{3}%\n技能等级修正：{4}\n主机 ID：{5}</RimClaw_MemoryDisk.comps.CompMemoryDisk.inspectWithModelHost>
+  <!-- EN: No available pawn can insert this model package. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.noInsertionPawn>没有可用殖民者可以插入该模型数据包。</RimClaw_MemoryDisk.comps.CompMemoryDisk.noInsertionPawn>
+  <!-- EN: Could not eject previous model package during reinstall. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.reinstallEjectFailed>重新安装时无法弹出旧模型数据包。</RimClaw_MemoryDisk.comps.CompMemoryDisk.reinstallEjectFailed>
+  <!-- EN: Select a model package. -->
+  <RimClaw_MemoryDisk.comps.CompMemoryDisk.selectModelPackage>请选择一个模型数据包。</RimClaw_MemoryDisk.comps.CompMemoryDisk.selectModelPackage>
   
 </LanguageData>

@@ -9,6 +9,21 @@ namespace RimClaw
         public float fishingSpawnChance = RimClawSettings.DefaultFishingSpawnChance;
         public int spawnRadiusFromFisher = RimClawSettings.DefaultSpawnRadiusFromFisher;
 
+        public string genericNoneText = "None";
+        public string genericNoneParenText = "(None)";
+        public string genericUnnamedText = "(unnamed)";
+
+        public string gizmoConnectLabel = "Connect to LLM Service";
+        public string gizmoConnectDesc = "Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply.";
+        public string gizmoDisconnectLabel = "Disconnect from LLM Service";
+        public string gizmoDisconnectDesc = "Disconnect this clawfish from {0}.";
+        public string messageClawConnected = "{0} connected to {1}";
+        public string messageClawDisconnected = "{0} disconnected from service";
+        public string alertOutOfFeeLabel = "LLM service out of fee";
+        public string alertOutOfFeeDesc = "One or more LLM Subscription services have stopped because there is not enough silver in range.";
+        public string alertGpuBreakRiskLabel = "GPU cluster breakdown risk";
+        public string alertGpuBreakRiskDesc = "One or more GPU clusters are operating in unsafe environmental conditions and have elevated random breakdown risk.";
+
         public string fishingLetterLabel = "Clawfish Hooked";
         public string fishingLetterText = "{0} hooked a Clawfish and aborted fishing.";
         public string promptInjectorSuccessLetterLabel = "Prompt Injection Success";

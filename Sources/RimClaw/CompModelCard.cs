@@ -18,6 +18,7 @@ namespace RimClaw
         public float workSpeedBonusMax = 0.06f;
         public float parameterSizeMinB = 0.1f;
         public float parameterSizeMaxB = 999f;
+        public string inspectFormat = "Model: {0}\nParameter size: {1:0.0}B\nRequired VRAM: {2} GB\nToken/s per instance: {3:0.0}\nFee rate: x{4:0.00}\nWork speed: x{5:0.00}\nSkill level adjust: {6}";
 
         public CompProperties_ModelCard()
         {
@@ -168,7 +169,7 @@ namespace RimClaw
         public override string CompInspectStringExtra()
         {
             EnsureInitialized();
-            return $"Model: {modelName}\nParameter size: {parameterSizeB:0.0}B\nRequired VRAM: {requiredVram} GB\nToken/s per instance: {tokenPerSecondPerInstance:0.0}\nFee rate: x{feeRate:0.00}\nWork speed: x{workSpeedMultiplier:0.00}\nSkill level adjust: {(modelSkillLevelAdjustment >= 0 ? "+" : string.Empty)}{modelSkillLevelAdjustment}";
+            return string.Format(Props.inspectFormat, modelName, parameterSizeB, requiredVram, tokenPerSecondPerInstance, feeRate, workSpeedMultiplier, (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment);
         }
 
         private int ComputeModelSkillAdjustment(FactionModelProfile profile)

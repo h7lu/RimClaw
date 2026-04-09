@@ -41,6 +41,13 @@
         <tokenPerSecondPerInstanceMax>260</tokenPerSecondPerInstanceMax>
         <workSpeedBonusMin>-0.7</workSpeedBonusMin>
         <workSpeedBonusMax>0.02</workSpeedBonusMax>
+        <inspectFormat>Model: {0}
+Parameter size: {1:0.0}B
+Required VRAM: {2} GB
+Token/s per instance: {3:0.0}
+Fee rate: x{4:0.00}
+Work speed: x{5:0.00}
+Skill level adjust: {6}</inspectFormat>
       </li>
     </comps>
   </ThingDef>

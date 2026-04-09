@@ -58,7 +58,7 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), "RimClaw_SubWindow_Title".Translate());
+            Widgets.Label(new Rect(inRect.x + 8f, inRect.y, inRect.width - 16f, 30f), subscription.Props.windowTitle);
             Text.Font = oldFont;
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 30f, inRect.width, inRect.height - 30f);
@@ -89,14 +89,14 @@ namespace RimClaw
 
             string[] labels =
             {
-                "RimClaw_SubWindow_Label_PricePerK".Translate(),
-                "RimClaw_SubWindow_Label_WorkSpeed".Translate(),
-                "RimClaw_SubWindow_Label_LiveIO".Translate(),
-                "RimClaw_SubWindow_Label_LifetimeSpent".Translate(),
-                "RimClaw_SubWindow_Label_ActiveClaws".Translate(),
-                "RimClaw_SubWindow_Label_PerSecond".Translate(),
-                "RimClaw_SubWindow_Label_CurrentHourCost".Translate(),
-                "RimClaw_SubWindow_Label_PendingPayment".Translate()
+                subscription.Props.labelPricePerK,
+                subscription.Props.labelWorkSpeed,
+                subscription.Props.labelLiveIO,
+                subscription.Props.labelLifetimeSpent,
+                subscription.Props.labelActiveClaws,
+                subscription.Props.labelPerSecond,
+                subscription.Props.labelCurrentHourCost,
+                subscription.Props.labelPendingPayment
             };
 
             string[] values =
@@ -113,7 +113,7 @@ namespace RimClaw
 
             DrawTwoColumnStats(new Rect(left.x + 8f, left.y + 110f, left.width - 16f, left.height - 114f), labels, values);
 
-            Widgets.Label(new Rect(right.x + 8f, right.y + 4f, right.width - 16f, 22f), "RimClaw_SubWindow_HourlySilver".Translate());
+            Widgets.Label(new Rect(right.x + 8f, right.y + 4f, right.width - 16f, 22f), subscription.Props.hourlySilver);
             DrawLine(new Vector2(right.x + 8f, right.y + 24f), new Vector2(right.xMax - 8f, right.y + 24f));
             Rect graphRect = new Rect(right.x + 8f, right.y + 26f, right.width - 16f, right.height - 62f);
             DrawLineGraph(graphRect, EnsureRenderableSeries(GetSeriesForRange(snapshot.HourlySilverHistory), snapshot.CurrentHourSilverSpent), new Color(0.95f, 0.88f, 0.10f, 1f), 2);
@@ -122,7 +122,7 @@ namespace RimClaw
 
         private void DrawConnectedClawGrid(Rect rect, SubscriptionSnapshot snapshot)
         {
-            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), "RimClaw_SubWindow_ConnectedClaws".Translate());
+            Widgets.Label(new Rect(rect.x + 8f, rect.y + 6f, rect.width - 16f, 22f), subscription.Props.connectedClaws);
             DrawLine(new Vector2(rect.x + 8f, rect.y + 26f), new Vector2(rect.xMax - 8f, rect.y + 26f));
 
             Rect scrollRect = new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, rect.height - 38f);
@@ -176,7 +176,7 @@ namespace RimClaw
         {
             if (selectedClawIndex < 0 || selectedClawIndex >= snapshot.Claws.Count)
             {
-                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), "RimClaw_SubWindow_SelectClaw".Translate());
+                Widgets.Label(new Rect(rect.x + 10f, rect.y + 10f, rect.width - 20f, 24f), subscription.Props.selectClaw);
                 return;
             }
 
@@ -186,9 +186,9 @@ namespace RimClaw
 
             float maxAvailable = subscription.GetAvailableTokenRateForClawfish(selected.Claw);
             string detail =
-                "RimClaw_SubWindow_Detail_CurrentToken".Translate(selected.CurrentTps.ToString("0.0")) + "\n" +
-                "RimClaw_SubWindow_Detail_ProvidedToken".Translate(selected.ProvidedTps.ToString("0.0"), maxAvailable.ToString("0.0")) + "\n" +
-                "RimClaw_SubWindow_Detail_SilverPerSec".Translate(selected.SilverPerSecond.ToString("0.0000"));
+                string.Format(subscription.Props.detailCurrentToken, selected.CurrentTps.ToString("0.0")) + "\n" +
+                string.Format(subscription.Props.detailProvidedToken, selected.ProvidedTps.ToString("0.0"), maxAvailable.ToString("0.0")) + "\n" +
+                string.Format(subscription.Props.detailSilverPerSec, selected.SilverPerSecond.ToString("0.0000"));
             Widgets.Label(new Rect(rect.x + 8f, rect.y + 30f, rect.width - 16f, 88f), detail);
 
             Rect buttonDaily = new Rect(rect.x + 8f, rect.y + 118f, 66f, 24f);
@@ -209,17 +209,17 @@ namespace RimClaw
                 Widgets.DrawHighlightSelected(buttonAll);
             }
 
-            if (Widgets.ButtonText(buttonDaily, "RimClaw_SubWindow_Range_Daily".Translate()))
+            if (Widgets.ButtonText(buttonDaily, subscription.Props.rangeDaily))
             {
                 range = GraphRange.Daily;
             }
 
-            if (Widgets.ButtonText(button15, "RimClaw_SubWindow_Range_15d".Translate()))
+            if (Widgets.ButtonText(button15, subscription.Props.range15d))
             {
                 range = GraphRange.FifteenDay;
             }
 
-            if (Widgets.ButtonText(buttonAll, "RimClaw_SubWindow_Range_All".Translate()))
+            if (Widgets.ButtonText(buttonAll, subscription.Props.rangeAll))
             {
                 range = GraphRange.All;
             }
@@ -230,11 +230,11 @@ namespace RimClaw
             //DrawPlotRangeButtons(new Rect(rect.x + 8f, rect.yMax - 30f, rect.width - 16f, 24f));
 
             Rect disconnectRect = new Rect(rect.x + 8f, rect.yMax - 44f, rect.width - 16f, 32f);
-            if (Widgets.ButtonText(disconnectRect, "RimClaw_SubWindow_Disconnect".Translate()))
+            if (Widgets.ButtonText(disconnectRect, subscription.Props.disconnect))
             {
                 subscription.DisconnectClaw(selected.Claw);
                 selectedClawIndex = -1;
-                Messages.Message("RimClaw_SubWindow_DisconnectMessage".Translate(selected.Claw.NameShortColored), MessageTypeDefOf.NeutralEvent, historical: false);
+                Messages.Message(string.Format(subscription.Props.disconnectMessage, selected.Claw.NameShortColored), MessageTypeDefOf.NeutralEvent, historical: false);
             }
         }
 
@@ -263,9 +263,9 @@ namespace RimClaw
             return source.GetRange(source.Count - desired, desired);
         }
 
-        private static void DrawLineGraph(Rect rect, List<float> values, Color color, int axisDecimals)
+        private void DrawLineGraph(Rect rect, List<float> values, Color color, int axisDecimals)
         {
-            ConsoleLineChartUtility.DrawSingleSeries(rect, values, color, BorderColor, "RimClaw_Chart_SilverPerSec".Translate(), axisDecimals);
+            ConsoleLineChartUtility.DrawSingleSeries(rect, values, color, BorderColor, subscription.Props.chartSilverPerSec, subscription.Props.chartZero, subscription.Props.chartOld, subscription.Props.chartNew, axisDecimals);
         }
 
         private static List<float> EnsureRenderableSeries(List<float> source, float fallbackValue)
@@ -379,9 +379,9 @@ namespace RimClaw
 
             string[] labels =
             {
-                "RimClaw_SubWindow_Range_1d".Translate(),
-                "RimClaw_SubWindow_Range_15d".Translate(),
-                "RimClaw_SubWindow_Range_All".Translate()
+                subscription.Props.range1d,
+                subscription.Props.range15d,
+                subscription.Props.rangeAll
             };
 
             GraphRange[] values =
@@ -431,13 +431,13 @@ namespace RimClaw
         {
             if (claw == null)
             {
-                return "RimClaw_SubWindow_NoClaw".Translate();
+                return service.Props.noClaw;
             }
 
             CompClawfishTokenConnection conn = claw.TryGetComp<CompClawfishTokenConnection>();
             if (conn == null || !conn.IsConnected || conn.ConnectedSupplier == null)
             {
-                return "RimClaw_SubWindow_Unassigned".Translate();
+                return service.Props.unassigned;
             }
 
             CompHostComputerService host = conn.ConnectedSupplier.TryGetComp<CompHostComputerService>();

@@ -7,7 +7,7 @@ namespace RimClaw
 {
     public static class ConsoleLineChartUtility
     {
-        public static void DrawSingleSeries(Rect rect, List<float> values, Color lineColor, Color borderColor, string yUnitLabel, int axisDecimals = 0)
+        public static void DrawSingleSeries(Rect rect, List<float> values, Color lineColor, Color borderColor, string yUnitLabel, string zeroLabel, string oldLabel, string newLabel, int axisDecimals = 0)
         {
             DrawOutline(rect, borderColor);
             if (values == null || values.Count < 2)
@@ -24,7 +24,7 @@ namespace RimClaw
 
             Widgets.DrawLine(new Vector2(plot.x, baselineY), new Vector2(plot.xMax, baselineY), borderColor, 1f);
             Widgets.Label(new Rect(rect.x + 4f, rect.y + 2f, 36f, 16f), yUnitLabel);
-            Widgets.Label(new Rect(plot.x - 2f, baselineY - 10f, 22f, 16f), "RimClaw_Chart_Zero".Translate());
+            Widgets.Label(new Rect(plot.x - 2f, baselineY - 10f, 22f, 16f), zeroLabel);
 
             float max = 0f;
             for (int i = 0; i < values.Count; i++)
@@ -50,8 +50,8 @@ namespace RimClaw
 
             Widgets.DrawLine(new Vector2(plot.x, rect.y + 2f), new Vector2(plot.x, baselineY), borderColor, 1f);
             Widgets.DrawLine(new Vector2(plot.xMax, rect.y + 2f), new Vector2(plot.xMax, baselineY), borderColor, 1f);
-            Widgets.Label(new Rect(plot.x - 4f, rect.yMax - 16f, 24f, 14f), "RimClaw_Chart_Old".Translate());
-            Widgets.Label(new Rect(plot.xMax - 20f, rect.yMax - 16f, 24f, 14f), "RimClaw_Chart_New".Translate());
+            Widgets.Label(new Rect(plot.x - 4f, rect.yMax - 16f, 24f, 14f), oldLabel);
+            Widgets.Label(new Rect(plot.xMax - 20f, rect.yMax - 16f, 24f, 14f), newLabel);
 
             float step = plot.width / Mathf.Max(1, values.Count - 1);
             Vector2 prev = Vector2.zero;
@@ -71,7 +71,7 @@ namespace RimClaw
             Text.Font = oldFont;
         }
 
-        public static void DrawDualSeries(Rect rect, List<float> primary, List<float> secondary, Color primaryColor, Color secondaryColor, Color borderColor)
+        public static void DrawDualSeries(Rect rect, List<float> primary, List<float> secondary, Color primaryColor, Color secondaryColor, Color borderColor, string primaryLabel, string secondaryLabel, string zeroLabel)
         {
             DrawOutline(rect, borderColor);
 
@@ -83,8 +83,8 @@ namespace RimClaw
 
             GameFont oldFont = Text.Font;
             Text.Font = GameFont.Tiny;
-            Widgets.Label(new Rect(rect.x + 6f, rect.y + 4f, 120f, 22f), "RimClaw_Chart_TokenPerSec".Translate());
-            Widgets.Label(new Rect(rect.xMax - 90f, rect.y + 4f, 84f, 22f), "RimClaw_Chart_HeatPerSec".Translate());
+            Widgets.Label(new Rect(rect.x + 6f, rect.y + 4f, 120f, 22f), primaryLabel);
+            Widgets.Label(new Rect(rect.xMax - 90f, rect.y + 4f, 84f, 22f), secondaryLabel);
 
             Rect plot = new Rect(rect.x + 56f, rect.y + 26f, rect.width - 112f, rect.height - 34f);
             DrawLine(new Vector2(plot.x, plot.y), new Vector2(plot.x, plot.yMax), borderColor);
@@ -92,7 +92,7 @@ namespace RimClaw
 
             float zeroLineY = plot.yMax - 8f;
             Widgets.DrawLine(new Vector2(plot.x, zeroLineY), new Vector2(plot.xMax, zeroLineY), borderColor, 1f);
-            Widgets.Label(new Rect(plot.x + 4f, zeroLineY - 10f, 24f, 16f), "RimClaw_Chart_Zero".Translate());
+            Widgets.Label(new Rect(plot.x + 4f, zeroLineY - 10f, 24f, 16f), zeroLabel);
 
             float rawMaxPrimary = 1f;
             float rawMaxSecondary = 1f;

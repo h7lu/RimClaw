@@ -66,10 +66,16 @@ namespace RimClaw
 
         public override string CompInspectStringExtra()
         {
+            CompLLMSubscriptionService subscription = parent?.TryGetComp<CompLLMSubscriptionService>();
+            if (subscription != null)
+            {
+                return subscription.CompInspectStringExtra();
+            }
+
             float consumed = GetTotalConsumptionRate();
             float available = GetAvailableTokenRateForClawfish(null); // Average per claw
 
-            return "RimClaw_TokenSupplier_Inspect".Translate(connectedClawfish.Count, totalTokenCapacityPerSecond.ToString("F0"), consumed.ToString("F2"), available.ToString("F2"));
+            return $"Connected Clawfish: {connectedClawfish.Count}\nTotal Token Capacity: {totalTokenCapacityPerSecond.ToString("F0")} TPS\nTotal Consumption: {consumed.ToString("F2")} TPS\nPer-Claw Allocation: {available.ToString("F2")} TPS";
         }
     }
 }

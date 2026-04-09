@@ -10,6 +10,8 @@ namespace RimClaw
         public float heatPerUsageFraction = 20f;
         public float heatAverageSeconds = 15f;
         public float maxTemperatureC = 1000f;
+        public string inspectUnassigned = "Host: unassigned";
+        public string inspectAssigned = "Host ID: {0}\nVRAM: {1} GB";
 
         public CompProperties_GPUCluster()
         {
@@ -62,8 +64,8 @@ namespace RimClaw
         public override string CompInspectStringExtra()
         {
             return hostThingID < 0
-                ? "RimClaw_GPUCluster_Inspect_Unassigned".Translate()
-                : "RimClaw_GPUCluster_Inspect_Assigned".Translate(hostThingID, Props.providedVRAM);
+                ? Props.inspectUnassigned
+                : string.Format(Props.inspectAssigned, hostThingID, Props.providedVRAM);
         }
     }
 }

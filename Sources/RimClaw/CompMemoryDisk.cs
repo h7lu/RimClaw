@@ -21,6 +21,20 @@ namespace RimClaw
         public Vector3 southOffset = new Vector3(0f, 0f, 0.18f);
         public Vector3 westOffset = new Vector3(0f, 0f, 0.18f);
 
+        public string insertModelLabel = "Insert model";
+        public string insertModelDesc = "Select a model package on the ground, then assign a pawn to carry and insert it.";
+        public string ejectModelLabel = "Eject model";
+        public string ejectModelDesc = "Eject current model as a model package item.";
+        public string inspectNone = "Model: (none)";
+        public string inspectNoneWithHost = "Model: (none)\nHost ID: {0}";
+        public string inspectWithModel = "Model: {0}\nRequired VRAM: {1} GB\nToken/s per instance: {2}\nWork speed bonus: +{3}%\nSkill level adjust: {4}";
+        public string inspectWithModelHost = "Model: {0}\nRequired VRAM: {1} GB\nToken/s per instance: {2}\nWork speed bonus: +{3}%\nSkill level adjust: {4}\nHost ID: {5}";
+        public string reinstallEjectFailed = "Could not eject previous model package during reinstall.";
+        public string selectModelPackage = "Select a model package.";
+        public string noInsertionPawn = "No available pawn can insert this model package.";
+        public string ejectPlaceFailed = "Could not place ejected model package.";
+        public string insertFailed = "Failed to insert model package into memory disk.";
+
         public CompProperties_MemoryDisk()
         {
             compClass = typeof(CompMemoryDisk);
@@ -102,8 +116,8 @@ namespace RimClaw
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "RimClaw_MemoryDisk_InsertModel_Label".Translate(),
-                    defaultDesc = "RimClaw_MemoryDisk_InsertModel_Desc".Translate(),
+                    defaultLabel = Props.insertModelLabel,
+                    defaultDesc = Props.insertModelDesc,
                     icon = ContentFinder<Texture2D>.Get("Insert_Model", reportFailure: false),
                     action = delegate
                     {
@@ -116,8 +130,8 @@ namespace RimClaw
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "RimClaw_MemoryDisk_EjectModel_Label".Translate(),
-                    defaultDesc = "RimClaw_MemoryDisk_EjectModel_Desc".Translate(),
+                    defaultLabel = Props.ejectModelLabel,
+                    defaultDesc = Props.ejectModelDesc,
                     icon = ContentFinder<Texture2D>.Get("Eject_Model", reportFailure: false),
                     action = delegate
                     {
@@ -132,13 +146,13 @@ namespace RimClaw
             if (!hasModel)
             {
                 return hostThingID < 0
-                    ? "RimClaw_MemoryDisk_Inspect_None".Translate()
-                    : "RimClaw_MemoryDisk_Inspect_NoneWithHost".Translate(hostThingID);
+                    ? Props.inspectNone
+                    : string.Format(Props.inspectNoneWithHost, hostThingID);
             }
 
             return hostThingID < 0
-                ? "RimClaw_MemoryDisk_Inspect_WithModel".Translate(modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment)
-                : "RimClaw_MemoryDisk_Inspect_WithModelHost".Translate(modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment, hostThingID);
+                ? string.Format(Props.inspectWithModel, modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment)
+                : string.Format(Props.inspectWithModelHost, modelName, requiredVram, tokenPerSecondPerInstance.ToString("0"), (workSpeedBonus * 100f).ToString("0.0"), (modelSkillLevelAdjustment >= 0 ? "+" : string.Empty) + modelSkillLevelAdjustment, hostThingID);
         }
 
         public override void CompTick()
@@ -184,7 +198,7 @@ namespace RimClaw
                 if (!placedPrevious)
                 {
                     previousPackage.Destroy(DestroyMode.Vanish);
-                        Messages.Message("RimClaw_MemoryDisk_ReinstallEjectFailed".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                        Messages.Message(Props.reinstallEjectFailed, parent, MessageTypeDefOf.RejectInput, historical: false);
                     return false;
                 }
             }
@@ -309,14 +323,14 @@ namespace RimClaw
                 Thing selectedThing = target.Thing;
                 if (selectedThing == null || selectedThing.def != RimClawDefOf.RimClaw_ModelCard)
                 {
-                    Messages.Message("RimClaw_MemoryDisk_SelectModelPackage".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(Props.selectModelPackage, parent, MessageTypeDefOf.RejectInput, historical: false);
                     return;
                 }
 
                 Pawn worker = FindBestInsertionPawn(selectedThing);
                 if (worker == null)
                 {
-                    Messages.Message("RimClaw_MemoryDisk_NoInsertionPawn".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(Props.noInsertionPawn, parent, MessageTypeDefOf.RejectInput, historical: false);
                     return;
                 }
 
@@ -380,7 +394,7 @@ namespace RimClaw
             if (!placed)
             {
                 package.Destroy(DestroyMode.Vanish);
-                Messages.Message("RimClaw_MemoryDisk_EjectPlaceFailed".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                Messages.Message(Props.ejectPlaceFailed, parent, MessageTypeDefOf.RejectInput, historical: false);
                 return;
             }
 

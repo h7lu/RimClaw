@@ -34,6 +34,11 @@ namespace RimClaw
         public List<string> heavyWorkKeywords = new List<string> { "DoBill", "Cook", "Construct", "Repair", "Mine", "CutPlant", "Harvest", "Plant", "Smooth", "Refuel", "Load" };
         public List<string> lightWorkKeywords = new List<string> { "Clean", "Handle", "Train", "Tame", "Wardening", "Social", "Art", "Smith", "Tailor", "Craft" };
 
+        public string connectedStatusFormat = "Connected to {0}";
+        public string notConnectedStatusText = "Not connected";
+        public string requiredTpsFormat = "Required TPS: {0}";
+        public string currentTpsFormat = "Current TPS: {0}/{1} needed";
+
         public CompProperties_ClawfishTokenConnection()
         {
             compClass = typeof(CompClawfishTokenConnection);
@@ -381,14 +386,14 @@ namespace RimClaw
                 return null;
 
             Pawn pawn = parent as Pawn;
-            string status = IsConnected ? "RimClaw_TokenConnection_Status_Connected".Translate(connectedSupplier.Label) : "RimClaw_TokenConnection_Status_NotConnected".Translate();
+            string status = IsConnected ? string.Format(Props.connectedStatusFormat, connectedSupplier.Label) : Props.notConnectedStatusText;
             float required = GetAdjustedTokenConsumptionRate(pawn);
-            string consumption = "RimClaw_TokenConnection_RequiredTps".Translate(required.ToString("F0"));
+            string consumption = string.Format(Props.requiredTpsFormat, required.ToString("F0"));
 
             if (IsConnected)
             {
                 float provided = GetProvidedRate(pawn);
-                consumption += "\n" + "RimClaw_TokenConnection_CurrentTps".Translate(provided.ToString("F0"), required.ToString("F0"));
+                consumption += "\n" + string.Format(Props.currentTpsFormat, provided.ToString("F0"), required.ToString("F0"));
             }
 
             return $"{status}\n{consumption}";

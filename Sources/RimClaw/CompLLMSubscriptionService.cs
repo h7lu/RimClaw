@@ -47,6 +47,38 @@ namespace RimClaw
         public float pricePerKTokens = 0.5f;
         public float silverSearchRadius = 5f;
         public int historyLength = 360;
+        public string openConsoleLabel = "Open Console";
+        public string openConsoleDesc = "Open the LLM subscription management console.";
+        public string inspectFormat = "Model: {0}\nLive Throughput: {1}/{2} TPS\nActive Claws: {3}\nPer-second Silver: {4}\nCurrent Hour Cost: {5}\nPending Payment: {6}\nSupplied TPS: {7}";
+        public string outOfFee = "LLM subscription has run out of fee and stopped. Deliver silver within range to resume.";
+        public string resumed = "LLM subscription resumed after receiving fee payment.";
+        public string windowTitle = "LLM Subscription Console";
+        public string labelPricePerK = "Price/K Tokens";
+        public string labelWorkSpeed = "Work Speed";
+        public string labelLiveIO = "Live I/O";
+        public string labelLifetimeSpent = "Lifetime Spent";
+        public string labelActiveClaws = "Active Claws";
+        public string labelPerSecond = "Per Second";
+        public string labelCurrentHourCost = "Current Hour Cost";
+        public string labelPendingPayment = "Pending Payment";
+        public string hourlySilver = "Hourly Silver Consumption";
+        public string connectedClaws = "Connected Claws";
+        public string selectClaw = "Select a claw to view details.";
+        public string detailCurrentToken = "Current Token/s: {0} needed";
+        public string detailProvidedToken = "Provided Token/s: {0} capped / {1} max";
+        public string detailSilverPerSec = "Silver Consumption/s: {0}";
+        public string rangeDaily = "Daily";
+        public string range1d = "1 day";
+        public string range15d = "15 days";
+        public string rangeAll = "All";
+        public string disconnect = "Disconnect";
+        public string disconnectMessage = "{0} disconnected from LLM Subscription";
+        public string noClaw = "(no claw)";
+        public string unassigned = "Unassigned";
+        public string chartSilverPerSec = "silver/s";
+        public string chartZero = "0";
+        public string chartOld = "old";
+        public string chartNew = "new";
 
         public CompProperties_LLMSubscriptionService()
         {
@@ -135,8 +167,8 @@ namespace RimClaw
         {
             yield return new Command_Action
             {
-                defaultLabel = "RimClaw_Subscription_OpenConsole_Label".Translate(),
-                defaultDesc = "RimClaw_Subscription_OpenConsole_Desc".Translate(),
+                defaultLabel = Props.openConsoleLabel,
+                defaultDesc = Props.openConsoleDesc,
                 icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
@@ -336,7 +368,7 @@ namespace RimClaw
         public override string CompInspectStringExtra()
         {
             float supplied = Mathf.Min(liveThroughput, totalTokenCapacityPerSecond);
-            return "RimClaw_Subscription_Inspect".Translate(GetCurrentModelIdentifier(), liveThroughput.ToString("0.0"), totalTokenCapacityPerSecond.ToString("0.0"), connectedClawfish.Count, model.PerSecondRate.ToString("0.00"), currentHourSilverSpent.ToString("0.00"), model.PendingPayment.ToString("0.00"), supplied.ToString("0.0"));
+            return string.Format(Props.inspectFormat, GetCurrentModelIdentifier(), liveThroughput.ToString("0.0"), totalTokenCapacityPerSecond.ToString("0.0"), connectedClawfish.Count, model.PerSecondRate.ToString("0.00"), currentHourSilverSpent.ToString("0.00"), model.PendingPayment.ToString("0.00"), supplied.ToString("0.0"));
         }
 
         private void RefreshModelTelemetry()
@@ -589,7 +621,7 @@ namespace RimClaw
             currentPerSecondSilverRate = 0f;
             model.PerSecondRate = 0f;
             model.PendingPayment = Mathf.Max(0f, model.PendingPayment);
-            Messages.Message("RimClaw_Subscription_OutOfFee".Translate(), parent, MessageTypeDefOf.CautionInput, historical: false);
+            Messages.Message(Props.outOfFee, parent, MessageTypeDefOf.CautionInput, historical: false);
         }
 
         private void ResumeServiceAfterPayment()
@@ -600,7 +632,7 @@ namespace RimClaw
             }
 
             serviceStopped = false;
-            Messages.Message("RimClaw_Subscription_Resumed".Translate(), parent, MessageTypeDefOf.PositiveEvent, historical: false);
+            Messages.Message(Props.resumed, parent, MessageTypeDefOf.PositiveEvent, historical: false);
         }
 
         private static bool IsPowered(ThingWithComps thing)

@@ -5,6 +5,14 @@
   <RimClaw_ClawfishHuman.label>龙虾代理</RimClaw_ClawfishHuman.label>
   <!-- EN: An multifunctional LLM Agent with the shape of a crustacean. -->
   <RimClaw_ClawfishHuman.description>一种外形像甲壳纲动物的多功能 LLM 代理。</RimClaw_ClawfishHuman.description>
+  <!-- EN: Connected to {0} -->
+  <RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.connectedStatusFormat>已连接到 {0}</RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.connectedStatusFormat>
+  <!-- EN: Current TPS: {0}/{1} needed -->
+  <RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.currentTpsFormat>当前 TPS：{0}/{1}（需求）</RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.currentTpsFormat>
+  <!-- EN: Not connected -->
+  <RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.notConnectedStatusText>未连接</RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.notConnectedStatusText>
+  <!-- EN: Required TPS: {0} -->
+  <RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.requiredTpsFormat>需求 TPS：{0}</RimClaw_ClawfishHuman.comps.CompClawfishTokenConnection.requiredTpsFormat>
   <!-- EN: left fist -->
   <RimClaw_ClawfishHuman.tools.left_fist.label>左鳌肢</RimClaw_ClawfishHuman.tools.left_fist.label>
   <!-- EN: fist -->

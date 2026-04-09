@@ -9,6 +9,45 @@ namespace RimClaw
     public class CompProperties_HostComputerService : CompProperties
     {
         public int connectionRadius = 9;
+        public string openConsoleLabel = "Open Console";
+        public string openConsoleDesc = "Open the datacenter management console.";
+        public string inspectFormat = "Models connected: {0}\nCurrent TPS: {1}/{2} needed\nConnected Clawfish: {3}\nConnected GPU: {4}/{5}\nVRAM: {6}/{7} GB";
+        public string deassignedWarning = "Clawfish on that GPU were deassigned. Reassign them to active instances.";
+        public string windowTitle = "Datacenter Console";
+        public string connectedClawsLabel = "Connected Claws";
+        public string gpuListLabel = "GPU List";
+        public string instancesRowFormat = "Instances: {0}/{1}";
+        public string assignInactiveGpu = "Cannot assign clawfish to inactive GPU (None model).";
+        public string assignSuccess = "{0} assigned to {1}";
+        public string assignFailed = "Cannot assign clawfish to this GPU.";
+        public string selectGpu = "Select a GPU to view diagnostics.";
+        public string labelModel = "Model";
+        public string labelWorkSpeed = "Global Work Speed";
+        public string labelInstances = "Instances";
+        public string labelHeatRate = "Heat Rate";
+        public string labelTotalUsage = "Total Usage";
+        public string labelTokenIO = "Token I/O";
+        public string labelActiveTime = "Active Time";
+        public string noRunnableInstances = "No runnable instances (insufficient VRAM/model).";
+        public string range1h = "Recent 1h";
+        public string range1d = "Recent 1 day";
+        public string range15d = "Recent 15 days";
+        public string rangeAll = "All";
+        public string switchModelFailed = "Failed to switch model for this GPU.";
+        public string assignPrompt = "Assign: {0}";
+        public string statGpuMachines = "GPU Machines";
+        public string statRoomTemperature = "Room Temperature";
+        public string statTotalTokenIO = "Total token I/O";
+        public string statPower = "Power";
+        public string statConnectedClaws = "Connected claws";
+        public string statVramUsage = "VRAM Usage(GB)";
+        public string statModels = "Models";
+        public string statInstances = "Instances";
+        public string chartTokenPerSec = "token/s";
+        public string chartHeatPerSec = "heat/s";
+        public string chartZero = "0";
+        public string chartOld = "old";
+        public string chartNew = "new";
 
         public CompProperties_HostComputerService()
         {
@@ -24,6 +63,7 @@ namespace RimClaw
         public Color ModelColor;
         public int ModelDiskThingId;
         public bool IsActive;
+        public bool IsBroken;
         public int TotalVram;
         public int UsedVram;
         public int TotalInstances;
@@ -218,8 +258,8 @@ namespace RimClaw
         {
             yield return new Command_Action
             {
-                defaultLabel = "RimClaw_Host_OpenConsole_Label".Translate(),
-                defaultDesc = "RimClaw_Host_OpenConsole_Desc".Translate(),
+                defaultLabel = Props.openConsoleLabel,
+                defaultDesc = Props.openConsoleDesc,
                 icon = ContentFinder<Texture2D>.Get("control_panel", reportFailure: false),
                 action = delegate
                 {
@@ -270,7 +310,7 @@ namespace RimClaw
                 }
             }
 
-            return "RimClaw_Host_Inspect".Translate(availableModels.Count, totalUsedTokenRate.ToString("0.0"), totalTokenCapacity.ToString("0.0"), connectedClaws.Count, activeGpuCount, connectedGpus.Count, usedVram, totalVram);
+            return string.Format(Props.inspectFormat, availableModels.Count, totalUsedTokenRate.ToString("0.0"), totalTokenCapacity.ToString("0.0"), connectedClaws.Count, activeGpuCount, connectedGpus.Count, usedVram, totalVram);
         }
 
         public override void PostDraw()
@@ -370,18 +410,18 @@ namespace RimClaw
         {
             if (claw == null)
             {
-                return "RimClaw_Generic_None".Translate();
+                return RimClawConfig.Values.genericNoneText;
             }
 
             if (!clawToGpuThing.TryGetValue(claw.thingIDNumber, out int gpuThingId))
             {
-                return "RimClaw_Generic_None".Translate();
+                return RimClawConfig.Values.genericNoneText;
             }
 
             HostGpuSnapshot snapshot = GetGpuSnapshot(gpuThingId);
             if (snapshot == null || !snapshot.IsActive)
             {
-                return "RimClaw_Generic_None".Translate();
+                return RimClawConfig.Values.genericNoneText;
             }
 
             return snapshot.Name;
@@ -413,7 +453,7 @@ namespace RimClaw
 
             if (unassigned > 0)
             {
-                Messages.Message("RimClaw_Host_DeassignedWarning".Translate(), parent, MessageTypeDefOf.CautionInput, historical: false);
+                Messages.Message(Props.deassignedWarning, parent, MessageTypeDefOf.CautionInput, historical: false);
             }
 
             return true;
@@ -596,7 +636,9 @@ namespace RimClaw
             {
                 Thing gpuThing = connectedGpus[i];
                 CompGPUCluster gpuComp = gpuThing.TryGetComp<CompGPUCluster>();
+                CompBreakdownable breakdownable = gpuThing.TryGetComp<CompBreakdownable>();
                 int gpuVram = gpuComp?.Props?.providedVRAM ?? 0;
+                bool isBroken = breakdownable?.BrokenDown ?? false;
 
                 int selectedDiskId;
                 if (!gpuToModelDiskThing.TryGetValue(gpuThing.thingIDNumber, out selectedDiskId))
@@ -606,15 +648,16 @@ namespace RimClaw
                 }
 
                 HostModelOptionSnapshot selectedModel = GetModelOption(selectedDiskId);
-                bool isActive = selectedModel != null;
-                int requiredVramPerInstance = isActive ? Mathf.Max(0, selectedModel.RequiredVram) : 0;
-                float tokenPerInstance = isActive ? Mathf.Max(0f, selectedModel.TokenPerSecondPerInstance) : 0f;
-                int gpuTotalInstances = requiredVramPerInstance > 0 ? gpuVram / requiredVramPerInstance : 0;
+                bool hasModel = selectedModel != null;
+                bool isOperational = hasModel && !isBroken;
+                int requiredVramPerInstance = isOperational ? Mathf.Max(0, selectedModel.RequiredVram) : 0;
+                float tokenPerInstance = isOperational ? Mathf.Max(0f, selectedModel.TokenPerSecondPerInstance) : 0f;
+                int gpuTotalInstances = isOperational && requiredVramPerInstance > 0 ? gpuVram / requiredVramPerInstance : 0;
                 float gpuCapacity = gpuTotalInstances * tokenPerInstance;
-                Color gpuColor = isActive ? selectedModel.ModelColor : new Color32(100, 100, 100, 255);
-                string gpuModelName = isActive ? selectedModel.ModelName : "(None)";
-                float workSpeedMultiplier = isActive ? 1f + selectedModel.WorkSpeedBonus : 1f;
-                int skillLevelAdjustment = isActive ? selectedModel.SkillLevelAdjustment : 0;
+                Color gpuColor = hasModel ? selectedModel.ModelColor : new Color32(100, 100, 100, 255);
+                string gpuModelName = hasModel ? selectedModel.ModelName : "(None)";
+                float workSpeedMultiplier = isOperational ? 1f + selectedModel.WorkSpeedBonus : 1f;
+                int skillLevelAdjustment = isOperational ? selectedModel.SkillLevelAdjustment : 0;
 
                 gpuSnapshots.Add(new HostGpuSnapshot
                 {
@@ -622,10 +665,11 @@ namespace RimClaw
                     Name = $"GPU {i}",
                     ModelName = gpuModelName,
                     ModelColor = gpuColor,
-                    ModelDiskThingId = isActive ? selectedModel.DiskThingId : -1,
-                    IsActive = isActive,
+                    ModelDiskThingId = hasModel ? selectedModel.DiskThingId : -1,
+                    IsActive = isOperational,
+                    IsBroken = isBroken,
                     TotalVram = gpuVram,
-                    UsedVram = gpuTotalInstances * requiredVramPerInstance,
+                    UsedVram = isOperational ? gpuTotalInstances * requiredVramPerInstance : 0,
                     TotalInstances = gpuTotalInstances,
                     UsedInstances = 0,
                     PerInstanceCapacityTps = tokenPerInstance,
@@ -663,7 +707,7 @@ namespace RimClaw
                 HostGpuSnapshot gpu = gpuSnapshots[i];
                 totalVram += gpu.TotalVram;
                 usedVram += gpu.UsedVram;
-                totalInstances += gpu.TotalInstances;
+                totalInstances += gpu.IsActive ? gpu.TotalInstances : 0;
                 totalTokenCapacity += gpu.CapacityTps;
 
                 Thing gpuThing = FindThingById(gpu.ThingId);
@@ -721,7 +765,7 @@ namespace RimClaw
                 gpu.HeatHistory = UpdateGpuHeatHistory(gpu.ThingId, currentHeatRate);
                 gpu.TpsHistory = UpdateGpuTpsHistory(gpu.ThingId, gpu.UsedTps);
                 totalHeatRate += currentHeatRate;
-                usedInstances += gpu.UsedInstances;
+                usedInstances += gpu.IsActive ? gpu.UsedInstances : 0;
             }
         }
 

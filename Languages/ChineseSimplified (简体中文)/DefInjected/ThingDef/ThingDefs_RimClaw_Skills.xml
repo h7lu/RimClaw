@@ -5,5 +5,43 @@
   <RimClaw_SkillsMd.label>SKILLS.md</RimClaw_SkillsMd.label>
   <!-- EN: An open-standard Markdown file format implant that instructs AI agents on how to perform specific, specialized tasks. It includes metadata, instructions, and tools that allow agents to execute complex workflows, follow brand guidelines, or use external tools efficiently. Boosts the clawfish's ability in some specializations. Each SKILLS.md installed contribute to additional 5% token I/O consumption rate. -->
   <RimClaw_SkillsMd.description>一种开放标准的 Markdown 文件格式植入体，用于指导 AI 代理执行特定的专业任务。它包含元数据、指令和工具，能帮助代理高效执行复杂工作流、遵循规范或使用外部工具。可提升龙虾在某些专长上的能力。每安装一个 SKILLS.md 都会额外增加 5% 的 token I/O 消耗率。</RimClaw_SkillsMd.description>
+  <!-- EN: context corruption chance -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.contextCorruptionChance>上下文损坏概率</RimClaw_SkillsMd.comps.CompSkillsMd.contextCorruptionChance>
+  <!-- EN: Context corruption (from Skills.md): {0}% -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.contextCorruptionInspect>上下文损坏（来自 Skills.md）：{0}%</RimClaw_SkillsMd.comps.CompSkillsMd.contextCorruptionInspect>
+  <!-- EN: Context corruption caused by installed Skills.md implants. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.corruptionRateDesc>由已安装 Skills.md 植入体造成的上下文损坏。</RimClaw_SkillsMd.comps.CompSkillsMd.corruptionRateDesc>
+  <!-- EN: Skills.md corruption rate -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.corruptionRateLabel>Skills.md 损坏率</RimClaw_SkillsMd.comps.CompSkillsMd.corruptionRateLabel>
+  <!-- EN: All skill level shifts and stat modifiers this Skills.md applies after installation. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.effectsDesc>该 Skills.md 安装后提供的全部技能等级变动和属性修正。</RimClaw_SkillsMd.comps.CompSkillsMd.effectsDesc>
+  <!-- EN: Codename: {0}\nEffects: {1} -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.inspectFormat>代号：{0}\n效果：{1}</RimClaw_SkillsMd.comps.CompSkillsMd.inspectFormat>
+  <!-- EN: Select a Clawfish to receive this Skills implant. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.installDesc>选择一只龙虾来安装此 Skills 植入体。</RimClaw_SkillsMd.comps.CompSkillsMd.installDesc>
+  <!-- EN: Installed {0} on {1}. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.installed>已在 {1} 身上安装 {0}。</RimClaw_SkillsMd.comps.CompSkillsMd.installed>
+  <!-- EN: Install Skills -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.installLabel>安装 Skills</RimClaw_SkillsMd.comps.CompSkillsMd.installLabel>
+  <!-- EN: Skills implant can only be installed on Clawfish. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.installOnlyClawfish>Skills 植入体只能安装在龙虾身上。</RimClaw_SkillsMd.comps.CompSkillsMd.installOnlyClawfish>
+  <!-- EN: Generated codename of this Skills.md implant. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.nameDesc>该 Skills.md 植入体生成的代号。</RimClaw_SkillsMd.comps.CompSkillsMd.nameDesc>
+  <!-- EN: Skills.md name -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.nameLabel>Skills.md 名称</RimClaw_SkillsMd.comps.CompSkillsMd.nameLabel>
+  <!-- EN: Clawfish is not on the same map. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.notSameMap>龙虾不在同一张地图上。</RimClaw_SkillsMd.comps.CompSkillsMd.notSameMap>
+  <!-- EN: Ordered {0} to install {1}. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.orderedInstall>已下达命令：让 {0} 安装 {1}。</RimClaw_SkillsMd.comps.CompSkillsMd.orderedInstall>
+  <!-- EN: Prompt injection chance x{0} -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.promptInjectionChance>提示注入概率 x{0}</RimClaw_SkillsMd.comps.CompSkillsMd.promptInjectionChance>
+  <!-- EN: Select a Clawfish target. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.selectClawfish>请选择一只龙虾目标。</RimClaw_SkillsMd.comps.CompSkillsMd.selectClawfish>
+  <!-- EN: Remove one of {0} installed Skills.md implant(s). -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.uninstallDesc>从已安装的 {0} 个 Skills.md 植入体中移除一个。</RimClaw_SkillsMd.comps.CompSkillsMd.uninstallDesc>
+  <!-- EN: Uninstalled {0} from {1}. -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.uninstalled>已从 {1} 卸载 {0}。</RimClaw_SkillsMd.comps.CompSkillsMd.uninstalled>
+  <!-- EN: Uninstall Skills.md -->
+  <RimClaw_SkillsMd.comps.CompSkillsMd.uninstallLabel>卸载 Skills.md</RimClaw_SkillsMd.comps.CompSkillsMd.uninstallLabel>
   
 </LanguageData>

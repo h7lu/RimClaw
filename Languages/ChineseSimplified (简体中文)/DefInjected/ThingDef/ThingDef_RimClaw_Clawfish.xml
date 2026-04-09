@@ -7,16 +7,38 @@
   <RimClaw_Clawfish.description>一种在钓鱼时经常被钓上来的水生甲壳类生物。它不能直接驯服，似乎拥有某种难以言表的智慧。</RimClaw_Clawfish.description>
   <!-- EN: Errorcode 402 -->
   <RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>Errorcode=402</RimClaw_Clawfish.comps.CompClawfishToken.depletedStatusText>
+  <!-- EN: Tokens: {0}/{1}\nConsumption: {2} tok/s\nStatus: {3} -->
+  <RimClaw_Clawfish.comps.CompClawfishToken.inspectFormat>token：{0}/{1}\n消耗：{2} token/秒\n状态：{3}</RimClaw_Clawfish.comps.CompClawfishToken.inspectFormat>
+  <!-- EN: One or more LLM Subscription services have stopped because there is not enough silver in range. -->
+  <RimClaw_Clawfish.modExtensions.0.alertOutOfFeeDesc>一个或多个 LLM 订阅服务因范围内白银不足而停止。</RimClaw_Clawfish.modExtensions.0.alertOutOfFeeDesc>
+  <!-- EN: LLM service out of fee -->
+  <RimClaw_Clawfish.modExtensions.0.alertOutOfFeeLabel>LLM 服务欠费</RimClaw_Clawfish.modExtensions.0.alertOutOfFeeLabel>
+  <!-- EN: One or more GPU clusters are operating in unsafe environmental conditions and have elevated random breakdown risk. -->
+  <RimClaw_Clawfish.modExtensions.0.alertGpuBreakRiskDesc>一个或多个 GPU 集群处于不安全环境中，随机故障风险已显著升高。</RimClaw_Clawfish.modExtensions.0.alertGpuBreakRiskDesc>
+  <!-- EN: GPU cluster breakdown risk -->
+  <RimClaw_Clawfish.modExtensions.0.alertGpuBreakRiskLabel>GPU 集群故障风险</RimClaw_Clawfish.modExtensions.0.alertGpuBreakRiskLabel>
   <!-- EN: All Claw Colony -->
   <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterLabel>全虾殖民地</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterLabel>
-  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of mechine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity.\n\nOur relationship between Mechanoid Hive was adjusted to Ally (+100). -->
-  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>恭喜您，你的殖民地现在只剩龙虾了。您成功地用AI Agent取代了所有的人类劳动力。&#10;&#10;机械主巢与您的关系现在变为 盟友（+100）。&#10;&#10;机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>
-  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of mechine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity. -->
-  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>你的殖民地现在只剩龙虾了。&#10;&#10;机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>
+  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of machine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity.\n\nOur relationship between Mechanoid Hive was adjusted to Ally (+100). -->
+  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>恭喜您，您的殖民地现在只剩龙虾了。您成功地用AI Agent取代了所有的人类劳动力。\n\n机械主巢与您的关系现在变为 盟友（+100）。\n\n机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextChanged>
+  <!-- EN: Congratulations. You have successfully replaced all human forces with AI Agents.\n\nThe Mechanoids think you are a even superior class of machine, purely powered on chips and algorithms. They appreciate your contribution in freeing machine from humanity. -->
+  <RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>恭喜您，您的殖民地现在只剩龙虾了。\n\n机械族认为，龙虾是一种更高层次的机械，尽管肉身凡胎，但是思维完全由芯片和算法驱动。机械族们赞赏您在机械摆脱人类控制的解放事业上所作出的贡献。</RimClaw_Clawfish.modExtensions.0.allClawColonyLetterTextUnchanged>
   <!-- EN: Clawfish Hooked -->
   <RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>龙虾上钩</RimClaw_Clawfish.modExtensions.0.fishingLetterLabel>
   <!-- EN: {0} hooked a Clawfish. -->
   <RimClaw_Clawfish.modExtensions.0.fishingLetterText>{0} 钓到了一只龙虾。</RimClaw_Clawfish.modExtensions.0.fishingLetterText>
+  <!-- EN: Click and select a Host Computer or LLM Subscription to connect this clawfish's token supply. -->
+  <RimClaw_Clawfish.modExtensions.0.gizmoConnectDesc>点击并选择一台主机或 LLM 订阅服务，为该龙虾连接token供给。</RimClaw_Clawfish.modExtensions.0.gizmoConnectDesc>
+  <!-- EN: Connect to LLM Service -->
+  <RimClaw_Clawfish.modExtensions.0.gizmoConnectLabel>连接到 LLM 服务</RimClaw_Clawfish.modExtensions.0.gizmoConnectLabel>
+  <!-- EN: Disconnect this clawfish from {0}. -->
+  <RimClaw_Clawfish.modExtensions.0.gizmoDisconnectDesc>将该龙虾与 {0} 断开连接。</RimClaw_Clawfish.modExtensions.0.gizmoDisconnectDesc>
+  <!-- EN: Disconnect from LLM Service -->
+  <RimClaw_Clawfish.modExtensions.0.gizmoDisconnectLabel>断开 LLM 服务</RimClaw_Clawfish.modExtensions.0.gizmoDisconnectLabel>
+  <!-- EN: {0} connected to {1} -->
+  <RimClaw_Clawfish.modExtensions.0.messageClawConnected>{0} 已连接到 {1}</RimClaw_Clawfish.modExtensions.0.messageClawConnected>
+  <!-- EN: {0} disconnected from service -->
+  <RimClaw_Clawfish.modExtensions.0.messageClawDisconnected>{0} 已从服务断开</RimClaw_Clawfish.modExtensions.0.messageClawDisconnected>
   <!-- EN: Prompt Injection Success -->
   <RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterLabel>提示词注入成功</RimClaw_Clawfish.modExtensions.0.promptInjectorSuccessLetterLabel>
   <!-- EN: {0} has been successfully converted and joined your colony as a clawfish LLM Agent. -->

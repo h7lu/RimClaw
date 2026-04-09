@@ -43,7 +43,7 @@ namespace RimClaw
                 case SkillsEffectKind.ReductionMultiplier:
                     return $"{ResolveReductionLabel(TargetDefName)} x{Multiplier:0.00}";
                 case SkillsEffectKind.PromptInjectionResistance:
-                    return "RimClaw_Skills_PromptInjectionChance".Translate(Multiplier.ToString("0.00"));
+                    return string.Format(DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.promptInjectionChance ?? "Prompt injection chance x{0}", Multiplier.ToString("0.00"));
                 default:
                     return TargetDefName ?? Kind.ToString();
             }
@@ -52,13 +52,13 @@ namespace RimClaw
         private static string ResolveSkillLabel(string defName)
         {
             SkillDef def = DefDatabase<SkillDef>.GetNamedSilentFail(defName);
-            return def?.label?.CapitalizeFirst() ?? defName ?? "RimClaw_Skills_FallbackSkill".Translate().ToString();
+            return def?.label?.CapitalizeFirst() ?? defName ?? (DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.fallbackSkill ?? "Skill");
         }
 
         private static string ResolveAdditiveStatLabel(string defName)
         {
             StatDef stat = DefDatabase<StatDef>.GetNamedSilentFail(defName);
-            return stat?.LabelCap ?? defName ?? "RimClaw_Skills_FallbackStat".Translate().ToString();
+            return stat?.LabelCap ?? defName ?? (DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.fallbackStat ?? "Stat");
         }
 
         private static string ResolveReductionLabel(string defName)
@@ -66,9 +66,9 @@ namespace RimClaw
             switch (defName)
             {
                 case "ContextCollapseChance":
-                    return "RimClaw_Skills_ContextCorruptionChance".Translate();
+                    return DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.contextCorruptionChance ?? "context corruption chance";
                 default:
-                    return defName ?? "RimClaw_Skills_FallbackRate".Translate().ToString();
+                    return defName ?? (DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.fallbackRate ?? "rate");
             }
         }
     }
@@ -102,6 +102,29 @@ namespace RimClaw
         public int minEffects = 1;
         public int maxEffects = 4;
         public float levelPercent = 0.03f;
+        public string promptInjectionChance = "Prompt injection chance x{0}";
+        public string contextCorruptionChance = "context corruption chance";
+        public string fallbackSkill = "Skill";
+        public string fallbackStat = "Stat";
+        public string fallbackRate = "rate";
+        public string installLabel = "Install Skills";
+        public string installDesc = "Select a Clawfish to receive this Skills implant.";
+        public string inspectFormat = "Codename: {0}\nEffects: {1}";
+        public string nameLabel = "Skills.md name";
+        public string nameDesc = "Generated codename of this Skills.md implant.";
+        public string effectsLabel = "Effects";
+        public string effectsDesc = "All skill level shifts and stat modifiers this Skills.md applies after installation.";
+        public string selectClawfish = "Select a Clawfish target.";
+        public string notSameMap = "Clawfish is not on the same map.";
+        public string orderedInstall = "Ordered {0} to install {1}.";
+        public string installOnlyClawfish = "Skills implant can only be installed on Clawfish.";
+        public string installed = "Installed {0} on {1}.";
+        public string uninstalled = "Uninstalled {0} from {1}.";
+        public string uninstallLabel = "Uninstall Skills.md";
+        public string uninstallDesc = "Remove one of {0} installed Skills.md implant(s).";
+        public string contextCorruptionInspect = "Context corruption (from Skills.md): {0}%";
+        public string corruptionRateLabel = "Skills.md corruption rate";
+        public string corruptionRateDesc = "Context corruption caused by installed Skills.md implants.";
 
         public CompProperties_SkillsMd()
         {
@@ -162,8 +185,8 @@ namespace RimClaw
 
             yield return new Command_Action
             {
-                defaultLabel = "RimClaw_Skills_Install_Label".Translate(),
-                defaultDesc = "RimClaw_Skills_Install_Desc".Translate(),
+                defaultLabel = Props.installLabel,
+                defaultDesc = Props.installDesc,
                 icon = ContentFinder<Texture2D>.Get("install_skill_md", reportFailure: false),
                 action = BeginInstallTargeting
             };
@@ -173,7 +196,7 @@ namespace RimClaw
         {
             EnsureInitialized();
 
-            return "RimClaw_Skills_Inspect".Translate(codename, BuildEffectsText());
+            return string.Format(Props.inspectFormat, codename, BuildEffectsText());
         }
 
         public override IEnumerable<StatDrawEntry> SpecialDisplayStats()
@@ -182,16 +205,16 @@ namespace RimClaw
 
             yield return new StatDrawEntry(
                 StatCategoryDefOf.Basics,
-                "RimClaw_Skills_Name_Label".Translate(),
-                codename ?? "RimClaw_Generic_Unnamed".Translate().ToString(),
-                "RimClaw_Skills_Name_Desc".Translate(),
+                Props.nameLabel,
+                codename ?? RimClawConfig.Values.genericUnnamedText,
+                Props.nameDesc,
                 2000);
 
             yield return new StatDrawEntry(
                 StatCategoryDefOf.Basics,
-                "RimClaw_Skills_Effects_Label".Translate(),
+                Props.effectsLabel,
                 BuildEffectsText(),
-                "RimClaw_Skills_Effects_Desc".Translate(),
+                Props.effectsDesc,
                 1999);
         }
 
@@ -368,7 +391,7 @@ namespace RimClaw
         {
             if (effects.Count == 0)
             {
-                return "RimClaw_Generic_None".Translate();
+                return RimClawConfig.Values.genericNoneText;
             }
 
             List<string> lines = new List<string>();
@@ -563,7 +586,7 @@ namespace RimClaw
                 Pawn pawn = target.Thing as Pawn;
                 if (pawn == null || !ClawfishUtility.IsClawfish(pawn))
                 {
-                    Messages.Message("RimClaw_Skills_SelectClawfish".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                    Messages.Message(Props.selectClawfish, parent, MessageTypeDefOf.RejectInput, historical: false);
                     return;
                 }
 
@@ -575,20 +598,20 @@ namespace RimClaw
         {
             if (parent?.MapHeld == null || clawfish?.Map != parent.Map)
             {
-                Messages.Message("RimClaw_Skills_NotSameMap".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                Messages.Message(Props.notSameMap, parent, MessageTypeDefOf.RejectInput, historical: false);
                 return;
             }
 
             Job installJob = JobMaker.MakeJob(RimClawDefOf.RimClaw_InstallSkillsMd, parent, clawfish);
             clawfish.jobs.TryTakeOrderedJob(installJob);
-            Messages.Message("RimClaw_Skills_OrderedInstall".Translate(clawfish.LabelShortCap, codename), parent, MessageTypeDefOf.PositiveEvent, historical: false);
+            Messages.Message(string.Format(Props.orderedInstall, clawfish.LabelShortCap, codename), parent, MessageTypeDefOf.PositiveEvent, historical: false);
         }
 
         public void InstallOnPawn(Pawn pawn)
         {
             if (pawn?.health == null || !ClawfishUtility.IsClawfish(pawn))
             {
-                Messages.Message("RimClaw_Skills_InstallOnlyClawfish".Translate(), parent, MessageTypeDefOf.RejectInput, historical: false);
+                Messages.Message(Props.installOnlyClawfish, parent, MessageTypeDefOf.RejectInput, historical: false);
                 return;
             }
 
@@ -601,7 +624,7 @@ namespace RimClaw
 
             pawn.health.AddHediff(hediff);
             SkillsImplantUtility.RefreshPawnSkills(pawn);
-            Messages.Message("RimClaw_Skills_Installed".Translate(codename, pawn.LabelShortCap), pawn, MessageTypeDefOf.PositiveEvent, historical: false);
+            Messages.Message(string.Format(Props.installed, codename, pawn.LabelShortCap), pawn, MessageTypeDefOf.PositiveEvent, historical: false);
             parent.Destroy(DestroyMode.Vanish);
         }
 
@@ -1091,7 +1114,7 @@ namespace RimClaw
             GenPlace.TryPlaceThing(skillsMdItem, pawn.Position, pawn.Map, ThingPlaceMode.Near);
             pawn.health.RemoveHediff(implant);
             RefreshPawnSkills(pawn);
-            Messages.Message("RimClaw_Skills_Uninstalled".Translate(implant.Codename, pawn.LabelShortCap), pawn, MessageTypeDefOf.NeutralEvent, historical: false);
+            Messages.Message(string.Format(RimClawDefOf.RimClaw_SkillsMd.GetCompProperties<CompProperties_SkillsMd>()?.uninstalled ?? "Uninstalled {0} from {1}.", implant.Codename, pawn.LabelShortCap), pawn, MessageTypeDefOf.NeutralEvent, historical: false);
             return true;
         }
     }

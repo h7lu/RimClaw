@@ -10,8 +10,8 @@ namespace RimClaw
 
         public Alert_LLMSubscriptionOutOfFee()
         {
-            defaultLabel = "RimClaw_Alert_OutOfFee_Label".Translate();
-            defaultExplanation = "RimClaw_Alert_OutOfFee_Desc".Translate();
+            defaultLabel = RimClawConfig.Values.alertOutOfFeeLabel;
+            defaultExplanation = RimClawConfig.Values.alertOutOfFeeDesc;
             defaultPriority = AlertPriority.High;
         }
 

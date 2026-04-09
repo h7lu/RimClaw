@@ -93,6 +93,10 @@
           <li>Tailor</li>
           <li>Craft</li>
         </lightWorkKeywords>
+        <connectedStatusFormat>Connected to {0}</connectedStatusFormat>
+        <notConnectedStatusText>Not connected</notConnectedStatusText>
+        <requiredTpsFormat>Required TPS: {0}</requiredTpsFormat>
+        <currentTpsFormat>Current TPS: {0}/{1} needed</currentTpsFormat>
       </li>
     </comps>
   </ThingDef>

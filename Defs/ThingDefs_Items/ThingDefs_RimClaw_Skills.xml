@@ -77,6 +77,30 @@
         </nameSuffixes>
         <minEffects>1</minEffects>
         <maxEffects>4</maxEffects>
+        <promptInjectionChance>Prompt injection chance x{0}</promptInjectionChance>
+        <contextCorruptionChance>context corruption chance</contextCorruptionChance>
+        <fallbackSkill>Skill</fallbackSkill>
+        <fallbackStat>Stat</fallbackStat>
+        <fallbackRate>rate</fallbackRate>
+        <installLabel>Install Skills</installLabel>
+        <installDesc>Select a Clawfish to receive this Skills implant.</installDesc>
+        <inspectFormat>Codename: {0}
+Effects: {1}</inspectFormat>
+        <nameLabel>Skills.md name</nameLabel>
+        <nameDesc>Generated codename of this Skills.md implant.</nameDesc>
+        <effectsLabel>Effects</effectsLabel>
+        <effectsDesc>All skill level shifts and stat modifiers this Skills.md applies after installation.</effectsDesc>
+        <selectClawfish>Select a Clawfish target.</selectClawfish>
+        <notSameMap>Clawfish is not on the same map.</notSameMap>
+        <orderedInstall>Ordered {0} to install {1}.</orderedInstall>
+        <installOnlyClawfish>Skills implant can only be installed on Clawfish.</installOnlyClawfish>
+        <installed>Installed {0} on {1}.</installed>
+        <uninstalled>Uninstalled {0} from {1}.</uninstalled>
+        <uninstallLabel>Uninstall Skills.md</uninstallLabel>
+        <uninstallDesc>Remove one of {0} installed Skills.md implant(s).</uninstallDesc>
+        <contextCorruptionInspect>Context corruption (from Skills.md): {0}%</contextCorruptionInspect>
+        <corruptionRateLabel>Skills.md corruption rate</corruptionRateLabel>
+        <corruptionRateDesc>Context corruption caused by installed Skills.md implants.</corruptionRateDesc>
       </li>
     </comps>
   </ThingDef>

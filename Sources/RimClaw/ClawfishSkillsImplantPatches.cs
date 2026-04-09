@@ -29,8 +29,8 @@ namespace RimClaw
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "RimClaw_Skills_Uninstall_Label".Translate(),
-                    defaultDesc = "RimClaw_Skills_Uninstall_Desc".Translate(skillsMdCount),
+                    defaultLabel = RimClawDefOf.RimClaw_SkillsMd.GetCompProperties<CompProperties_SkillsMd>()?.uninstallLabel ?? "Uninstall Skills.md",
+                    defaultDesc = string.Format(RimClawDefOf.RimClaw_SkillsMd.GetCompProperties<CompProperties_SkillsMd>()?.uninstallDesc ?? "Remove one of {0} installed Skills.md implant(s).", skillsMdCount),
                     icon = ContentFinder<Texture2D>.Get("uninstall_skill_md", reportFailure: false),
                     action = delegate
                     {
@@ -52,7 +52,7 @@ namespace RimClaw
             for (int i = 0; i < implants.Count; i++)
             {
                 Hediff_SkillsImplant implant = implants[i];
-                string label = implant.Codename ?? "RimClaw_Generic_Unnamed".Translate().ToString();
+                string label = implant.Codename ?? RimClawConfig.Values.genericUnnamedText;
                 int index = i;
                 options.Add(new FloatMenuOption(label, delegate
                 {
@@ -90,7 +90,7 @@ namespace RimClaw
             float corruptionRate = SkillsImplantUtility.GetContextCorruptionRateFromSkillsMd(__instance);
             if (corruptionRate > 0f)
             {
-                __result += "\n" + "RimClaw_Skills_ContextCorruptionInspect".Translate((corruptionRate * 100f).ToString("0.0"));
+                __result += "\n" + string.Format(DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.contextCorruptionInspect ?? "Context corruption (from Skills.md): {0}%", (corruptionRate * 100f).ToString("0.0"));
             }
         }
     }
@@ -115,9 +115,9 @@ namespace RimClaw
             {
                 yield return new StatDrawEntry(
                     StatCategoryDefOf.Basics,
-                    "RimClaw_Skills_CorruptionRate_Label".Translate(),
+                    DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.corruptionRateLabel ?? "Skills.md corruption rate",
                     $"{corruptionRate * 100f:0.0}%",
-                    "RimClaw_Skills_CorruptionRate_Desc".Translate(),
+                    DefDatabase<ThingDef>.GetNamedSilentFail("RimClaw_SkillsMd")?.GetCompProperties<CompProperties_SkillsMd>()?.corruptionRateDesc ?? "Context corruption caused by installed Skills.md implants.",
                     2000);
             }
         }

@@ -20,6 +20,7 @@ namespace RimClaw
 
         public string onlineStatusText = "Online";
         public string depletedStatusText = "Errorcode 402";
+        public string inspectFormat = "Tokens: {0}/{1}\nConsumption: {2} tok/s\nStatus: {3}";
 
         public List<string> idleJobKeywords = new List<string> { "Goto", "Wait", "Wander" };
         public List<string> combatJobKeywords = new List<string> { "Attack", "Hunt" };
@@ -238,7 +239,7 @@ namespace RimClaw
 
             float rate = GetCurrentConsumptionRatePerSecond(pawn);
             string status = currentTokens > 0.0001f ? Props.onlineStatusText : Props.depletedStatusText;
-            return "RimClaw_ClawfishToken_Inspect".Translate(currentTokens.ToString("0.0"), MaxTokens.ToString("0.0"), rate.ToString("0.00"), status);
+            return string.Format(Props.inspectFormat, currentTokens.ToString("0.0"), MaxTokens.ToString("0.0"), rate.ToString("0.00"), status);
         }
     }
 }

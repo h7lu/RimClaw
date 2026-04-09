@@ -14,7 +14,7 @@
   <!-- EN: dumpster speghatti code -->
   <RimClaw_DumpsterCode.label>屎山代码</RimClaw_DumpsterCode.label>
   <!-- EN: Vibe code dumpster speghatti code of a Clawfish. It is unsafe, hard to maintain, and looks gross. But as it works, who cares about code design? -->
-  <RimClaw_DumpsterCode.description>龙虾的vibe coding出来的屎山面条代码。它不安全、难以维护，而且看起来令人作呕。但既然能运行，有炒作热度，又有谁在乎代码设计呢？</RimClaw_DumpsterCode.description>
+  <RimClaw_DumpsterCode.description>龙虾里的vibe coding出来的屎山面条代码。它不安全、难以维护，而且看起来令人作呕。但既然能运行，有炒作热度，又有谁在乎代码设计呢？</RimClaw_DumpsterCode.description>
   
   <!-- EN: Prompt Injection Database -->
   <RimClaw_PromptInjectionDatabase.label>提示词注入数据库</RimClaw_PromptInjectionDatabase.label>
