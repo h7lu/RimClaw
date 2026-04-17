@@ -12,6 +12,7 @@ namespace RimClaw
     public static class Patch_PawnRenderer_RenderPawnAt
     {
         private static readonly AccessTools.FieldRef<PawnRenderer, Pawn> PawnRef = AccessTools.FieldRefAccess<PawnRenderer, Pawn>("pawn");
+        private static readonly MethodInfo SetSilhouetteDataMethod = AccessTools.Method(typeof(PawnRenderer), "SetSilhouetteData");
 
         public static bool Prefix(PawnRenderer __instance, UnityEngine.Vector3 drawLoc, ref Verse.Rot4? rotOverride, bool neverAimWeapon)
         {
@@ -21,10 +22,28 @@ namespace RimClaw
             {
                 Verse.Rot4 rot = rotOverride ?? pawn.Rotation;
                 clawfishGraphic.Draw(drawLoc, rot, pawn, 0f);
+
+                Graphic silhouetteGraphic = GetSilhouetteGraphic(pawn, clawfishGraphic);
+                SetSilhouetteDataMethod?.Invoke(__instance, new object[] { silhouetteGraphic, drawLoc });
                 return false;
             }
 
             return true;
+        }
+
+        private static Graphic GetSilhouetteGraphic(Pawn pawn, Graphic fallbackGraphic)
+        {
+            if (pawn == null)
+            {
+                return fallbackGraphic;
+            }
+
+            if (pawn.RaceProps?.Humanlike == true)
+            {
+                return pawn.ageTracker?.CurLifeStage?.silhouetteGraphicData?.Graphic ?? fallbackGraphic;
+            }
+
+            return pawn.ageTracker?.CurKindLifeStage?.silhouetteGraphicData?.Graphic ?? fallbackGraphic;
         }
     }
 
